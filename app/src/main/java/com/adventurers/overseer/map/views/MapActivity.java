@@ -1,14 +1,12 @@
 package com.adventurers.overseer.map.views;
 
-import static com.adventurers.overseer.Constants.RC_ACCESS_FINE_LOCATION;
+import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
 
-import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
@@ -57,13 +55,7 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        // check if permission is granted
-        if (ActivityCompat
-                .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            PermissionHelper.requestLocation(this);
-        }
-        //TODO: Check if Location Service is enabled
+        PermissionHelper.requestLocationAndGPS(this);
         //mMap.setMyLocationEnabled(true);
     }
 
@@ -79,14 +71,12 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
         // Some permissions have been granted
-        // ...
-
+        PermissionHelper.requestLocationAndGPS(this);
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> list) {
         // Some permissions have been denied
-        // ...
 
         // Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
         // This will display a dialog directing them to enable the permission in app settings.
@@ -94,7 +84,7 @@ public class MapActivity extends FragmentActivity
             PermissionHelper.openApplicationInSettings(this);
         }
         else {
-            PermissionHelper.requestLocation(this);
+            PermissionHelper.requestLocationAndGPS(this);
         }
     }
 
@@ -103,13 +93,18 @@ public class MapActivity extends FragmentActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
-            // Do something after user returned from app settings screen, like showing a Toast.
-            String[] PERMISSION = { Manifest.permission.ACCESS_FINE_LOCATION };
-            requestPermissions(PERMISSION, RC_ACCESS_FINE_LOCATION);
-            if(EasyPermissions.hasPermissions(this, PERMISSION)){
-            }
-            else{
-                PermissionHelper.requestLocation(this);
+            // Do something after user returned from app settings screen.
+            PermissionHelper.requestLocationAndGPS(this);
+        }
+        else if(requestCode == RC_GPS_SERVICE) {
+            // Do something after GPS is turned on in location dialog
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    PermissionHelper.requestLocationAndGPS(this);
+                    break;
+                case Activity.RESULT_CANCELED:
+                    PermissionHelper.requestLocationAndGPS(this);
+                    break;
             }
         }
     }
