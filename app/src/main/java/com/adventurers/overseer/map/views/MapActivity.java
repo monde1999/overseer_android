@@ -14,6 +14,7 @@ import com.adventurers.overseer.R;
 import com.adventurers.overseer.map.helpers.Location;
 import com.adventurers.overseer.map.helpers.PermissionHelper;
 import com.adventurers.overseer.map.helpers.StatusBarHelper;
+import com.adventurers.overseer.splash.SplashActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -23,8 +24,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.List;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -91,6 +94,10 @@ public class MapActivity extends FragmentActivity
             if(location != null) {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 zoomToLatLng(latLng, 15, false);
+            }
+            else {
+                // Restart application to obtain device location
+                ProcessPhoenix.triggerRebirth(MapActivity.this);
             }
         }
     };
