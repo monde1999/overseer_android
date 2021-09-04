@@ -12,22 +12,14 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.map.helpers.Location;
+import com.adventurers.overseer.map.helpers.MapHelper;
 import com.adventurers.overseer.map.helpers.PermissionHelper;
 import com.adventurers.overseer.map.helpers.StatusBarHelper;
-import com.adventurers.overseer.splash.SplashActivity;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.List;
-import java.util.Map;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -38,6 +30,8 @@ public class MapActivity extends FragmentActivity
     private double mVisibilityRadius;
     private boolean mHazardVisibility;
     private GoogleMap mMap;
+
+    private static final String TAG = "MapActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,46 +67,14 @@ public class MapActivity extends FragmentActivity
     private void startActivity() {
         if(PermissionHelper.isLocationGranted(this) && PermissionHelper.isGPSOn(this) && mMap != null) {
             mMap.setMyLocationEnabled(true);
-            findUserLocation();
+
+            MapHelper mapHelper = new MapHelper(this, mMap);
+            mapHelper.moveCameraToDeviceLocation();
+            mapHelper.startFollowDevice();
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private void findUserLocation() {
-        FusedLocationProviderClient fusedLocationClient =
-                LocationServices.getFusedLocationProviderClient(this);
-
-        // Gets last known location and zoom to it using successListener
-        // Fast but less accurate, used to zoom in faster
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, successListener);
-    }
-
-    private final OnSuccessListener<android.location.Location>
-            successListener = new OnSuccessListener<android.location.Location>() {
-        @Override
-        public void onSuccess(android.location.Location location) {
-            if(location != null) {
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                zoomToLatLng(latLng, 15, false);
-            }
-            else {
-                // Restart application to obtain device location
-                ProcessPhoenix.triggerRebirth(MapActivity.this);
-            }
-        }
-    };
-
-    private void zoomToLatLng(LatLng latLng, float zoomLevel, boolean animated) {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel);
-        if(animated){
-            mMap.animateCamera(cameraUpdate);
-        }
-        else {
-            mMap.moveCamera(cameraUpdate);
-        }
-    }
-
-    //region : Permissions
+    //region Permissions...
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
