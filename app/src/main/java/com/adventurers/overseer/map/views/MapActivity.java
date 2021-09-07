@@ -5,19 +5,35 @@ import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
+import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
 import com.adventurers.overseer.map.helpers.Location;
 import com.adventurers.overseer.map.helpers.MapHelper;
 import com.adventurers.overseer.map.helpers.PermissionHelper;
 import com.adventurers.overseer.map.helpers.StatusBarHelper;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.List;
 
@@ -25,11 +41,15 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MapActivity extends FragmentActivity
-        implements OnMapReadyCallback,EasyPermissions.PermissionCallbacks {
+        implements OnMapReadyCallback,EasyPermissions.PermissionCallbacks, IMapView {
     private Location mFocusedLocation;
     private double mVisibilityRadius;
     private boolean mHazardVisibility;
     private GoogleMap mMap;
+
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
     private static final String TAG = "MapActivity";
 
@@ -45,6 +65,26 @@ public class MapActivity extends FragmentActivity
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
         StatusBarHelper.makeTransparent(this);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(2000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // Called when device location is updated
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                for(android.location.Location location : locationResult.getLocations()) {
+                    MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
+                            15, true);
+                }
+                onActorMove();
+            }
+        };
     }
 
     /**
@@ -65,16 +105,128 @@ public class MapActivity extends FragmentActivity
 
     @SuppressLint("MissingPermission")
     private void startActivity() {
-        if(PermissionHelper.isLocationGranted(this) && PermissionHelper.isGPSOn(this) && mMap != null) {
-            mMap.setMyLocationEnabled(true);
-
-            MapHelper mapHelper = new MapHelper(this, mMap);
-            mapHelper.moveCameraToDeviceLocation();
-            mapHelper.startFollowDevice();
+        if(PermissionHelper.isLocationGranted(this) && PermissionHelper.isGPSOn(this)
+                && mMap != null) {
+            setupMap();
+            renderUserLocation();
+            startFollowingDevice();
         }
     }
 
-    //region Permissions...
+    // region IMapView...
+    @Override
+    public void renderForecasts(List<FloodForecastPopupFragment> forecasts) {
+
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void renderUserLocation() {
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
+                new OnSuccessListener<android.location.Location>() {
+            @Override
+            public void onSuccess(android.location.Location location) {
+                if(location != null)
+                    MapHelper.moveCameraToLocation(mMap, location.getLatitude(),
+                            location.getLongitude(), 15, false);
+                else {
+                    // Restart application to obtain device location
+                    ProcessPhoenix.triggerRebirth(MapActivity.this);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void renderError(int errorCode, String errorString) {
+
+    }
+    // endregion
+
+    // region MapActivity...
+    private void styleMap() {
+
+    }
+
+    public GoogleMap getMap() {
+        return mMap;
+    }
+
+    private void onActorMove() {
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private void setupMap() {
+        mMap.setMyLocationEnabled(true);
+        // Stop following device when the user moves the map
+        mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
+            @Override
+            public void onCameraMoveStarted(int i) {
+                if (i == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                    stopFollowingDevice();
+                }
+            }
+        });
+
+        // Start following device when the user click the button
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                startFollowingDevice();
+                return false;
+            }
+        });
+    }
+
+    private void onZoomRateChange() {
+
+    }
+    // endregion
+
+    // region Misc...
+    private void startFollowingDevice() {
+        LocationSettingsRequest request = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest).build();
+        SettingsClient client = LocationServices.getSettingsClient(this);
+
+        Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
+        locationSettingsResponseTask.addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                startLocationUpdates();
+            }
+        });
+        locationSettingsResponseTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if(e instanceof ResolvableApiException) {
+                    ResolvableApiException apiException = (ResolvableApiException) e;
+                    try {
+                        apiException.startResolutionForResult(MapActivity.this, RC_GPS_SERVICE);
+                    } catch (IntentSender.SendIntentException sendIntentException) {
+                        sendIntentException.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void stopFollowingDevice() {
+        stopLocationUpdates();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
+    private void stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+    }
+    // endregion
+
+    // region Permissions...
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
