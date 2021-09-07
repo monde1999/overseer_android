@@ -1,4 +1,6 @@
-package com.adventurers.overseer.map.helpers;
+package com.adventurers.overseer.map.models;
+
+import androidx.annotation.NonNull;
 
 public class Location {
     private double latitude;
@@ -23,5 +25,11 @@ public class Location {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return latitude + "," + longitude;
     }
 }

@@ -8,16 +8,18 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
-import com.adventurers.overseer.map.helpers.Location;
+import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.helpers.MapHelper;
 import com.adventurers.overseer.map.helpers.PermissionHelper;
 import com.adventurers.overseer.map.helpers.StatusBarHelper;
+import com.adventurers.overseer.map.presenter.MapPresenter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -110,13 +112,17 @@ public class MapActivity extends FragmentActivity
             setupMap();
             renderUserLocation();
             startFollowingDevice();
+            MapPresenter mapPresenter = new MapPresenter(this);
+            mapPresenter.present(null,0);
         }
     }
 
     // region IMapView...
     @Override
     public void renderForecasts(List<FloodForecastPopupFragment> forecasts) {
-
+        for(FloodForecastPopupFragment popupFragment : forecasts) {
+            Toast.makeText(this, popupFragment.getLocation().toString(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @SuppressLint("MissingPermission")
