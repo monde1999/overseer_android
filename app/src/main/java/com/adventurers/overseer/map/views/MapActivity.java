@@ -121,7 +121,8 @@ public class MapActivity extends FragmentActivity
     @Override
     public void renderForecasts(List<FloodForecastPopupFragment> forecasts) {
         for(FloodForecastPopupFragment popupFragment : forecasts) {
-            Toast.makeText(this, popupFragment.getLocation().toString(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, popupFragment.getForecastLocation().toString(), Toast.LENGTH_LONG).show();
+            popupFragment.renderForecastOnLocation(null);
         }
     }
 
