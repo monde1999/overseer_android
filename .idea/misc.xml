@@ -3,9 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_street.xml" value="0.22037037037037038" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_weather.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/card_shape.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.11614583333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-xxhdpi/test.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/bg_gradient.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_afternoon_20dp.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_afternoon_20dp1.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_arrow_left16dp.xml" value="0.22037037037037038" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_arrow_left_16dp.xml" value="0.11614583333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_arrow_left_20dp.xml" value="0.11614583333333334" />
@@ -14,6 +19,10 @@
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_close_16x24.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_close_20dp.xml" value="0.11614583333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_close_24dp.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_evening_20dp.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_morning_20dp.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_night_20dp.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_rain_10dp.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_warning_20dp.xml" value="0.11614583333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/ic_warning_24dp.xml" value="0.22037037037037038" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable/splash_background.xml" value="0.22552083333333334" />
@@ -21,7 +30,7 @@
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/activity_map.xml" value="0.19202898550724637" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/activity_maps.xml" value="0.1" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/activity_splash.xml" value="0.18" />
-        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/fragment_floodforecast_detailed.xml" value="0.22" />
+        <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/fragment_floodforecast_detailed.xml" value="0.25" />
       </map>
     </option>
   </component>

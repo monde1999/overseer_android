@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">Overseer</string>
-    <string name="back_button">back button</string>
-    <string name="close_button">close button</string>
-    <string name="flood_here">Flood Here</string>
+    <string name="back_button">Back Button</string>
+    <string name="close_button">Close Button</string>
+    <string name="warning_icon">Warning Icon</string>
+    <string name="flood_here">Flood here in a few hours</string>
+    <string name="street_snapshot">Street Snapshot</string>
+    <string name="degree_celsius">28°</string>
+    <string name="rainfall">2.93mm (91%)</string>
+    <string name="weather_icon">Weather Icon</string>
+    <string name="weather_status">Weather Status</string>
+    <string name="morning">Morning</string>
+    <string name="afternoon">Afternoon</string>
+    <string name="evening">Evening</string>
+    <string name="night">Night</string>
 </resources>
