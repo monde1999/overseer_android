@@ -1,4 +1,4 @@
-package com.adventurers.overseer.map.controller;
+package com.adventurers.overseer.map.controllers;
 
 
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;

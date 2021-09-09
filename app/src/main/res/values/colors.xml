@@ -10,5 +10,8 @@
 
     <color name="main_color">#3498DB</color>
     <color name="main_dark">#2980B9</color>
-    <color name="grey">#FF95A5A6</color>
+    <color name="grey">#95A5A6</color>
+    <color name="amber_500">#FFC107</color>
+    <color name="grey_900">#424242</color>
+
 </resources>

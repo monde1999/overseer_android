@@ -1,4 +1,4 @@
-package com.adventurers.overseer.map.presenter;
+package com.adventurers.overseer.map.presenters;
 
 import com.adventurers.overseer.map.models.MapData;
 

@@ -2,6 +2,8 @@ package com.adventurers.overseer.floodforecast.views;
 
 import android.content.Context;
 
+import androidx.fragment.app.FragmentManager;
+
 import com.adventurers.overseer.floodforecast.models.ForecastData;
 import com.adventurers.overseer.map.models.Location;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,14 +15,16 @@ import com.google.maps.android.ui.IconGenerator;
 
 public class FloodForecastPopupFragment implements IFloodForecastView {
     private final Location mForecastLocation;
-    private IconGenerator iconGenerator;
-    private Marker marker;
+    private IconGenerator mIconGenerator;
+    private Marker mMarker;
     private GoogleMap mMap;
+    private FloodForecastDetailedFragment mFloodForecastDetailedFragment;
 
     public FloodForecastPopupFragment(Location location, Context context, GoogleMap map) {
         mForecastLocation = new Location(location.getLatitude(), location.getLongitude());
-        iconGenerator = new IconGenerator(context);
+        mIconGenerator = new IconGenerator(context);
         mMap = map;
+        mFloodForecastDetailedFragment = FloodForecastDetailedFragment.newInstance(null);
     }
 
     public Location getForecastLocation() {
@@ -32,13 +36,21 @@ public class FloodForecastPopupFragment implements IFloodForecastView {
     public void renderForecastOnLocation(ForecastData forecastData) {
         styleFragment();
         LatLng latLng = new LatLng(mForecastLocation.getLatitude(), mForecastLocation.getLongitude());
-        marker = mMap.addMarker(new MarkerOptions()
+        mMarker = mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("Flood"))));
+                .icon(BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon("Flood"))));
     }
     // endregion
 
     private void styleFragment() {
-        iconGenerator.setStyle(IconGenerator.STYLE_ORANGE);
+        mIconGenerator.setStyle(IconGenerator.STYLE_ORANGE);
+    }
+
+    public Marker getMarker() {
+        return mMarker;
+    }
+
+    public void showDetailedFragment(FragmentManager fragmentManager) {
+        mFloodForecastDetailedFragment.showDetailedFragment(fragmentManager);
     }
 }

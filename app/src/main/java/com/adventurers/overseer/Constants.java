@@ -6,4 +6,6 @@ public class Constants {
 
     public static final int EC_SERVER_FAILED = 4005;
     public static final String EM_SERVER_FAILED = "Can't connect to server.";
+
+    public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
 }

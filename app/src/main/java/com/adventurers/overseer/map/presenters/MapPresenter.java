@@ -1,17 +1,13 @@
-package com.adventurers.overseer.map.presenter;
+package com.adventurers.overseer.map.presenters;
 
 import android.content.Context;
 
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
-import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.interactors.MapInteractor;
 import com.adventurers.overseer.map.models.MapData;
 import com.adventurers.overseer.map.views.IMapView;
 import com.adventurers.overseer.map.views.MapActivity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MapPresenter implements IMapPresenter {
     private final IMapView mMapView;

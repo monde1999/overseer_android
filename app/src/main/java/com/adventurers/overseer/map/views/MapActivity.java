@@ -8,18 +8,18 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
+import com.adventurers.overseer.floodforecast.views.FloodForecast;
 import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.helpers.MapHelper;
 import com.adventurers.overseer.map.helpers.PermissionHelper;
 import com.adventurers.overseer.map.helpers.StatusBarHelper;
-import com.adventurers.overseer.map.presenter.MapPresenter;
+import com.adventurers.overseer.map.presenters.MapPresenter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -32,6 +32,7 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -49,9 +50,11 @@ public class MapActivity extends FragmentActivity
     private boolean mHazardVisibility;
     private GoogleMap mMap;
 
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationRequest locationRequest;
-    private LocationCallback locationCallback;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
+
+    private List<FloodForecastPopupFragment> mPopupFragments;
 
     private static final String TAG = "MapActivity";
 
@@ -68,15 +71,15 @@ public class MapActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
         StatusBarHelper.makeTransparent(this);
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(2000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(2000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         // Called when device location is updated
-        locationCallback = new LocationCallback() {
+        mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
@@ -120,6 +123,7 @@ public class MapActivity extends FragmentActivity
     // region IMapView...
     @Override
     public void renderForecasts(List<FloodForecastPopupFragment> forecasts) {
+        mPopupFragments = forecasts;
         for(FloodForecastPopupFragment popupFragment : forecasts) {
 //            Toast.makeText(this, popupFragment.getForecastLocation().toString(), Toast.LENGTH_LONG).show();
             popupFragment.renderForecastOnLocation(null);
@@ -129,7 +133,7 @@ public class MapActivity extends FragmentActivity
     @SuppressLint("MissingPermission")
     @Override
     public void renderUserLocation() {
-        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
+        mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
                 new OnSuccessListener<android.location.Location>() {
             @Override
             public void onSuccess(android.location.Location location) {
@@ -163,9 +167,10 @@ public class MapActivity extends FragmentActivity
 
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "PotentialBehaviorOverride"})
     private void setupMap() {
         mMap.setMyLocationEnabled(true);
+
         // Stop following device when the user moves the map
         mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
             @Override
@@ -184,6 +189,15 @@ public class MapActivity extends FragmentActivity
                 return false;
             }
         });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                FloodForecast.showDetailedFragment(mPopupFragments, marker, getSupportFragmentManager());
+                stopFollowingDevice();
+                return true;
+            }
+        });
     }
 
     private void onZoomRateChange() {
@@ -194,7 +208,7 @@ public class MapActivity extends FragmentActivity
     // region Misc...
     private void startFollowingDevice() {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest).build();
+                .addLocationRequest(mLocationRequest).build();
         SettingsClient client = LocationServices.getSettingsClient(this);
 
         Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
@@ -225,11 +239,11 @@ public class MapActivity extends FragmentActivity
 
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.getMainLooper());
     }
 
     private void stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
     // endregion
 
