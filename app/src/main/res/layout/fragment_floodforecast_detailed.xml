@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/dp_40"
-    android:paddingTop="@dimen/dp_10">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/dp_10"
+    android:paddingBottom="@dimen/dp_20">
     <ImageButton
         android:id="@+id/forecast_btn_back"
         android:layout_width="wrap_content"
@@ -38,12 +38,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/forecast_btn_back"
         android:layout_marginTop="@dimen/dp_20"
-        android:paddingBottom="@dimen/dp_50"
         android:layout_marginHorizontal="10dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/dp_30">
+            android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/ic_warning"
                 android:layout_width="wrap_content"
@@ -91,14 +89,14 @@
             </RelativeLayout>
             <TextView
                 android:id="@+id/forecast_tv_location"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/street_snapshot"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_14"
                 app:layout_constraintTop_toBottomOf="@id/iv_forecast_loc_container"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_5"
                 android:layout_marginHorizontal="@dimen/dp_10"/>
             <TableLayout
                 android:id="@+id/weatherTable"
