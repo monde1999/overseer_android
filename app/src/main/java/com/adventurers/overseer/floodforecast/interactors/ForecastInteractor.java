@@ -10,10 +10,19 @@ import java.util.Timer;
 
 public class ForecastInteractor {
     Timer timer;
+    IFloodForecastPresenter mFloodForecastPresenter;
 
-    public void showForecastOnLocation(Location location){
+    public ForecastInteractor(IFloodForecastPresenter floodForecastPresenter) {
+        mFloodForecastPresenter = floodForecastPresenter;
     }
 
-    public void showRequestFailure(int errorCode, String message){
+    public void showForecastOnLocation(Location location) {
+        FloodForecastController controller = new FloodForecastController(this);
+        ForecastData forecastData = controller.getForecastDataOnLocation(location);
+        mFloodForecastPresenter.presentForecastOnLocation(forecastData);
+    }
+
+    public void showRequestFailure(int errorCode, String message) {
+        mFloodForecastPresenter.presentRequestFailure(errorCode, message);
     }
 }

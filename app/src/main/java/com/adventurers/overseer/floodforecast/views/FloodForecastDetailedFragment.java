@@ -4,11 +4,15 @@ import static com.adventurers.overseer.Constants.TAG_FLOOD_FORECAST_DETAILED_FRA
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,18 +20,43 @@ import androidx.fragment.app.FragmentManager;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.models.ForecastData;
+import com.adventurers.overseer.floodforecast.presenters.FloodForecastPresenter;
 import com.adventurers.overseer.map.models.Location;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.gson.Gson;
 
 public class FloodForecastDetailedFragment extends BottomSheetDialogFragment implements IFloodForecastView {
     private Location mForecastLocation;
+    private ForecastData mForecastData;
 
-    public static FloodForecastDetailedFragment newInstance(ForecastData forecastData){
-        return new FloodForecastDetailedFragment();
+    public static FloodForecastDetailedFragment newInstance(Location location) {
+        FloodForecastDetailedFragment fragment = new FloodForecastDetailedFragment();
+        Bundle args = new Bundle();
+        Gson gson = new Gson();
+        String json = gson.toJson(location);
+        args.putString("Location", json);
+        fragment.setArguments(args);
+        return fragment;
     }
 
+    // region DialogFragment...
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        // Called before showing the dialog
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            String json = getArguments().getString("Location");
+            Gson gson = new Gson();
+            mForecastLocation = gson.fromJson(json, Location.class);
+            FloodForecastPresenter presenter = new FloodForecastPresenter(this);
+            presenter.present(mForecastLocation);
+        }
+    }
+    // endregion
+
+    // region BottomSheetDialogFragment...
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -37,37 +66,40 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
             public void onShow(DialogInterface dialog) {
                 BottomSheetDialog d = (BottomSheetDialog) dialog;
 
-                FrameLayout bottomSheet = (FrameLayout) d.findViewById(R.id.design_bottom_sheet);
-                assert bottomSheet != null;
-                BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+                FrameLayout bottomSheet = d.findViewById(R.id.design_bottom_sheet);
+                if(bottomSheet != null) {
+                    BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+
+                View view = getView();
+                if(view != null) {
+                    TextView location = view.findViewById(R.id.forecast_tv_location);
+                    location.setText(mForecastData.getMessage());
+                }
+                // Set details
             }
         });
-
-        // Do something with your dialog like setContentView() or whatever
         return dialog;
     }
+    // endregion
 
+    // region Fragment...
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_floodforecast_detailed, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_floodforecast_detailed, container, false);
     }
-
-    // region BottomSheetDialogFragment...
-
     // endregion
 
     // region IFloodForecastView...
     @Override
     public void renderForecastOnLocation(ForecastData forecastData) {
-        //this.show();
+        mForecastData = forecastData;
     }
 
     public void showDetailedFragment(FragmentManager fragmentManager) {
         this.show(fragmentManager, TAG_FLOOD_FORECAST_DETAILED_FRAGMENT);
     }
-
     // endregion
 
     private void styleFragment() {

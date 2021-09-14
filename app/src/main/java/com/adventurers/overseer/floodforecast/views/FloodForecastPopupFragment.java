@@ -24,7 +24,7 @@ public class FloodForecastPopupFragment implements IFloodForecastView {
         mForecastLocation = new Location(location.getLatitude(), location.getLongitude());
         mIconGenerator = new IconGenerator(context);
         mMap = map;
-        mFloodForecastDetailedFragment = FloodForecastDetailedFragment.newInstance(null);
+        mFloodForecastDetailedFragment = FloodForecastDetailedFragment.newInstance(location);
     }
 
     public Location getForecastLocation() {
