@@ -17,7 +17,7 @@ public class ForecastInteractor {
     }
 
     public void showForecastOnLocation(Location location) {
-        FloodForecastController controller = new FloodForecastController(this);
+        IFloodForecastController controller = new FloodForecastController(this);
         ForecastData forecastData = controller.getForecastDataOnLocation(location);
         mFloodForecastPresenter.presentForecastOnLocation(forecastData);
     }

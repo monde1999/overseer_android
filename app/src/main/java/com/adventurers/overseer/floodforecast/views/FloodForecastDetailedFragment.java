@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,8 +75,20 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
 
                 View view = getView();
                 if(view != null) {
-                    TextView location = view.findViewById(R.id.forecast_tv_location);
-                    location.setText(mForecastData.getMessage());
+                    TextView tv_warning = view.findViewById(R.id.forecast_tv_warning);
+                    ProgressBar pb_street = view.findViewById(R.id.forecast_pb_street);
+                    ImageView iv_street = view.findViewById(R.id.forecast_iv_street);
+                    TextView tv_location = view.findViewById(R.id.forecast_tv_location);
+                    TextView tv_temp = view.findViewById(R.id.forecast_tv_temp);
+                    TextView tv_rain = view.findViewById(R.id.forecast_tv_rain);
+                    ProgressBar pb_weather = view.findViewById(R.id.forecast_pb_weather);
+                    ImageView iv_weather = view.findViewById(R.id.forecast_iv_weather);
+                    TextView tv_weather_status = view.findViewById(R.id.forecast_tv_weather_status);
+                    TextView tv_morning = view.findViewById(R.id.forecast_tv_morning);
+                    TextView tv_afternoon = view.findViewById(R.id.forecast_tv_afternoon);
+                    TextView tv_evening = view.findViewById(R.id.forecast_tv_evening);
+                    TextView tv_night = view.findViewById(R.id.forecast_tv_night);
+                    tv_location.setText(mForecastData.getMessage());
                 }
                 // Set details
             }

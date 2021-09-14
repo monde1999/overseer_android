@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_floodforecast_detailed.xml" value="0.21" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_street.xml" value="0.22037037037037038" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_weather.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/card_shape.xml" value="0.22552083333333334" />

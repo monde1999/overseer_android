@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="@dimen/dp_30"
-        android:layout_marginLeft="@dimen/dp_20"
+        android:layout_marginStart="@dimen/dp_20"
         android:background="@color/white"
         android:contentDescription="@string/back_button"
         android:visibility="gone"/>
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="@dimen/dp_30"
-        android:layout_marginRight="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_20"
         android:background="@color/white"
         android:contentDescription="@string/close_button"
         android:visibility="gone"/>
@@ -49,11 +49,10 @@
                 android:src="@drawable/ic_warning_20dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="@dimen/dp_10"
                 android:layout_marginStart="@dimen/dp_10"
                 android:contentDescription="@string/warning_icon"/>
             <TextView
-                android:id="@+id/forcast_tv_warning"
+                android:id="@+id/forecast_tv_warning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/flood_here"
@@ -62,7 +61,6 @@
                 app:layout_constraintTop_toTopOf="@id/ic_warning"
                 app:layout_constraintBottom_toBottomOf="@id/ic_warning"
                 android:textSize="@dimen/sp_16"
-                android:layout_marginLeft="@dimen/dp_10"
                 android:layout_marginStart="@dimen/dp_10"/>
             <RelativeLayout
                 android:id="@+id/iv_forecast_loc_container"
@@ -112,7 +110,7 @@
                         android:orientation="vertical"
                         android:layout_column="0"
                         android:layout_weight="1"
-                        android:gravity="left"
+                        android:gravity="start"
                         android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/forecast_tv_temp"
@@ -130,14 +128,14 @@
                             android:textSize="@dimen/sp_12"
                             android:textColor="@color/white"
                             android:drawablePadding="@dimen/dp_5"
-                            android:drawableLeft="@drawable/ic_rain_15dp"
+                            android:drawableStart="@drawable/ic_rain_15dp"
                             tools:ignore="UseCompatTextViewDrawableXml" />
                     </LinearLayout>
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_column="1"
                         android:layout_weight="1"
-                        android:gravity="right">
+                        android:gravity="end">
                         <RelativeLayout
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content">
@@ -147,12 +145,13 @@
                                 android:layout_height="@dimen/dp_80"
                                 android:layout_centerInParent="true"
                                 android:contentDescription="@string/weather_icon"/>
+
                             <ProgressBar
                                 android:id="@+id/forecast_pb_weather"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:indeterminateTint="@color/white"/>
+                                android:indeterminateTint="@color/white" />
                         </RelativeLayout>
                         <TextView
                             android:id="@+id/forecast_tv_weather_status"

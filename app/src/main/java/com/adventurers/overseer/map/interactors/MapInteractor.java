@@ -8,14 +8,13 @@ import com.adventurers.overseer.map.presenters.IMapPresenter;
 
 public class MapInteractor {
     private final IMapPresenter mMapPresenter;
-    private final IMapController mMapController;
 
     public MapInteractor(IMapPresenter iMapPresenter){
         mMapPresenter = iMapPresenter;
-        mMapController = new MapController(this);
     }
 
     public void showForecastsAroundLocation(Location location, double visibilityRadius) {
+        IMapController mMapController = new MapController(this);
         MapData mMapData = mMapController.getForecastsAroundLocation(location, visibilityRadius);
         mMapPresenter.presentForecastsAroundLocation(mMapData);
     }
