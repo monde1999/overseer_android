@@ -4,8 +4,8 @@ package com.adventurers.overseer.map.controllers;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
-import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.interactors.MapInteractor;
+import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.models.MapData;
 
 import java.util.ArrayList;
