@@ -9,6 +9,12 @@ public class DirectionData {
     private Location currentLocation;
     private Location goal;
 
+    public DirectionData(List<Location> path, Location currentLocation, Location goal) {
+        this.path = path;
+        this.currentLocation = currentLocation;
+        this.goal = goal;
+    }
+
     public List<Location> getPath() {
         return path;
     }

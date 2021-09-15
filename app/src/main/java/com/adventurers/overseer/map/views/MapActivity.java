@@ -1,6 +1,7 @@
 package com.adventurers.overseer.map.views;
 
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
+import static com.adventurers.overseer.Constants.TAG_MAP_MODULE;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -9,6 +10,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -124,7 +126,11 @@ public class MapActivity extends FragmentActivity
             startFollowingDevice();
             MapPresenter mapPresenter = new MapPresenter(this);
             mapPresenter.present(null,0);
+
             DirectionPresenter directionPresenter = new DirectionPresenter(this);
+            Location currentLocation = new Location(10.197100,123.747842);
+            Location goal = new Location(10.239083,123.779508);
+            directionPresenter.present(currentLocation, goal);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.adventurers.overseer.floodforecast.views;
 
-import static com.adventurers.overseer.Constants.TAG_FLOOD_FORECAST_DETAILED_FRAGMENT;
+import static com.adventurers.overseer.Constants.TAG_FLOOD_FORECAST_MODULE;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -109,7 +109,7 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
     }
 
     public void showDetailedFragment(FragmentManager fragmentManager) {
-        this.show(fragmentManager, TAG_FLOOD_FORECAST_DETAILED_FRAGMENT);
+        this.show(fragmentManager, TAG_FLOOD_FORECAST_MODULE);
     }
     // endregion
 

@@ -7,5 +7,9 @@ public class Constants {
     public static final int EC_SERVER_FAILED = 4005;
     public static final String EM_SERVER_FAILED = "Can't connect to server.";
 
-    public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
+    public static String TAG_FLOOD_FORECAST_MODULE = "FloodForecastModule";
+    public static String TAG_DIRECTION_MODULE = "DirectionModule";
+    public static String TAG_MAP_MODULE = "MapModule";
+
+    public static String MAPS_API_KEY = "AIzaSyC-Aad2Zl-pfaVAJg5VnJUyflfdjJogjIY";
 }
