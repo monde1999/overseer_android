@@ -7,12 +7,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
+import com.adventurers.overseer.direction.presenters.DirectionPresenter;
+import com.adventurers.overseer.direction.views.IDirectionView;
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
 import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
 import com.adventurers.overseer.map.helpers.MapHelper;
@@ -32,19 +35,23 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MapActivity extends FragmentActivity
-        implements OnMapReadyCallback,EasyPermissions.PermissionCallbacks, IMapView {
+        implements OnMapReadyCallback,EasyPermissions.PermissionCallbacks, IMapView, IDirectionView {
     private Location mFocusedLocation;
     private double mVisibilityRadius;
     private boolean mHazardVisibility;
@@ -117,6 +124,7 @@ public class MapActivity extends FragmentActivity
             startFollowingDevice();
             MapPresenter mapPresenter = new MapPresenter(this);
             mapPresenter.present(null,0);
+            DirectionPresenter directionPresenter = new DirectionPresenter(this);
         }
     }
 
@@ -203,6 +211,31 @@ public class MapActivity extends FragmentActivity
     private void onZoomRateChange() {
 
     }
+    // endregion
+
+    // region IDirectionView
+
+    @Override
+    public void renderPath(List<Location> path) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                List<LatLng> steps = new ArrayList<>();
+                for(Location step: path){
+                    steps.add(new LatLng(step.getLatitude(), step.getLongitude()));
+                }
+                Polyline polyline = mMap.addPolyline(new PolylineOptions().addAll(steps));
+                polyline.setColor(getColor(R.color.colorPrimary));
+                polyline.setClickable(true);
+            }
+        });
+    }
+
+    @Override
+    public void renderPathFindingUnsuccessful() {
+
+    }
+
     // endregion
 
     // region Misc...
