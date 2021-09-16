@@ -6,7 +6,7 @@ import com.adventurers.overseer.direction.presenters.IDirectionPresenter;
 import com.adventurers.overseer.map.models.Location;
 
 public class DirectionInteractor {
-    private IDirectionPresenter mDirectionPresenter;
+    private final IDirectionPresenter mDirectionPresenter;
 
     public DirectionInteractor(IDirectionPresenter directionPresenter) {
         mDirectionPresenter = directionPresenter;
@@ -14,13 +14,13 @@ public class DirectionInteractor {
 
     public void showPath(Location currentLocation, Location goal) {
         DirectionController controller = new DirectionController(this);
-        DirectionData directionData = controller.findPath(currentLocation, goal);
-        if(directionData != null) {
-            mDirectionPresenter.presentPath(directionData);
-        }
-
+        controller.findPath(currentLocation, goal);
     }
     public void showRequestFailure(int errorCode, String errorMessage) {
         mDirectionPresenter.presentPathFindingUnsuccessful();
+    }
+
+    public void onSuccessRequest(DirectionData directionData) {
+        mDirectionPresenter.presentPath(directionData);
     }
 }

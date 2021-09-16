@@ -1,9 +1,6 @@
 package com.adventurers.overseer.direction.controllers;
 
 import static com.adventurers.overseer.Constants.MAPS_API_KEY;
-import static com.adventurers.overseer.Constants.TAG_DIRECTION_MODULE;
-
-import android.util.Log;
 
 import com.adventurers.overseer.direction.interactors.DirectionInteractor;
 import com.adventurers.overseer.direction.models.DirectionData;
@@ -28,8 +25,6 @@ public class DirectionController implements IDirectionController {
 
     @Override
     public DirectionData findPath(Location currentLocation, Location goal) {
-        Log.d(TAG_DIRECTION_MODULE, MAPS_API_KEY);
-        List<Location> path = new ArrayList<>();
         GeoApiContext geoApiContext = new GeoApiContext.Builder().apiKey(MAPS_API_KEY).build();
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
         LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -40,12 +35,14 @@ public class DirectionController implements IDirectionController {
         directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                for(DirectionsRoute route : result.routes) {
+                List<Location> path = new ArrayList<>();
+                for (DirectionsRoute route : result.routes) {
                     List<LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
                     // This loops through all the LatLng coordinates of ONE polyline.
-                    for(LatLng latLng: decodedPath){
+                    for (LatLng latLng : decodedPath) {
                         path.add(new Location(latLng.lat, latLng.lng));
                     }
+                    mDirectionInteractor.onSuccessRequest(new DirectionData(path, currentLocation, goal));
                 }
             }
 
@@ -54,7 +51,7 @@ public class DirectionController implements IDirectionController {
                 mDirectionInteractor.showRequestFailure(e.hashCode(), e.getMessage());
             }
         });
-        if(!path.isEmpty()) return new DirectionData(path, currentLocation, goal);
-        else return null;
+        // Returns null as onResult and onFailure is not waited
+        return null;
     }
 }
