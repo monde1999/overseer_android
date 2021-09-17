@@ -14,7 +14,7 @@ public class DirectionPresenter implements IDirectionPresenter {
 
     @Override
     public void presentPath(DirectionData directionData) {
-        mMapActivity.renderPath(directionData.getPath());
+        mMapActivity.renderPaths(directionData.getRoutes());
     }
 
     @Override

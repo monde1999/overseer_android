@@ -30,20 +30,22 @@ public class DirectionController implements IDirectionController {
         LatLng origin = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         LatLng destination = new LatLng(goal.getLatitude(), goal.getLongitude());
         // Returns 1 route when DirectionsApiRequest.alternatives is set to false
-        directions.alternatives(false);
+        directions.alternatives(true);
         directions.origin(origin);
         directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                List<Location> path = new ArrayList<>();
+                List<List<Location>> paths = new ArrayList<>();
                 for (DirectionsRoute route : result.routes) {
                     List<LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
+                    List<Location> path = new ArrayList<>();
                     // This loops through all the LatLng coordinates of ONE polyline.
                     for (LatLng latLng : decodedPath) {
                         path.add(new Location(latLng.lat, latLng.lng));
                     }
-                    mDirectionInteractor.onSuccessRequest(new DirectionData(path, currentLocation, goal));
+                    paths.add(path);
                 }
+                mDirectionInteractor.onSuccessRequest(new DirectionData(paths, currentLocation, goal));
             }
 
             @Override

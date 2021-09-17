@@ -5,6 +5,6 @@ import com.adventurers.overseer.map.models.Location;
 import java.util.List;
 
 public interface IDirectionView {
-    void renderPath(List<Location> path);
+    void renderPaths(List<List<Location>> paths);
     void renderPathFindingUnsuccessful();
 }

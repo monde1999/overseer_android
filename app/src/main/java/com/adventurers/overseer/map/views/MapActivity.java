@@ -7,13 +7,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
+import com.adventurers.overseer.direction.models.DirectionData;
 import com.adventurers.overseer.direction.presenters.DirectionPresenter;
 import com.adventurers.overseer.direction.views.IDirectionView;
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
@@ -35,16 +35,12 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -127,7 +123,7 @@ public class MapActivity extends FragmentActivity
 
             DirectionPresenter directionPresenter = new DirectionPresenter(this);
             Location currentLocation = new Location(10.197100, 123.747842);
-            Location goal = new Location(10.239083, 123.779508);
+            Location goal = new Location(10.2947348, 123.8801183);
             directionPresenter.present(currentLocation, goal);
         }
     }
@@ -137,7 +133,6 @@ public class MapActivity extends FragmentActivity
     public void renderForecasts(List<FloodForecastPopupFragment> forecasts) {
         mPopupFragments = forecasts;
         for (FloodForecastPopupFragment popupFragment : forecasts) {
-//            Toast.makeText(this, popupFragment.getForecastLocation().toString(), Toast.LENGTH_LONG).show();
             popupFragment.renderForecastOnLocation(null);
         }
     }
@@ -202,6 +197,7 @@ public class MapActivity extends FragmentActivity
             }
         });
 
+        // Action when the user clicks on a marker
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
@@ -220,19 +216,22 @@ public class MapActivity extends FragmentActivity
     // region IDirectionView
 
     @Override
-    public void renderPath(List<Location> path) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                List<LatLng> steps = new ArrayList<>();
-                for (Location step : path) {
-                    steps.add(new LatLng(step.getLatitude(), step.getLongitude()));
-                }
-                Polyline polyline = mMap.addPolyline(new PolylineOptions().addAll(steps));
-                polyline.setColor(getColor(R.color.main_color));
-                polyline.setClickable(true);
-            }
-        });
+    public void renderPaths(List<List<Location>> paths) {
+//        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//            @Override
+//            public void run() {
+//                List<LatLng> steps = new ArrayList<>();
+//                for (Location step : path) {
+//                    steps.add(new LatLng(step.getLatitude(), step.getLongitude()));
+//                }
+//                Polyline polyline = mMap.addPolyline(new PolylineOptions().addAll(steps));
+//                polyline.setColor(getColor(R.color.main_color));
+//                polyline.setClickable(true);
+//            }
+//        });
+        for(List<Location> path : paths) {
+            DirectionData.renderPath(path,mMap);
+        }
     }
 
     @Override

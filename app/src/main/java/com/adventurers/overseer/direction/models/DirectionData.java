@@ -1,41 +1,46 @@
 package com.adventurers.overseer.direction.models;
 
-import com.adventurers.overseer.map.models.Location;
+import android.os.Handler;
+import android.os.Looper;
 
+import com.adventurers.overseer.R;
+import com.adventurers.overseer.map.models.Location;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class DirectionData {
-    private List<Location> path;
-    private Location currentLocation;
-    private Location goal;
+    private List<List<Location>> mRoutes;
+    private Location mCurrentLocation;
+    private Location mGoal;
+    private List<Polyline> mPaths;
 
-    public DirectionData(List<Location> path, Location currentLocation, Location goal) {
-        this.path = path;
-        this.currentLocation = currentLocation;
-        this.goal = goal;
+    public DirectionData(List<List<Location>> Paths, Location CurrentLocation, Location Goal) {
+        mRoutes = Paths;
+        mCurrentLocation = CurrentLocation;
+        mGoal = Goal;
     }
 
-    public List<Location> getPath() {
-        return path;
+    public List<List<Location>> getRoutes() {
+        return mRoutes;
     }
 
-    public void setPath(List<Location> path) {
-        this.path = path;
-    }
-
-    public Location getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(Location currentLocation) {
-        this.currentLocation = currentLocation;
-    }
-
-    public Location getGoal() {
-        return goal;
-    }
-
-    public void setGoal(Location goal) {
-        this.goal = goal;
+    public static void renderPath(List<Location> path, GoogleMap map) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                List<LatLng> steps = new ArrayList<>();
+                for (Location step : path) {
+                    steps.add(new LatLng(step.getLatitude(), step.getLongitude()));
+                }
+                Polyline polyline = map.addPolyline(new PolylineOptions().addAll(steps));
+                polyline.setColor(R.color.main_color);
+                polyline.setClickable(true);
+            }
+        });
     }
 }
