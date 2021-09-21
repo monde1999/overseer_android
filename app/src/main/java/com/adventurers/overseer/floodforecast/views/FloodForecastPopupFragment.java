@@ -53,4 +53,8 @@ public class FloodForecastPopupFragment implements IFloodForecastView {
     public void showDetailedFragment(FragmentManager fragmentManager) {
         mFloodForecastDetailedFragment.showDetailedFragment(fragmentManager);
     }
+
+    public void remove() {
+        mMarker.remove();
+    }
 }

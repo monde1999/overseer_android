@@ -4,12 +4,22 @@ package com.adventurers.overseer.map.controllers;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
-import com.adventurers.overseer.map.models.Location;
+import androidx.annotation.NonNull;
+
 import com.adventurers.overseer.map.interactors.MapInteractor;
+import com.adventurers.overseer.map.models.FloodArea;
+import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.models.MapData;
+import com.adventurers.overseer.map.models.OverseerApi;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapController implements IMapController {
     private final MapInteractor mMapInteractor;
@@ -20,12 +30,35 @@ public class MapController implements IMapController {
 
     @Override
     public MapData getForecastsAroundLocation(Location location, double visibilityRadius) {
-        List<Location> forecasts = new ArrayList<>();
-        // APO
-        forecasts.add(new Location(10.197100, 123.747842));
-        // Caltex
-        forecasts.add(new Location(10.239083, 123.779508));
-        return new MapData(forecasts);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.1.11:8000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        OverseerApi overseerApi = retrofit.create(OverseerApi.class);
+        Call<List<FloodArea>> call = overseerApi.getFloodAreas(location.getLatitude(), location.getLongitude());
+        call.enqueue(new Callback<List<FloodArea>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<FloodArea>> call, @NonNull Response<List<FloodArea>> response) {
+                //
+                if(!response.isSuccessful()){
+                    return;
+                }
+                List<Location> forecasts = new ArrayList<>();
+                if (response.body() != null) {
+                    for(FloodArea floodArea : response.body()){
+                        forecasts.add(new Location(floodArea.getLatitude(), floodArea.getLongitude()));
+                    }
+                }
+                mMapInteractor.onSuccessRequest(new MapData(forecasts));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<FloodArea>> call, @NonNull Throwable t) {
+                // can't connect
+                onServerRequestFailed();
+            }
+        });
+        return null;
     }
 
     private void onServerRequestFailed(){

@@ -15,10 +15,10 @@ import androidx.fragment.app.FragmentActivity;
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
 import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
-import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.helpers.MapHelper;
 import com.adventurers.overseer.map.helpers.PermissionHelper;
 import com.adventurers.overseer.map.helpers.StatusBarHelper;
+import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -49,6 +49,7 @@ public class MapActivity extends FragmentActivity
     private double mVisibilityRadius;
     private boolean mHazardVisibility;
     private GoogleMap mMap;
+    private MapPresenter mMapPresenter;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
@@ -70,6 +71,7 @@ public class MapActivity extends FragmentActivity
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
         StatusBarHelper.makeTransparent(this);
+        mMapPresenter = new MapPresenter(this);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -86,6 +88,7 @@ public class MapActivity extends FragmentActivity
                 for(android.location.Location location : locationResult.getLocations()) {
                     MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
                             15, true);
+                    mMapPresenter.present(new Location(location.getLatitude(), location.getLongitude()), .5);
                 }
                 onActorMove();
             }
@@ -115,17 +118,22 @@ public class MapActivity extends FragmentActivity
             setupMap();
             renderUserLocation();
             startFollowingDevice();
-            MapPresenter mapPresenter = new MapPresenter(this);
-            mapPresenter.present(null,0);
         }
     }
 
     // region IMapView...
     @Override
     public void renderForecasts(List<FloodForecastPopupFragment> forecasts) {
+        // Remove previous popupFragments from the map
+        if(mPopupFragments!=null) {
+            for(FloodForecastPopupFragment popupFragment : mPopupFragments) {
+                popupFragment.remove();
+            }
+        }
+
+        // Render new popupFragments to the map
         mPopupFragments = forecasts;
         for(FloodForecastPopupFragment popupFragment : forecasts) {
-//            Toast.makeText(this, popupFragment.getForecastLocation().toString(), Toast.LENGTH_LONG).show();
             popupFragment.renderForecastOnLocation(null);
         }
     }
@@ -137,9 +145,10 @@ public class MapActivity extends FragmentActivity
                 new OnSuccessListener<android.location.Location>() {
             @Override
             public void onSuccess(android.location.Location location) {
-                if(location != null)
+                if(location != null) {
                     MapHelper.moveCameraToLocation(mMap, location.getLatitude(),
                             location.getLongitude(), 15, false);
+                }
                 else {
                     // Restart application to obtain device location
                     ProcessPhoenix.triggerRebirth(MapActivity.this);

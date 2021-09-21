@@ -15,11 +15,14 @@ public class MapInteractor {
 
     public void showForecastsAroundLocation(Location location, double visibilityRadius) {
         IMapController mMapController = new MapController(this);
-        MapData mMapData = mMapController.getForecastsAroundLocation(location, visibilityRadius);
-        mMapPresenter.presentForecastsAroundLocation(mMapData);
+        mMapController.getForecastsAroundLocation(location, visibilityRadius);
     }
 
     public void showRequestFailure(int errorCode, String errorMessage) {
         mMapPresenter.presentRequestFailure(errorCode, errorMessage);
+    }
+
+    public void onSuccessRequest(MapData mapData) {
+        mMapPresenter.presentForecastsAroundLocation(mapData);
     }
 }

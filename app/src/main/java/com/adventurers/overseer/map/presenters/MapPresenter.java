@@ -3,8 +3,8 @@ package com.adventurers.overseer.map.presenters;
 import android.content.Context;
 
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
-import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.interactors.MapInteractor;
+import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.models.MapData;
 import com.adventurers.overseer.map.views.IMapView;
 import com.adventurers.overseer.map.views.MapActivity;
