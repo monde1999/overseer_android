@@ -54,6 +54,7 @@ public class MapActivity extends FragmentActivity
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
+    private boolean followUser;
 
     private List<FloodForecastPopupFragment> mPopupFragments;
 
@@ -79,6 +80,7 @@ public class MapActivity extends FragmentActivity
         mLocationRequest.setInterval(2000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        followUser = true;
 
         // Called when device location is updated
         mLocationCallback = new LocationCallback() {
@@ -86,8 +88,10 @@ public class MapActivity extends FragmentActivity
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 for(android.location.Location location : locationResult.getLocations()) {
-                    MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
-                            15, true);
+                    if(followUser) {
+                        MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
+                                15, true);
+                    }
                     mMapPresenter.present(new Location(location.getLatitude(), location.getLongitude()), .5);
                 }
                 onActorMove();
@@ -117,7 +121,7 @@ public class MapActivity extends FragmentActivity
                 && mMap != null) {
             setupMap();
             renderUserLocation();
-            startFollowingDevice();
+            runLocationUpdates();
         }
     }
 
@@ -194,7 +198,7 @@ public class MapActivity extends FragmentActivity
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                startFollowingDevice();
+                runLocationUpdates();
                 return false;
             }
         });
@@ -203,6 +207,7 @@ public class MapActivity extends FragmentActivity
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 FloodForecast.showDetailedFragment(mPopupFragments, marker, getSupportFragmentManager());
+                // Stop following device when the user clicks a marker
                 stopFollowingDevice();
                 return true;
             }
@@ -215,7 +220,7 @@ public class MapActivity extends FragmentActivity
     // endregion
 
     // region Misc...
-    private void startFollowingDevice() {
+    private void runLocationUpdates() {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest).build();
         SettingsClient client = LocationServices.getSettingsClient(this);
@@ -242,8 +247,12 @@ public class MapActivity extends FragmentActivity
         });
     }
 
+    private void startFollowingDevice() {
+        followUser = true;
+    }
+
     private void stopFollowingDevice() {
-        stopLocationUpdates();
+        followUser = false;
     }
 
     @SuppressLint("MissingPermission")

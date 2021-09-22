@@ -1,6 +1,7 @@
 package com.adventurers.overseer.map.controllers;
 
 
+import static com.adventurers.overseer.Constants.BASE_URL;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
@@ -31,7 +32,7 @@ public class MapController implements IMapController {
     @Override
     public MapData getForecastsAroundLocation(Location location, double visibilityRadius) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.11:8000/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);

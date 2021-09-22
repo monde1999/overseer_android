@@ -8,4 +8,6 @@ public class Constants {
     public static final String EM_SERVER_FAILED = "Can't connect to server.";
 
     public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
+
+    public static String BASE_URL = "http://192.168.1.11:8000/";
 }
