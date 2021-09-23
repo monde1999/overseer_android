@@ -1,4 +1,4 @@
-package com.adventurers.overseer.map.helpers;
+package com.adventurers.overseer.helpers;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

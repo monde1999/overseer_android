@@ -1,4 +1,4 @@
-package com.adventurers.overseer.map.models;
+package com.adventurers.overseer.api;
 
 import java.util.List;
 

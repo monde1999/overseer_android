@@ -1,17 +1,17 @@
 package com.adventurers.overseer.map.controllers;
 
 
-import static com.adventurers.overseer.Constants.BASE_URL;
+import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
 import androidx.annotation.NonNull;
 
 import com.adventurers.overseer.map.interactors.MapInteractor;
-import com.adventurers.overseer.map.models.FloodArea;
+import com.adventurers.overseer.api.FloodArea;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.models.MapData;
-import com.adventurers.overseer.map.models.OverseerApi;
+import com.adventurers.overseer.api.OverseerApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class MapController implements IMapController {
     @Override
     public MapData getForecastsAroundLocation(Location location, double visibilityRadius) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(BASE_URL_OVERSEER)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
