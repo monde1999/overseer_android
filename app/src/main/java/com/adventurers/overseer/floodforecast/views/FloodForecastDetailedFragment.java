@@ -120,7 +120,8 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
             tv_evening.setText(tempEve);
             String tempNight = forecastData.getNight_temp()+"°";
             tv_night.setText(tempNight);
-            ImageHelper.loadWeatherIcon(getContext(), forecastData.getIcon(), iv_weather, pb_weather);
+            ImageHelper.loadWeatherIcon(forecastData.getIcon(), iv_weather, pb_weather);
+            ImageHelper.loadStreetStaticView(forecastData.getLocation(), iv_street, pb_street);
         }
     }
 

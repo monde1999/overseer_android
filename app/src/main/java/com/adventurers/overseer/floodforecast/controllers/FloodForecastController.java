@@ -25,21 +25,6 @@ public class FloodForecastController implements IFloodForecastController {
     public FloodForecastController(ForecastInteractor forecastInteractor) {
         mForecastInteractor = forecastInteractor;
     }
-    
-//    @Override
-//    public ForecastData getForecastDataOnLocation(Location location) {
-//        ForecastData forecastData = new ForecastData();
-//        if(location.getLatitude() == 10.197100) {
-//            forecastData.setMessage("City of Naga");
-//        }
-//        else if(location.getLatitude() == 10.239083) {
-//            forecastData.setMessage("Minglanilla");
-//        }
-//        else {
-//            forecastData.setMessage("Unknown location.");
-//        }
-//        return forecastData;
-//    }
 
     @Override
     public ForecastData getForecastDataOnLocation(Location location) {
