@@ -1,7 +1,7 @@
 package com.adventurers.overseer.report.controllers;
 
 import com.adventurers.overseer.report.interactors.ReportInteractor;
-import com.adventurers.overseer.server.CreateReportData;
+import com.adventurers.overseer.report.helpers.CreateReportData;
 import com.adventurers.overseer.server.ReportApi;
 
 import java.io.File;

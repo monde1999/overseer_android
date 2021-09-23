@@ -119,7 +119,7 @@ public class ReportActivityFragment extends BottomSheetDialogFragment implements
             public void onClick(View v) {
                 datetime = new Date();
                 String desc = description.getText().toString();
-                if(desc==null){
+                if(desc==""){
                     Toast.makeText(getActivity(),  "Please enter a description", Toast.LENGTH_LONG).show();
                 }
 
@@ -245,7 +245,7 @@ public class ReportActivityFragment extends BottomSheetDialogFragment implements
                             image.setMinimumWidth(dpToPx(165));
                             image.setMinimumHeight(dpToPx(137));
                             card.addView(image);
-                            card.setBackgroundResource(R.drawable.rounded_rec);
+                            card.setBackgroundResource(R.drawable.create_report_rounded_rec);
                             imageContainer.addView(card);
                             try {
                                 pictureList.add(FileUtil.from(getActivity(), getImageUri(getContext(),selectedImage)));
@@ -282,7 +282,7 @@ public class ReportActivityFragment extends BottomSheetDialogFragment implements
                                     image.setImageURI(selectedImage);
                                     card.addView(image);
                                     card.setMinimumHeight(dpToPx(2));
-                                    card.setBackgroundResource(R.drawable.upload_images);
+                                    card.setBackgroundResource(R.drawable.create_report_upload_images);
                                     imageContainer.addView(card);
 
                                     try {

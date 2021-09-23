@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -20,6 +22,7 @@ import com.adventurers.overseer.map.helpers.MapHelper;
 import com.adventurers.overseer.map.helpers.PermissionHelper;
 import com.adventurers.overseer.map.helpers.StatusBarHelper;
 import com.adventurers.overseer.map.presenters.MapPresenter;
+import com.adventurers.overseer.report.views.ReportActivityFragment;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -90,6 +93,15 @@ public class MapActivity extends FragmentActivity
                 onActorMove();
             }
         };
+        /*
+        //portal for create-report module
+	    ((Button)findViewById(R.id.report)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ReportActivityFragment raf = ReportActivityFragment.newInstance();
+                raf.show(getSupportFragmentManager(), "fragment_report_activity");
+            }
+        });
+        */
     }
 
     /**

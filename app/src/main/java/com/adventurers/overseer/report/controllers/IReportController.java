@@ -1,6 +1,6 @@
 package com.adventurers.overseer.report.controllers;
 
-import com.adventurers.overseer.server.CreateReportData;
+import com.adventurers.overseer.report.helpers.CreateReportData;
 
 public interface IReportController {
     void addReportToDb(CreateReportData reportData);

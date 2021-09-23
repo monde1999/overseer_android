@@ -3,7 +3,7 @@ package com.adventurers.overseer.report.interactors;
 import com.adventurers.overseer.report.controllers.IReportController;
 import com.adventurers.overseer.report.controllers.ReportController;
 import com.adventurers.overseer.report.presenters.IReportPresenter;
-import com.adventurers.overseer.server.CreateReportData;
+import com.adventurers.overseer.report.helpers.CreateReportData;
 
 import java.io.File;
 import java.util.Date;
