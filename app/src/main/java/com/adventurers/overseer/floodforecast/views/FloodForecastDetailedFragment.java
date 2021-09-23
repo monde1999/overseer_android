@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentManager;
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.models.ForecastData;
 import com.adventurers.overseer.floodforecast.presenters.FloodForecastPresenter;
+import com.adventurers.overseer.helpers.GeocoderHelper;
 import com.adventurers.overseer.helpers.ImageHelper;
 import com.adventurers.overseer.helpers.StringHelper;
 import com.adventurers.overseer.map.models.Location;
@@ -122,6 +123,7 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
             tv_night.setText(tempNight);
             ImageHelper.loadWeatherIcon(forecastData.getIcon(), iv_weather, pb_weather);
             ImageHelper.loadStreetStaticView(forecastData.getLocation(), iv_street, pb_street);
+            GeocoderHelper.getLocationAddress(forecastData.getLocation(), tv_location);
         }
     }
 
