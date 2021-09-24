@@ -7,11 +7,11 @@ import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
 import androidx.annotation.NonNull;
 
-import com.adventurers.overseer.map.interactors.MapInteractor;
 import com.adventurers.overseer.api.FloodArea;
+import com.adventurers.overseer.api.OverseerApi;
+import com.adventurers.overseer.map.interactors.MapInteractor;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.models.MapData;
-import com.adventurers.overseer.api.OverseerApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +44,13 @@ public class MapController implements IMapController {
                 if(!response.isSuccessful()){
                     return;
                 }
-                List<Location> forecasts = new ArrayList<>();
                 if (response.body() != null) {
+                    List<Location> forecasts = new ArrayList<>();
                     for(FloodArea floodArea : response.body()){
                         forecasts.add(new Location(floodArea.getLatitude(), floodArea.getLongitude()));
                     }
+                    mMapInteractor.onSuccessRequest(new MapData(forecasts));
                 }
-                mMapInteractor.onSuccessRequest(new MapData(forecasts));
             }
 
             @Override

@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,9 +73,7 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
                 if(bottomSheet != null) {
                     BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
-
                 view = getView();
-                // Set details
             }
         });
         return dialog;
@@ -134,5 +133,9 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
 
     private void styleFragment() {
 
+    }
+
+    public void showRequestFailure(int errorCode, String errorMessage) {
+        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
     }
 }

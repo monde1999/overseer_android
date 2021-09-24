@@ -2,15 +2,17 @@ package com.adventurers.overseer.floodforecast.controllers;
 
 import static com.adventurers.overseer.Constants.BASE_URL_WEATHER;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
-import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
+import static com.adventurers.overseer.Constants.OPENWEATHER_APPID;
 
-import com.adventurers.overseer.api.Current;
-import com.adventurers.overseer.api.Daily;
-import com.adventurers.overseer.api.Weather;
-import com.adventurers.overseer.api.WeatherApi;
-import com.adventurers.overseer.helpers.TempHelper;
+import androidx.annotation.NonNull;
+
+import com.adventurers.overseer.api.openweather.Current;
+import com.adventurers.overseer.api.openweather.Daily;
+import com.adventurers.overseer.api.openweather.Weather;
+import com.adventurers.overseer.api.openweather.WeatherApi;
 import com.adventurers.overseer.floodforecast.interactors.ForecastInteractor;
 import com.adventurers.overseer.floodforecast.models.ForecastData;
+import com.adventurers.overseer.helpers.TempHelper;
 import com.adventurers.overseer.map.models.Location;
 
 import retrofit2.Call;
@@ -34,22 +36,21 @@ public class FloodForecastController implements IFloodForecastController {
                 .build();
         WeatherApi weatherApi = retrofit.create(WeatherApi.class);
         String exclude = "hourly,minutely,alerts";
-        String appid = "67aa636d02df1df62ef01de2db58fa49";
+        String appid = OPENWEATHER_APPID;
         Call<Weather> call = weatherApi.getWeather(location.getLatitude(), location.getLongitude(), exclude,appid);
         call.enqueue(new Callback<Weather>() {
             @Override
-            public void onResponse(Call<Weather> call, Response<Weather> response) {
+            public void onResponse(@NonNull Call<Weather> call, @NonNull Response<Weather> response) {
                 if(!response.isSuccessful()){
                     return;
                 }
-                ForecastData forecastData = new ForecastData();
-                forecastData.setMessage("default");
                 if (response.body() != null) {
+                    ForecastData forecastData = new ForecastData();
                     Weather weather = response.body();
                     Current current = weather.getCurrent();
                     Daily today = weather.getDaily().get(0);
                     forecastData.setLocation(location);
-                    forecastData.setCurrent_temp((int)TempHelper.toCelsiusInt(current.getTemp()));
+                    forecastData.setCurrent_temp(TempHelper.toCelsiusInt(current.getTemp()));
                     forecastData.setRain(today.getRain());
                     forecastData.setClouds(current.getClouds());
                     forecastData.setWeather_status(current.getWeather().get(0).getDescription());
@@ -58,22 +59,19 @@ public class FloodForecastController implements IFloodForecastController {
                     forecastData.setEve_temp(TempHelper.toCelsiusInt(today.getTemp().getEve()));
                     forecastData.setNight_temp(TempHelper.toCelsiusInt(today.getTemp().getNight()));
                     forecastData.setIcon(current.getWeather().get(0).getIcon());
+                    mForecastInteractor.onSuccessRequest(forecastData);
                 }
-                mForecastInteractor.onSuccessRequest(forecastData);
             }
 
             @Override
-            public void onFailure(Call<Weather> call, Throwable t) {
-                ForecastData forecastData = new ForecastData();
-                forecastData.setMessage("failed"+t.getCause());
-                mForecastInteractor.onSuccessRequest(forecastData);
-                onServerRequestFailed();
+            public void onFailure(@NonNull Call<Weather> call, @NonNull Throwable t) {
+                onServerRequestFailed(t.getMessage());
             }
         });
         return null;
     }
 
-    private void onServerRequestFailed() {
-        mForecastInteractor.showRequestFailure(EC_SERVER_FAILED, EM_SERVER_FAILED);
+    private void onServerRequestFailed(String message) {
+        mForecastInteractor.showRequestFailure(EC_SERVER_FAILED, message);
     }
 }

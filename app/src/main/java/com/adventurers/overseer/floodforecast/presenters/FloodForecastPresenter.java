@@ -20,7 +20,7 @@ public class FloodForecastPresenter implements IFloodForecastPresenter {
 
     @Override
     public void presentRequestFailure(int errorCode, String errorMessage) {
-
+        ((FloodForecastDetailedFragment)mFloodForecastView).showRequestFailure(errorCode, errorMessage);
     }
 
     public void present(Location location) {

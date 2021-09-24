@@ -1,6 +1,4 @@
-package com.adventurers.overseer.api;
-
-import java.util.List;
+package com.adventurers.overseer.api.openweather;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

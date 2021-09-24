@@ -117,7 +117,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="80dp"
                             android:text="@string/degree_celsius"
-                            android:textSize="@dimen/sp_70"
+                            android:textSize="@dimen/sp_60"
                             android:textColor="@color/white"
                             android:gravity="center"/>
                         <TextView

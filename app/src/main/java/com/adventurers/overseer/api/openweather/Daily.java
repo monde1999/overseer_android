@@ -1,11 +1,12 @@
 
-package com.adventurers.overseer.api;
+package com.adventurers.overseer.api.openweather;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Current {
+import java.util.List;
+
+public class Daily {
 
     @SerializedName("dt")
     @Expose
@@ -16,12 +17,21 @@ public class Current {
     @SerializedName("sunset")
     @Expose
     private Integer sunset;
+    @SerializedName("moonrise")
+    @Expose
+    private Integer moonrise;
+    @SerializedName("moonset")
+    @Expose
+    private Integer moonset;
+    @SerializedName("moon_phase")
+    @Expose
+    private Double moonPhase;
     @SerializedName("temp")
     @Expose
-    private Double temp;
+    private Temp temp;
     @SerializedName("feels_like")
     @Expose
-    private Double feelsLike;
+    private FeelsLike feelsLike;
     @SerializedName("pressure")
     @Expose
     private Integer pressure;
@@ -31,15 +41,6 @@ public class Current {
     @SerializedName("dew_point")
     @Expose
     private Double dewPoint;
-    @SerializedName("uvi")
-    @Expose
-    private Double uvi;
-    @SerializedName("clouds")
-    @Expose
-    private Integer clouds;
-    @SerializedName("visibility")
-    @Expose
-    private Integer visibility;
     @SerializedName("wind_speed")
     @Expose
     private Double windSpeed;
@@ -51,7 +52,19 @@ public class Current {
     private Double windGust;
     @SerializedName("weather")
     @Expose
-    private List<Weather__1> weather = null;
+    private List<Weather__2> weather = null;
+    @SerializedName("clouds")
+    @Expose
+    private Integer clouds;
+    @SerializedName("pop")
+    @Expose
+    private Double pop;
+    @SerializedName("rain")
+    @Expose
+    private Double rain;
+    @SerializedName("uvi")
+    @Expose
+    private Double uvi;
 
     public Integer getDt() {
         return dt;
@@ -77,19 +90,43 @@ public class Current {
         this.sunset = sunset;
     }
 
-    public Double getTemp() {
+    public Integer getMoonrise() {
+        return moonrise;
+    }
+
+    public void setMoonrise(Integer moonrise) {
+        this.moonrise = moonrise;
+    }
+
+    public Integer getMoonset() {
+        return moonset;
+    }
+
+    public void setMoonset(Integer moonset) {
+        this.moonset = moonset;
+    }
+
+    public Double getMoonPhase() {
+        return moonPhase;
+    }
+
+    public void setMoonPhase(Double moonPhase) {
+        this.moonPhase = moonPhase;
+    }
+
+    public Temp getTemp() {
         return temp;
     }
 
-    public void setTemp(Double temp) {
+    public void setTemp(Temp temp) {
         this.temp = temp;
     }
 
-    public Double getFeelsLike() {
+    public FeelsLike getFeelsLike() {
         return feelsLike;
     }
 
-    public void setFeelsLike(Double feelsLike) {
+    public void setFeelsLike(FeelsLike feelsLike) {
         this.feelsLike = feelsLike;
     }
 
@@ -117,30 +154,6 @@ public class Current {
         this.dewPoint = dewPoint;
     }
 
-    public Double getUvi() {
-        return uvi;
-    }
-
-    public void setUvi(Double uvi) {
-        this.uvi = uvi;
-    }
-
-    public Integer getClouds() {
-        return clouds;
-    }
-
-    public void setClouds(Integer clouds) {
-        this.clouds = clouds;
-    }
-
-    public Integer getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Integer visibility) {
-        this.visibility = visibility;
-    }
-
     public Double getWindSpeed() {
         return windSpeed;
     }
@@ -165,12 +178,44 @@ public class Current {
         this.windGust = windGust;
     }
 
-    public List<Weather__1> getWeather() {
+    public List<Weather__2> getWeather() {
         return weather;
     }
 
-    public void setWeather(List<Weather__1> weather) {
+    public void setWeather(List<Weather__2> weather) {
         this.weather = weather;
+    }
+
+    public Integer getClouds() {
+        return clouds;
+    }
+
+    public void setClouds(Integer clouds) {
+        this.clouds = clouds;
+    }
+
+    public Double getPop() {
+        return pop;
+    }
+
+    public void setPop(Double pop) {
+        this.pop = pop;
+    }
+
+    public Double getRain() {
+        return rain;
+    }
+
+    public void setRain(Double rain) {
+        this.rain = rain;
+    }
+
+    public Double getUvi() {
+        return uvi;
+    }
+
+    public void setUvi(Double uvi) {
+        this.uvi = uvi;
     }
 
 }

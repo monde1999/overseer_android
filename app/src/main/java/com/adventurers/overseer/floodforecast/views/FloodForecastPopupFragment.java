@@ -15,10 +15,10 @@ import com.google.maps.android.ui.IconGenerator;
 
 public class FloodForecastPopupFragment implements IFloodForecastView {
     private final Location mForecastLocation;
-    private IconGenerator mIconGenerator;
+    private final IconGenerator mIconGenerator;
     private Marker mMarker;
-    private GoogleMap mMap;
-    private FloodForecastDetailedFragment mFloodForecastDetailedFragment;
+    private final GoogleMap mMap;
+    private final FloodForecastDetailedFragment mFloodForecastDetailedFragment;
 
     public FloodForecastPopupFragment(Location location, Context context, GoogleMap map) {
         mForecastLocation = new Location(location.getLatitude(), location.getLongitude());

@@ -1,5 +1,5 @@
 
-package com.adventurers.overseer.api;
+package com.adventurers.overseer.api.openweather;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
