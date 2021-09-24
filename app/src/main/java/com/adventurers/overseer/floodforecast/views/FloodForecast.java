@@ -13,7 +13,6 @@ import java.util.List;
 
 public class FloodForecast {
     private final List<FloodForecastPopupFragment> popupFragments;
-    private GoogleMap mMap;
 
     public FloodForecast(List<Location> locations, Context context, GoogleMap map) {
         popupFragments = new ArrayList<>();

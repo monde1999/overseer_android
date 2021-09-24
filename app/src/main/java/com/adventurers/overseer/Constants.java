@@ -7,6 +7,12 @@ public class Constants {
     public static final int EC_SERVER_FAILED = 4005;
     public static final String EM_SERVER_FAILED = "Can't connect to server.";
 
+    public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
+
+    public static String BASE_URL_OVERSEER = "http://192.168.1.11:8000/";
+    public static String BASE_URL_WEATHER = "https://api.openweathermap.org/";
+
+    public static String OPENWEATHER_APPID = "67aa636d02df1df62ef01de2db58fa49";
     public static String TAG_FLOOD_FORECAST_MODULE = "FloodForecastModule";
     public static String TAG_DIRECTION_MODULE = "DirectionModule";
     public static String TAG_MAP_MODULE = "MapModule";

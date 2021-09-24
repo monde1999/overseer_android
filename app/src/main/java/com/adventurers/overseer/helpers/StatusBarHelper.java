@@ -1,4 +1,4 @@
-package com.adventurers.overseer.map.helpers;
+package com.adventurers.overseer.helpers;
 
 import android.app.Activity;
 import android.graphics.Color;

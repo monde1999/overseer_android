@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -18,9 +19,9 @@ import com.adventurers.overseer.direction.presenters.DirectionPresenter;
 import com.adventurers.overseer.direction.views.IDirectionView;
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
 import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
-import com.adventurers.overseer.map.helpers.MapHelper;
-import com.adventurers.overseer.map.helpers.PermissionHelper;
-import com.adventurers.overseer.map.helpers.StatusBarHelper;
+import com.adventurers.overseer.helpers.MapHelper;
+import com.adventurers.overseer.helpers.PermissionHelper;
+import com.adventurers.overseer.helpers.StatusBarHelper;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -52,10 +53,12 @@ public class MapActivity extends FragmentActivity
     private double mVisibilityRadius;
     private boolean mHazardVisibility;
     private GoogleMap mMap;
+    private MapPresenter mMapPresenter;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
+    private boolean followUser;
 
     private List<FloodForecastPopupFragment> mPopupFragments;
 
@@ -73,6 +76,7 @@ public class MapActivity extends FragmentActivity
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
         StatusBarHelper.makeTransparent(this);
+        mMapPresenter = new MapPresenter(this);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -80,15 +84,19 @@ public class MapActivity extends FragmentActivity
         mLocationRequest.setInterval(2000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        followUser = true;
 
         // Called when device location is updated
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                for (android.location.Location location : locationResult.getLocations()) {
-                    MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
-                            15, true);
+                for(android.location.Location location : locationResult.getLocations()) {
+                    if(followUser) {
+                        MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
+                                15, true);
+                    }
+                    mMapPresenter.present(new Location(location.getLatitude(), location.getLongitude()), .5);
                 }
                 onActorMove();
             }
@@ -113,13 +121,11 @@ public class MapActivity extends FragmentActivity
 
     @SuppressLint("MissingPermission")
     private void startActivity() {
-        if (PermissionHelper.isLocationGranted(this) && PermissionHelper.isGPSOn(this)
+        if(PermissionHelper.isLocationGranted(this) && PermissionHelper.isGPSOn(this)
                 && mMap != null) {
             setupMap();
             renderUserLocation();
-            startFollowingDevice();
-            MapPresenter mapPresenter = new MapPresenter(this);
-            mapPresenter.present(null, 0);
+            runLocationUpdates();
 
             DirectionPresenter directionPresenter = new DirectionPresenter(this);
             Location currentLocation = new Location(10.197100, 123.747842);
@@ -131,8 +137,16 @@ public class MapActivity extends FragmentActivity
     // region IMapView...
     @Override
     public void renderForecasts(List<FloodForecastPopupFragment> forecasts) {
+        // Remove previous popupFragments from the map
+        if(mPopupFragments!=null) {
+            for(FloodForecastPopupFragment popupFragment : mPopupFragments) {
+                popupFragment.remove();
+            }
+        }
+
+        // Render new popupFragments to the map
         mPopupFragments = forecasts;
-        for (FloodForecastPopupFragment popupFragment : forecasts) {
+        for(FloodForecastPopupFragment popupFragment : forecasts) {
             popupFragment.renderForecastOnLocation(null);
         }
     }
@@ -142,17 +156,18 @@ public class MapActivity extends FragmentActivity
     public void renderUserLocation() {
         mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
                 new OnSuccessListener<android.location.Location>() {
-                    @Override
-                    public void onSuccess(android.location.Location location) {
-                        if (location != null)
-                            MapHelper.moveCameraToLocation(mMap, location.getLatitude(),
-                                    location.getLongitude(), 15, false);
-                        else {
-                            // Restart application to obtain device location
-                            ProcessPhoenix.triggerRebirth(MapActivity.this);
-                        }
-                    }
-                });
+            @Override
+            public void onSuccess(android.location.Location location) {
+                if(location != null) {
+                    MapHelper.moveCameraToLocation(mMap, location.getLatitude(),
+                            location.getLongitude(), 15, false);
+                }
+                else {
+                    // Restart application to obtain device location
+                    ProcessPhoenix.triggerRebirth(MapActivity.this);
+                }
+            }
+        });
     }
 
     @Override
@@ -192,7 +207,7 @@ public class MapActivity extends FragmentActivity
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                startFollowingDevice();
+                runLocationUpdates();
                 return false;
             }
         });
@@ -202,6 +217,7 @@ public class MapActivity extends FragmentActivity
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 FloodForecast.showDetailedFragment(mPopupFragments, marker, getSupportFragmentManager());
+                // Stop following device when the user clicks a marker
                 stopFollowingDevice();
                 return true;
             }
@@ -242,7 +258,7 @@ public class MapActivity extends FragmentActivity
     // endregion
 
     // region Misc...
-    private void startFollowingDevice() {
+    private void runLocationUpdates() {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest).build();
         SettingsClient client = LocationServices.getSettingsClient(this);
@@ -269,8 +285,12 @@ public class MapActivity extends FragmentActivity
         });
     }
 
+    private void startFollowingDevice() {
+        followUser = true;
+    }
+
     private void stopFollowingDevice() {
-        stopLocationUpdates();
+        followUser = false;
     }
 
     @SuppressLint("MissingPermission")
@@ -308,7 +328,8 @@ public class MapActivity extends FragmentActivity
         // This will display a dialog directing them to enable the permission in app settings.
         if (EasyPermissions.somePermissionPermanentlyDenied(this, list)) {
             PermissionHelper.openApplicationInSettings(this);
-        } else {
+        }
+        else {
             PermissionHelper.requestLocationAndGPS(this);
         }
     }
@@ -321,7 +342,8 @@ public class MapActivity extends FragmentActivity
             // Do something after user returned from app settings screen.
             PermissionHelper.requestLocationAndGPS(this);
             startActivity();
-        } else if (requestCode == RC_GPS_SERVICE) {
+        }
+        else if(requestCode == RC_GPS_SERVICE) {
             // Do something after GPS is turned on in location dialog
             switch (resultCode) {
                 case Activity.RESULT_OK:

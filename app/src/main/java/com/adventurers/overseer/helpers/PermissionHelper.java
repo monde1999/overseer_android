@@ -1,4 +1,4 @@
-package com.adventurers.overseer.map.helpers;
+package com.adventurers.overseer.helpers;
 
 import static com.adventurers.overseer.Constants.RC_ACCESS_FINE_LOCATION;
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
