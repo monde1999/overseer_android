@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -163,7 +164,7 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void renderError(int errorCode, String errorString) {
-
+        Toast.makeText(this, errorString, Toast.LENGTH_LONG).show();
     }
     // endregion
 
