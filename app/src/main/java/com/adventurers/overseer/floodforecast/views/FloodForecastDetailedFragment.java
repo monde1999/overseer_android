@@ -4,9 +4,7 @@ import static com.adventurers.overseer.Constants.TAG_FLOOD_FORECAST_DETAILED_FRA
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +21,9 @@ import androidx.fragment.app.FragmentManager;
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.models.ForecastData;
 import com.adventurers.overseer.floodforecast.presenters.FloodForecastPresenter;
+import com.adventurers.overseer.helpers.GeocoderHelper;
+import com.adventurers.overseer.helpers.ImageHelper;
+import com.adventurers.overseer.helpers.StringHelper;
 import com.adventurers.overseer.map.models.Location;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -31,7 +32,7 @@ import com.google.gson.Gson;
 
 public class FloodForecastDetailedFragment extends BottomSheetDialogFragment implements IFloodForecastView {
     private Location mForecastLocation;
-    private ForecastData mForecastData;
+    private View view;
 
     public static FloodForecastDetailedFragment newInstance(Location location) {
         FloodForecastDetailedFragment fragment = new FloodForecastDetailedFragment();
@@ -72,25 +73,7 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
                 if(bottomSheet != null) {
                     BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
-
-                View view = getView();
-                if(view != null) {
-                    TextView tv_warning = view.findViewById(R.id.forecast_tv_warning);
-                    ProgressBar pb_street = view.findViewById(R.id.forecast_pb_street);
-                    ImageView iv_street = view.findViewById(R.id.forecast_iv_street);
-                    TextView tv_location = view.findViewById(R.id.forecast_tv_location);
-                    TextView tv_temp = view.findViewById(R.id.forecast_tv_temp);
-                    TextView tv_rain = view.findViewById(R.id.forecast_tv_rain);
-                    ProgressBar pb_weather = view.findViewById(R.id.forecast_pb_weather);
-                    ImageView iv_weather = view.findViewById(R.id.forecast_iv_weather);
-                    TextView tv_weather_status = view.findViewById(R.id.forecast_tv_weather_status);
-                    TextView tv_morning = view.findViewById(R.id.forecast_tv_morning);
-                    TextView tv_afternoon = view.findViewById(R.id.forecast_tv_afternoon);
-                    TextView tv_evening = view.findViewById(R.id.forecast_tv_evening);
-                    TextView tv_night = view.findViewById(R.id.forecast_tv_night);
-                    tv_location.setText(mForecastData.getMessage());
-                }
-                // Set details
+                view = getView();
             }
         });
         return dialog;
@@ -108,7 +91,39 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
     // region IFloodForecastView...
     @Override
     public void renderForecastOnLocation(ForecastData forecastData) {
-        mForecastData = forecastData;
+        if(view != null) {
+            TextView tv_warning = view.findViewById(R.id.forecast_tv_warning);
+            ProgressBar pb_street = view.findViewById(R.id.forecast_pb_street);
+            ImageView iv_street = view.findViewById(R.id.forecast_iv_street);
+            TextView tv_location = view.findViewById(R.id.forecast_tv_location);
+            TextView tv_temp = view.findViewById(R.id.forecast_tv_temp);
+            TextView tv_rain = view.findViewById(R.id.forecast_tv_rain);
+            ProgressBar pb_weather = view.findViewById(R.id.forecast_pb_weather);
+            ImageView iv_weather = view.findViewById(R.id.forecast_iv_weather);
+            TextView tv_weather_status = view.findViewById(R.id.forecast_tv_weather_status);
+            TextView tv_morning = view.findViewById(R.id.forecast_tv_morning);
+            TextView tv_afternoon = view.findViewById(R.id.forecast_tv_afternoon);
+            TextView tv_evening = view.findViewById(R.id.forecast_tv_evening);
+            TextView tv_night = view.findViewById(R.id.forecast_tv_night);
+
+            tv_location.setText(forecastData.getLocation().toString());
+            String temp = forecastData.getCurrent_temp()+"°";
+            tv_temp.setText(temp);
+            String rain = forecastData.getRain()+"mm ("+forecastData.getClouds()+"%)";
+            tv_rain.setText(rain);
+            tv_weather_status.setText(StringHelper.capitalizeWord(forecastData.getWeather_status()));
+            String tempMorn = forecastData.getMorn_temp()+"°";
+            tv_morning.setText(tempMorn);
+            String tempAft = forecastData.getAft_temp()+"°";
+            tv_afternoon.setText(tempAft);
+            String tempEve = forecastData.getEve_temp()+"°";
+            tv_evening.setText(tempEve);
+            String tempNight = forecastData.getNight_temp()+"°";
+            tv_night.setText(tempNight);
+            ImageHelper.loadWeatherIcon(forecastData.getIcon(), iv_weather, pb_weather);
+            ImageHelper.loadStreetStaticView(forecastData.getLocation(), iv_street, pb_street);
+            GeocoderHelper.getLocationAddress(forecastData.getLocation(), tv_location);
+        }
     }
 
     public void showDetailedFragment(FragmentManager fragmentManager) {
@@ -118,5 +133,9 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
 
     private void styleFragment() {
 
+    }
+
+    public void showRequestFailure(int errorCode, String errorMessage) {
+        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
     }
 }

@@ -2,6 +2,7 @@ package com.adventurers.overseer.floodforecast.presenters;
 
 import com.adventurers.overseer.floodforecast.interactors.ForecastInteractor;
 import com.adventurers.overseer.floodforecast.models.ForecastData;
+import com.adventurers.overseer.floodforecast.views.FloodForecastDetailedFragment;
 import com.adventurers.overseer.floodforecast.views.IFloodForecastView;
 import com.adventurers.overseer.map.models.Location;
 
@@ -19,7 +20,7 @@ public class FloodForecastPresenter implements IFloodForecastPresenter {
 
     @Override
     public void presentRequestFailure(int errorCode, String errorMessage) {
-
+        ((FloodForecastDetailedFragment)mFloodForecastView).showRequestFailure(errorCode, errorMessage);
     }
 
     public void present(Location location) {
