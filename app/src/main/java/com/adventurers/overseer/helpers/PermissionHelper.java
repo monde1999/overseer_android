@@ -1,7 +1,9 @@
 package com.adventurers.overseer.helpers;
 
 import static com.adventurers.overseer.Constants.RC_ACCESS_FINE_LOCATION;
+import static com.adventurers.overseer.Constants.RC_CAMERA;
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
+import static com.adventurers.overseer.Constants.RC_WRITE_EXTERNAL_STORAGE;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,6 +14,8 @@ import android.location.LocationManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -35,6 +39,14 @@ public class PermissionHelper {
         new AppSettingsDialog.Builder(activity)
                 .setRationale("Location Permission is required by the app to work properly. " +
                         "You can enable it in settings.")
+                .setPositiveButton("Settings")
+                .setNegativeButton("Cancel")
+                .build().show();
+    }
+
+    public static void openApplicationInSettings(Fragment fragment, String rationale) {
+        new AppSettingsDialog.Builder(fragment)
+                .setRationale(rationale)
                 .setPositiveButton("Settings")
                 .setNegativeButton("Cancel")
                 .build().show();
@@ -88,13 +100,13 @@ public class PermissionHelper {
     }
 
     public static boolean isLocationGranted(Activity activity){
-        boolean location = true;
+        boolean isGranted = true;
         if (ActivityCompat
                 .checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            location = false;
+            isGranted = false;
         }
-        return location;
+        return isGranted;
     }
 
     public static void ensureLocationAndGPS(Activity activity) {
@@ -107,6 +119,47 @@ public class PermissionHelper {
             if(!PermissionHelper.isGPSOn(activity)) {
                 PermissionHelper.requestGPS(activity);
             }
+        }
+    }
+
+    public static void requestCamera(Fragment fragment){
+        String[] PERMISSION = { Manifest.permission.CAMERA };
+        fragment.requestPermissions(PERMISSION, RC_CAMERA);
+    }
+
+    public static void requestWriteExternalStorage(Fragment fragment){
+        String[] PERMISSION = { Manifest.permission.WRITE_EXTERNAL_STORAGE };
+        fragment.requestPermissions(PERMISSION, RC_WRITE_EXTERNAL_STORAGE);
+    }
+
+    public static boolean isCameraGranted(Context context){
+        boolean isGranted = true;
+        if (ContextCompat
+                .checkSelfPermission(context, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            isGranted = false;
+        }
+        return isGranted;
+    }
+
+    public static boolean isWriteExternalStorageGranted(Context context){
+        boolean isGranted = true;
+        if (ContextCompat
+                .checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            isGranted = false;
+        }
+        return isGranted;
+    }
+
+    public static void ensureCameraAndWriteExternalStorage(Fragment fragment) {
+        // Check if Camera Permission is granted
+        if (!PermissionHelper.isCameraGranted(fragment.getContext())) {
+            PermissionHelper.requestCamera(fragment);
+        }
+        // Check if Write External Storage is granted
+        if(!PermissionHelper.isWriteExternalStorageGranted(fragment.getContext())) {
+            PermissionHelper.requestWriteExternalStorage(fragment);
         }
     }
 }

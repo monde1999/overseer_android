@@ -1,13 +1,18 @@
 package com.adventurers.overseer.map.views;
 
+import static com.adventurers.overseer.Constants.RC_ACCESS_FINE_LOCATION;
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
+import static com.adventurers.overseer.Constants.TAG_REPORT;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,7 +26,7 @@ import com.adventurers.overseer.helpers.PermissionHelper;
 import com.adventurers.overseer.helpers.StatusBarHelper;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
-import com.adventurers.overseer.report.views.ReportFragment;
+import com.adventurers.overseer.report.views.ReportActivity;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -38,6 +43,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.List;
@@ -58,8 +64,10 @@ public class MapActivity extends FragmentActivity
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
     private boolean followUser;
+    private Location userLocation;
 
     private List<FloodForecastPopupFragment> mPopupFragments;
+    FloatingActionButton fab_report;
 
     private static final String TAG = "MapActivity";
 
@@ -84,6 +92,8 @@ public class MapActivity extends FragmentActivity
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         followUser = true;
+        userLocation = new Location(0,0);
+        fab_report = findViewById(R.id.map_fab_report);
 
         // Called when device location is updated
         mLocationCallback = new LocationCallback() {
@@ -95,6 +105,8 @@ public class MapActivity extends FragmentActivity
                         MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
                                 15, true);
                     }
+                    userLocation.setLatitude(location.getLatitude());
+                    userLocation.setLongitude(location.getLongitude());
                     mMapPresenter.present(new Location(location.getLatitude(), location.getLongitude()), .5);
                 }
                 onActorMove();
@@ -125,6 +137,14 @@ public class MapActivity extends FragmentActivity
             setupMap();
             renderUserLocation();
             runLocationUpdates();
+
+            fab_report.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ReportActivity reportFragment = ReportActivity.newInstance(userLocation);
+                    reportFragment.show(getSupportFragmentManager(), TAG_REPORT);
+                }
+            });
         }
     }
 
@@ -143,6 +163,8 @@ public class MapActivity extends FragmentActivity
         for(FloodForecastPopupFragment popupFragment : forecasts) {
             popupFragment.renderForecastOnLocation(null);
         }
+        fab_report.setClickable(true);
+        fab_report.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(52,152,219)));
     }
 
     @SuppressLint("MissingPermission")
@@ -166,7 +188,9 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void renderError(int errorCode, String errorString) {
-        Toast.makeText(this, errorString, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show();
+        fab_report.setClickable(false);
+        fab_report.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.grey)));
     }
     // endregion
 
@@ -213,14 +237,6 @@ public class MapActivity extends FragmentActivity
                 // Stop following device when the user clicks a marker
                 stopFollowingDevice();
                 return true;
-            }
-        });
-
-        mMap.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
-            @Override
-            public void onMyLocationClick(@NonNull android.location.Location location) {
-                ReportFragment reportFragment = new ReportFragment();
-                reportFragment.show(getSupportFragmentManager(), "ReportTag");
             }
         });
     }
@@ -283,7 +299,9 @@ public class MapActivity extends FragmentActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        if(requestCode==RC_ACCESS_FINE_LOCATION || requestCode==RC_GPS_SERVICE) {
+            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.adventurers.overseer.helpers;
 
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.widget.TextView;
@@ -10,9 +11,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class GeocoderHelper {
-    public static void getLocationAddress(Location location, TextView textView){
-        Geocoder geocoder = new Geocoder(textView.getContext());
-        String addressName = textView.getText().toString();
+    public static String getLocationAddress(Location location, Context context){
+        Geocoder geocoder = new Geocoder(context);
+        String addressName = location.toString();
         List<Address> address;
         try {
             address = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
@@ -20,6 +21,6 @@ public class GeocoderHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        textView.setText(addressName);
+        return addressName;
     }
 }

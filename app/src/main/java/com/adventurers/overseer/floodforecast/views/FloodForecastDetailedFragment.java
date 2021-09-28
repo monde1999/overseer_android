@@ -122,7 +122,8 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
             tv_night.setText(tempNight);
             ImageHelper.loadWeatherIcon(forecastData.getIcon(), iv_weather, pb_weather);
             ImageHelper.loadStreetStaticView(forecastData.getLocation(), iv_street, pb_street);
-            GeocoderHelper.getLocationAddress(forecastData.getLocation(), tv_location);
+            String address = GeocoderHelper.getLocationAddress(forecastData.getLocation(), getContext());
+            tv_location.setText(address);
         }
     }
 

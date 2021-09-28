@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/map_layout">
     <include layout="@layout/fragment_maps"
         android:id="@+id/maps"/>
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/menuFab"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:src="@drawable/ic_menu_24dp"-->
-<!--        android:layout_marginLeft="20dp"-->
-<!--        android:layout_marginTop="30dp"-->
-<!--        app:layout_anchor="@id/maps"-->
-<!--        app:layout_anchorGravity="top|left"-->
-<!--        />-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/map_fab_report"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_pen_20dp"
+        android:layout_marginEnd="@dimen/dp_20"
+        android:layout_marginBottom="@dimen/dp_30"
+        app:layout_anchor="@id/maps"
+        app:layout_anchorGravity="bottom|right"
+        android:clickable="false"
+        app:backgroundTint="@color/grey"
+        />
 <!--    <com.google.android.material.button.MaterialButton-->
 <!--        android:id="@+id/search_bar"-->
 <!--        android:layout_width="match_parent"-->
