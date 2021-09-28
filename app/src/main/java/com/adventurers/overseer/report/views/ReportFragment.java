@@ -3,10 +3,9 @@ package com.adventurers.overseer.report.views;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -33,7 +31,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -42,43 +39,57 @@ import java.util.Date;
 import java.util.List;
 
 public class ReportFragment extends BottomSheetDialogFragment {
-    View view;
-    ReportsRecyclerViewAdapter adapter;
-    ActivityResultLauncher<Intent> galleryResultLauncher;
-    ActivityResultLauncher<Intent> cameraResultLauncher;
-    List<Uri> imagePath = new ArrayList<>();
-    String currentImagePath = null;
+    private View view;
+    private ReportsRecyclerViewAdapter adapter;
+    private ActivityResultLauncher<Intent> galleryIntentResultLauncher;
+    private ActivityResultLauncher<Intent> cameraIntentResultLauncher;
+    private List<File> imageFiles;
+    private String takePhotoPath;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        galleryResultLauncher = registerForActivityResult(
+        imageFiles = new ArrayList<>();
+
+        galleryIntentResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            // There are no request codes
                             Intent data = result.getData();
                             if (data != null) {
-                                Toast.makeText(getContext(),data.getData().toString(),Toast.LENGTH_LONG).show();
-                                imagePath.add(data.getData());
-                                adapter.notifyItemInserted(imagePath.size() - 1);
+                                Cursor cursor = null;
+                                try {
+                                    // Convert Uri to file pathname
+                                    String[] proj = { MediaStore.Images.Media.DATA };
+                                    cursor = getContext().getContentResolver().query(data.getData(),  proj, null, null, null);
+                                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                                    cursor.moveToFirst();
+                                    String pickPhotoPath =  cursor.getString(column_index);
+
+                                    File image = new File(pickPhotoPath);
+                                    imageFiles.add(image);
+                                    adapter.notifyItemInserted(imageFiles.size() - 1);
+                                } finally {
+                                    if (cursor != null) {
+                                        cursor.close();
+                                    }
+                                }
                             }
                         }
                     }
                 }
         );
-        cameraResultLauncher = registerForActivityResult(
+        cameraIntentResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            Uri uri = Uri.fromFile(new File(currentImagePath));
-                            Toast.makeText(getContext(),uri.toString(),Toast.LENGTH_LONG).show();
-                            imagePath.add(uri);
-                            adapter.notifyItemInserted(imagePath.size() - 1);
+                            File image = new File(takePhotoPath);
+                            imageFiles.add(image);
+                            adapter.notifyItemInserted(imageFiles.size() - 1);
                         }
                     }
                 }
@@ -119,8 +130,8 @@ public class ReportFragment extends BottomSheetDialogFragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     if(optionsMenu[i].equals("Take Photo")){
-                                        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                        if(takePicture.resolveActivity(getContext().getPackageManager())!=null) {
+                                        Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                        if(takePhoto.resolveActivity(getContext().getPackageManager())!=null) {
                                             File image = null;
                                             try {
                                                 image = getImageFile();
@@ -130,14 +141,14 @@ public class ReportFragment extends BottomSheetDialogFragment {
 
                                             if(image!=null) {
                                                 Uri imageUri = FileProvider.getUriForFile(getContext(), "com.adventurers.fileprovider", image);
-                                                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                                                cameraResultLauncher.launch(takePicture);
+                                                takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                                cameraIntentResultLauncher.launch(takePhoto);
                                             }
                                         }
                                     }
                                     else if(optionsMenu[i].equals("Choose from Gallery")) {
                                         Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                        galleryResultLauncher.launch(pickPhoto);
+                                        galleryIntentResultLauncher.launch(pickPhoto);
                                     }
                                     else {
                                         dialogInterface.dismiss();
@@ -150,8 +161,7 @@ public class ReportFragment extends BottomSheetDialogFragment {
                     RecyclerView recyclerView = view.findViewById(R.id.report_recycler);
                     LinearLayoutManager horizontal = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
                     recyclerView.setLayoutManager(horizontal);
-
-                    adapter = new ReportsRecyclerViewAdapter(imagePath);
+                    adapter = new ReportsRecyclerViewAdapter(imageFiles);
                     recyclerView.setAdapter(adapter);
                 }
 
@@ -160,19 +170,12 @@ public class ReportFragment extends BottomSheetDialogFragment {
         return dialog;
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        //inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
     private File getImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "jpg_" + timeStamp + "_";
         File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName,".jpg",storageDir);
-        currentImagePath = image.getAbsolutePath();
+        takePhotoPath = image.getAbsolutePath();
         return image;
     }
 }

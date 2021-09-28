@@ -1,6 +1,5 @@
 package com.adventurers.overseer.report.views;
 
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +12,16 @@ import com.adventurers.overseer.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
+import java.io.File;
 import java.util.List;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class ReportsRecyclerViewAdapter extends RecyclerView.Adapter<ReportsRecyclerViewAdapter.ReportsViewHolder> {
-    private final List<Uri> imagePath;
+    private final List<File> mImageFiles;
 
-    public ReportsRecyclerViewAdapter(List<Uri> imagePath) {
-        this.imagePath = imagePath;
+    public ReportsRecyclerViewAdapter(List<File> imageFiles) {
+        mImageFiles = imageFiles;
     }
 
     @NonNull
@@ -35,12 +35,12 @@ public class ReportsRecyclerViewAdapter extends RecyclerView.Adapter<ReportsRecy
     @Override
     public void onBindViewHolder(@NonNull ReportsRecyclerViewAdapter.ReportsViewHolder holder, int position) {
         Transformation transformation = new RoundedCornersTransformation(100,0);
-        Picasso.get().load(imagePath.get(position)).transform(transformation).resize(400,400).centerCrop().into(holder.image);
+        Picasso.get().load(mImageFiles.get(position)).transform(transformation).resize(400,400).centerCrop().into(holder.image);
     }
 
     @Override
     public int getItemCount() {
-        return imagePath.size();
+        return mImageFiles.size();
     }
 
     public static class ReportsViewHolder extends RecyclerView.ViewHolder {
@@ -50,5 +50,9 @@ public class ReportsRecyclerViewAdapter extends RecyclerView.Adapter<ReportsRecy
             super(itemView);
             image = itemView.findViewById(R.id.report_iv_image);
         }
+    }
+
+    public List<File> getImageFiles() {
+        return mImageFiles;
     }
 }

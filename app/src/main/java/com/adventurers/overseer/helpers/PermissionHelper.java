@@ -97,7 +97,7 @@ public class PermissionHelper {
         return location;
     }
 
-    public static void requestLocationAndGPS(Activity activity) {
+    public static void ensureLocationAndGPS(Activity activity) {
         // Check if Location Permission is granted
         if (!PermissionHelper.isLocationGranted(activity)) {
             PermissionHelper.requestLocation(activity);

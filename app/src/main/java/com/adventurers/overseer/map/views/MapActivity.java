@@ -53,6 +53,7 @@ public class MapActivity extends FragmentActivity
     private GoogleMap mMap;
     private MapPresenter mMapPresenter;
 
+
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
@@ -113,7 +114,7 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        PermissionHelper.requestLocationAndGPS(this);
+        PermissionHelper.ensureLocationAndGPS(this);
         startActivity();
     }
 
@@ -288,7 +289,7 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
         // Some permissions have been granted
-        PermissionHelper.requestLocationAndGPS(this);
+        PermissionHelper.ensureLocationAndGPS(this);
         startActivity();
     }
 
@@ -302,7 +303,7 @@ public class MapActivity extends FragmentActivity
             PermissionHelper.openApplicationInSettings(this);
         }
         else {
-            PermissionHelper.requestLocationAndGPS(this);
+            PermissionHelper.ensureLocationAndGPS(this);
         }
     }
 
@@ -312,18 +313,18 @@ public class MapActivity extends FragmentActivity
 
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             // Do something after user returned from app settings screen.
-            PermissionHelper.requestLocationAndGPS(this);
+            PermissionHelper.ensureLocationAndGPS(this);
             startActivity();
         }
         else if(requestCode == RC_GPS_SERVICE) {
             // Do something after GPS is turned on in location dialog
             switch (resultCode) {
                 case Activity.RESULT_OK:
-                    PermissionHelper.requestLocationAndGPS(this);
+                    PermissionHelper.ensureLocationAndGPS(this);
                     startActivity();
                     break;
                 case Activity.RESULT_CANCELED:
-                    PermissionHelper.requestLocationAndGPS(this);
+                    PermissionHelper.ensureLocationAndGPS(this);
                     break;
             }
         }
