@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_10"
+    android:paddingBottom="@dimen/dp_20">
+
+    <TableRow
+        android:id="@+id/report_tr_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:weightSum="2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/report_tv_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="This is the address"
+            android:textSize="@dimen/sp_14"
+            android:paddingRight="@dimen/dp_5"
+            android:textColor="@color/black"/>
+
+        <ImageView
+            android:id="@+id/report_iv_location"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_150"
+            android:layout_column="1"
+            android:layout_weight="1"
+            android:contentDescription="@string/street_snapshot"
+            android:src="@drawable/bg_street" />
+    </TableRow>
+
+    <LinearLayout
+        android:id="@+id/report_ll_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/report_tr_address"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:padding="@dimen/dp_20"
+        android:orientation="vertical"
+        android:background="@drawable/bg_card">
+        <TextView
+            android:id="@+id/report_tv_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Juan Dela Cruz"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16"/>
+        <TextView
+            android:id="@+id/report_tv_time_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Just Now • Bonifacio Street, Cebu City"
+            android:textSize="@dimen/sp_12"/>
+
+        <EditText
+            android:id="@+id/report_et_caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:autofillHints="Caption"
+            android:background="@android:color/transparent"
+            android:hint="Write a caption..."
+            android:inputType="textMultiLine"
+            android:minHeight="48dp"
+            android:textSize="@dimen/sp_14" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/report_recycler"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/report_btn_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Add Photo"
+            android:textAllCaps="false"
+            android:textColor="@color/main_color"
+            android:background="@android:color/transparent"
+            />
+    </LinearLayout>
+    <Button
+        android:id="@+id/report_btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/report_ll_post"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="@dimen/dp_20"
+        android:textAllCaps="false"
+        android:text="Submit Report"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:background="@drawable/bg_button"
+        android:stateListAnimator="@null"
+        android:textColor="@color/white"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

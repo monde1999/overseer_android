@@ -21,6 +21,7 @@ import com.adventurers.overseer.helpers.PermissionHelper;
 import com.adventurers.overseer.helpers.StatusBarHelper;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
+import com.adventurers.overseer.report.views.ReportFragment;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -211,6 +212,14 @@ public class MapActivity extends FragmentActivity
                 // Stop following device when the user clicks a marker
                 stopFollowingDevice();
                 return true;
+            }
+        });
+
+        mMap.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
+            @Override
+            public void onMyLocationClick(@NonNull android.location.Location location) {
+                ReportFragment reportFragment = new ReportFragment();
+                reportFragment.show(getSupportFragmentManager(), "ReportTag");
             }
         });
     }
