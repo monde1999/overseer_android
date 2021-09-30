@@ -275,6 +275,9 @@
                     </LinearLayout>
                 </TableRow>
             </TableLayout>
+            <include layout="@layout/fragment_reports"
+                app:layout_constraintTop_toBottomOf="@id/weatherTable"
+                app:layout_constraintLeft_toLeftOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
