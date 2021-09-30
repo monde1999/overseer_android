@@ -1,8 +1,10 @@
 package com.adventurers.overseer.report.presenters;
 
 public interface IReportPresenter {
-    void presentReportFailure(int errorCode, String errorMessage);
+    void presentReportFailure(int i, String str);
+
     void presentReportProgressing();
+
     void presentReportSuccess();
 }
 

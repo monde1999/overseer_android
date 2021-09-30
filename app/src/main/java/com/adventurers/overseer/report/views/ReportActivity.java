@@ -62,6 +62,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     private String description;
 
     private View view;
+    private IReportView iReportView;
     private ReportsRecyclerViewAdapter adapter;
     private ActivityResultLauncher<Intent> galleryIntentResultLauncher;
     private ActivityResultLauncher<Intent> cameraIntentResultLauncher;
@@ -81,17 +82,17 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     // region IReportView...
     @Override
     public void renderReportSuccess() {
-
+        Toast.makeText(getActivity(),  "Success", Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void renderReportFailure() {
-
+    public void renderReportFailure(int error_code , String message) {
+        Toast.makeText(getActivity(),  error_code+":"+message, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void renderReportProgressing() {
-
+        Toast.makeText(getActivity(),  "In progress... please wait", Toast.LENGTH_LONG).show();
     }
     // endregion
 
@@ -100,7 +101,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         imageFiles = new ArrayList<>();
-
+        iReportView = (IReportView) this.getActivity();
         if(getArguments() != null){
             String json = getArguments().getString("Location");
             Gson gson = new Gson();
@@ -202,7 +203,6 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                                             } catch (IOException e) {
                                                 e.printStackTrace();
                                             }
-
                                             if(image!=null) {
                                                 Uri imageUri = FileProvider.getUriForFile(getContext(), "com.adventurers.fileprovider", image);
                                                 takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -245,8 +245,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                             user = 1;
                             description = et_description.getText().toString();
                             floodLevel = np_flood_level.getValue();
-//
-                            ReportPresenter presenter = new ReportPresenter();
+                            ReportPresenter presenter = new ReportPresenter(iReportView);
                             Toast.makeText(getContext(),
                                     "user: " + user
                                             + "\nreportedLocation: " + reportedLocation.toString()
