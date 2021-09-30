@@ -4,8 +4,14 @@ public class Constants {
     public static final int RC_ACCESS_FINE_LOCATION = 4003;
     public static final int RC_GPS_SERVICE = 4004;
 
-    public static final int EC_SERVER_FAILED = 4005;
+    public static final int EC_SERVER_FAILED = 4444;
     public static final String EM_SERVER_FAILED = "Can't connect to server.";
+
+    public static final int EC_ACCOUNT_NOT_EXIST = 4445;
+    public static final String EM_ACCOUNT_NOT_EXIST = "Account does not exist.";
+
+    public static final int EC_WRONG_PASSWORD = 4446;
+    public static final String EM_WRONG_PASSWORD = "Wrong password.";
 
     public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
 
