@@ -1,7 +1,6 @@
 package com.adventurers.overseer.report.interactors;
 
 
-
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.report.controllers.IReportController;
 import com.adventurers.overseer.report.controllers.ReportController;
@@ -12,18 +11,15 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-public class ReportInteractor {
+public class ReportInteractor{
     IReportController controller;
     IReportPresenter presenter;
     ReportController rc;
     CreateReportData createreportData;
 
-    public ReportInteractor(IReportPresenter presenter) {
+    public ReportInteractor(IReportPresenter presenter)
+    {
         this.presenter = presenter;
-    }
-
-    public ReportInteractor(IReportController controller) {
-        this.controller = controller;
     }
 
     public void report(int UserID, Location location, Date datetime, List<File> picture, int floodLevel, String description) {
@@ -32,15 +28,18 @@ public class ReportInteractor {
         this.createreportData = reportData;
         this.rc.addReportToDb(reportData);
     }
-    public void feedbackReportSuccess() {
-        this.presenter.presentReportSuccess();
-    }
-    public void feedbackReportError(int errorCode, String Description) {
-        this.presenter.presentReportFailure(errorCode, Description);
+    public void feedbackReportSuccess(String message)
+    {
+        this.presenter.presentReportSuccess(message);
     }
 
-    public void feedbackReportProgressing() {
-        this.presenter.presentReportProgressing();
+    public void feedbackReportError(int code, String message) {
+        this.presenter.presentReportFailure(code, message);
+    }
+
+    public void feedbackReportProgressing(String message)
+    {
+        this.presenter.presentReportProgressing(message);
     }
 }
 

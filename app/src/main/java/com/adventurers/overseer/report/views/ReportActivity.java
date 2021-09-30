@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.models.DateTime;
-import com.adventurers.overseer.floodforecast.presenters.FloodForecastPresenter;
 import com.adventurers.overseer.helpers.GeocoderHelper;
 import com.adventurers.overseer.helpers.ImageHelper;
 import com.adventurers.overseer.helpers.PermissionHelper;
@@ -81,8 +80,8 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
 
     // region IReportView...
     @Override
-    public void renderReportSuccess() {
-        Toast.makeText(getActivity(),  "Success", Toast.LENGTH_LONG).show();
+    public void renderReportSuccess(String message) {
+        Toast.makeText(getActivity(),  message, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -91,17 +90,30 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     }
 
     @Override
-    public void renderReportProgressing() {
-        Toast.makeText(getActivity(),  "In progress... please wait", Toast.LENGTH_LONG).show();
+    public void renderReportProgressing(String message) {
+        Toast.makeText(getActivity(),  message, Toast.LENGTH_LONG).show();
     }
-    // endregion
-
     // region DialogFragment...
+    public void submit(EditText et_description,NumberPicker np_flood_level) {
+        user = 1;
+        description = et_description.getText().toString();
+        floodLevel = np_flood_level.getValue();
+        ReportPresenter presenter = new ReportPresenter(this);
+        Toast.makeText(getContext(),
+                "user: " + user
+                        + "\nreportedLocation: " + reportedLocation.toString()
+                        + "\ntime: "
+                        + "\nfloodLevel: " + floodLevel
+                        + "\nimageFiles: " + imageFiles.size()
+                        + "\ndescription: " + description,
+                Toast.LENGTH_LONG).show();
+        presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description);// endregion
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         imageFiles = new ArrayList<>();
-        iReportView = (IReportView) this.getActivity();
+        iReportView = (IReportView) getView();
         if(getArguments() != null){
             String json = getArguments().getString("Location");
             Gson gson = new Gson();
@@ -242,19 +254,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                     btn_submit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            user = 1;
-                            description = et_description.getText().toString();
-                            floodLevel = np_flood_level.getValue();
-                            ReportPresenter presenter = new ReportPresenter(iReportView);
-                            Toast.makeText(getContext(),
-                                    "user: " + user
-                                            + "\nreportedLocation: " + reportedLocation.toString()
-                                            + "\ntime: "
-                                            + "\nfloodLevel: " + floodLevel
-                                            + "\nimageFiles: " + imageFiles.size()
-                                            + "\ndescription: " + description,
-                                    Toast.LENGTH_LONG).show();
-                            presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description);
+                           submit(et_description,np_flood_level);
                         }
                     });
 

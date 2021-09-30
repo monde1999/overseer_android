@@ -17,12 +17,12 @@ public ReportPresenter(IReportView view) {
         this.rv = view;
         }
 
-public void presentReportSuccess() {
-        this.rv.renderReportSuccess();
+public void presentReportSuccess(String message) {
+        this.rv.renderReportSuccess(message);
         }
 
-public void presentReportFailure(int errorCode, String errorMessage) {
-        this.rv.renderReportFailure(errorCode, errorMessage);
+public void presentReportFailure(int code, String message) {
+        this.rv.renderReportFailure(code, message);
         }
 
 public void report(int userID, Location location, Date datetime, int floodLevel, List<File> picture, String description) {
@@ -31,8 +31,8 @@ public void report(int userID, Location location, Date datetime, int floodLevel,
         reportInteractor.report(userID, location, datetime, picture, floodLevel, description);
         }
 
-public void presentReportProgressing() {
-        this.rv.renderReportProgressing();
+public void presentReportProgressing(String message) {
+        this.rv.renderReportProgressing(message);
         }
 }
 

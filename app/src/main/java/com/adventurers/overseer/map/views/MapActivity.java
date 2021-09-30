@@ -172,18 +172,18 @@ public class MapActivity extends FragmentActivity
     public void renderUserLocation() {
         mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
                 new OnSuccessListener<android.location.Location>() {
-            @Override
-            public void onSuccess(android.location.Location location) {
-                if(location != null) {
-                    MapHelper.moveCameraToLocation(mMap, location.getLatitude(),
-                            location.getLongitude(), 15, false);
-                }
-                else {
-                    // Restart application to obtain device location
-                    ProcessPhoenix.triggerRebirth(MapActivity.this);
-                }
-            }
-        });
+                    @Override
+                    public void onSuccess(android.location.Location location) {
+                        if(location != null) {
+                            MapHelper.moveCameraToLocation(mMap, location.getLatitude(),
+                                    location.getLongitude(), 15, false);
+                        }
+                        else {
+                            // Restart application to obtain device location
+                            ProcessPhoenix.triggerRebirth(MapActivity.this);
+                        }
+                    }
+                });
     }
 
     @Override

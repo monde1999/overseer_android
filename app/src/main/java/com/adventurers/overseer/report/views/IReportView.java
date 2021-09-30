@@ -1,7 +1,7 @@
 package com.adventurers.overseer.report.views;
 
 public interface IReportView {
-    void renderReportSuccess();
-    void renderReportProgressing();
-    void renderReportFailure(int error_code, String message);
+    void renderReportSuccess(String message);
+    void renderReportProgressing(String message);
+    void renderReportFailure(int code, String message);
 }

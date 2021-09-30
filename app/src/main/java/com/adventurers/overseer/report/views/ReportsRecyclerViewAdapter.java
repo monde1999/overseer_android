@@ -31,13 +31,11 @@ public class ReportsRecyclerViewAdapter extends RecyclerView.Adapter<ReportsRecy
         View view = inflater.inflate(R.layout.fragment_report_image_item, parent, false);
         return new ReportsViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ReportsRecyclerViewAdapter.ReportsViewHolder holder, int position) {
         Transformation transformation = new RoundedCornersTransformation(100,0);
         Picasso.get().load(mImageFiles.get(position)).transform(transformation).resize(400,400).centerCrop().into(holder.image);
     }
-
     @Override
     public int getItemCount() {
         return mImageFiles.size();

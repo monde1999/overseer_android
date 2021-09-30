@@ -2,9 +2,10 @@ package com.adventurers.overseer.report.controllers;
 
 import com.adventurers.overseer.report.interactors.ReportInteractor;
 import com.adventurers.overseer.report.server.CreateReportData;
-import com.adventurers.overseer.server.ReportApi;
+import com.adventurers.overseer.report.server.ReportApi;
 
 import java.io.File;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -20,20 +21,20 @@ public class ReportController implements IReportController {
     Retrofit retrofit;
     ReportInteractor reportInteractor;
     public  ReportController(ReportInteractor reportInteractor){
+        this.reportInteractor = reportInteractor;
         retrofit= new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
     @Override
-    public void addReportToDb(CreateReportData createreportData) {
+    public void addReportToDb(CreateReportData reportData) {
         ReportApi reportApi = retrofit.create(ReportApi.class);
-        MediaType mediaType = MediaType.parse("multipart/form-data");
         MultipartBody.Part[] imagesPart;
-        if (createreportData.getImages()!= null && !createreportData.getImages().isEmpty()){
-            imagesPart = new MultipartBody.Part[createreportData.getImages().size()];
-            for (int index = 0; index<createreportData.getImages().size();index++) {
-                File file = createreportData.getImages().get(index);
+        if (reportData.getImages()!= null && !reportData.getImages().isEmpty()){
+            imagesPart = new MultipartBody.Part[reportData.getImages().size()];
+            for (int index = 0; index<reportData.getImages().size();index++) {
+                File file = reportData.getImages().get(index);
                 RequestBody imageBody = RequestBody.create(MediaType.parse("image/*"),
                         file);
                 imagesPart[index] = MultipartBody.Part.createFormData("ReportImages",
@@ -44,21 +45,23 @@ public class ReportController implements IReportController {
         else{
             imagesPart = null;
         }
-        Call<okhttp3.ResponseBody> call = reportApi.createReport(createreportData.getUser(), createreportData.getDescription(),
-                createreportData.getLatitude(), createreportData.getLongitude(), createreportData.getFloodLevel(), imagesPart);
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"),reportData.getDescription());
+        Call<okhttp3.ResponseBody> call = reportApi.createReport(reportData.getUser(), reportData.getDescription(),
+                reportData.getLatitude(), reportData.getLongitude(), reportData.getFloodLevel(), imagesPart);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()){
-                   reportInteractor.feedbackReportSuccess();
+                   reportInteractor.feedbackReportSuccess("Success");
                 }
                 else {
-                    reportInteractor.feedbackReportError(0,"Failed to upload");
+                    reportInteractor.feedbackReportProgressing("In progress");
                 }
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                reportInteractor.feedbackReportError(1,"Unable to Connect.Please check your internet connection");
+                reportInteractor.feedbackReportError(001,"Unable to connect.");
             }
         });
     }
