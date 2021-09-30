@@ -1,5 +1,6 @@
 package com.adventurers.overseer.login.controllers;
 
+import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 import static com.adventurers.overseer.Constants.EC_ACCOUNT_NOT_EXIST;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EC_WRONG_PASSWORD;
@@ -10,7 +11,6 @@ import static com.adventurers.overseer.Constants.EM_WRONG_PASSWORD;
 import com.adventurers.overseer.login.api.LoginApi;
 import com.adventurers.overseer.login.interactors.LoginInteractor;
 import com.adventurers.overseer.login.models.LoginData;
-import com.adventurers.overseer.user.handlers.UserInfoHandler;
 import com.adventurers.overseer.user.models.UserInfo;
 
 import okhttp3.MediaType;
@@ -24,12 +24,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginController implements ILoginController {
 
     private final LoginInteractor loginInteractor;
-    private static final String BASE_URL = "http://192.168.0.13:8000/account/"; // change to host ip of server accordingly
     Retrofit retrofit;
     public LoginController(LoginInteractor loginInteractor) {
         this.loginInteractor = loginInteractor;
         retrofit= new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(BASE_URL_OVERSEER)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
@@ -53,7 +52,7 @@ public class LoginController implements ILoginController {
                     }
                     else{
                         UserInfo currentUser = new UserInfo(response.body().getUsername(),null,
-                                response.body().getFirstName(),response.body().getLastName(),response.body().getId());
+                                response.body().getFirstName(),response.body().getLastName(),response.body().getUserId());
                         loginInteractor.rememberUserLogin(currentUser,response.body().getToken());
                         loginInteractor.feedBackLoginSuccess();
                         System.out.println("Login Success");

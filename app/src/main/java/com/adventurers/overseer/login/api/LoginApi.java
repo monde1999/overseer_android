@@ -10,7 +10,7 @@ import retrofit2.http.Part;
 
 public interface LoginApi {
     @Multipart
-    @POST("login/")
+    @POST("account/login/")
     Call<LoginData> Login(@Part("username") RequestBody username,
                           @Part("password") RequestBody password);
 }

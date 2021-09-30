@@ -3,6 +3,7 @@ package com.adventurers.overseer.login.views;
 import static com.adventurers.overseer.Constants.EC_ACCOUNT_NOT_EXIST;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EC_WRONG_PASSWORD;
+import static com.adventurers.overseer.Constants.preferencesKey;
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +37,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     private TextView tv_username_error;
     private TextView tv_password_error;
     private LoadingDialog loadingDialog;
-    private final String preferencesKey = "com.adventurers.overseer";
     private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +103,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
     @Override
     public void renderLoginSuccess() {
+        //view saved user data
         Toast.makeText(getApplicationContext(), UserInfoHandler.getCurrentUser(sharedPreferences).toString()+
                 "\ntoken: "+ UserInfoHandler.getCurrentAccountToken(sharedPreferences),Toast.LENGTH_LONG).show();
+
         Intent i = new Intent(this, MapActivity.class);
         startActivity(i);
         finish();
@@ -137,6 +139,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
                 tv_username_error.setVisibility(View.VISIBLE);
             }
         }
+        //change this later
         return valid;
     }
 

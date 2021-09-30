@@ -1,31 +1,31 @@
 package com.adventurers.overseer.signup.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class SignupData {
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String password;
+    @SerializedName("isEmailUnique")
+    @Expose
+    private boolean isEmailUnique;
+    @SerializedName("token")
+    @Expose
+    private String token;
 
-    public SignupData(String username, String firstName, String lastName, String password) {
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
+    @SerializedName("id")
+    @Expose
+    private int userId;
+
+
+    public boolean getIsEmailUnique() {
+        return isEmailUnique;
     }
 
-    public String getUsername() {
-        return username;
+    public String getToken() {
+        return token;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public int getUserId() {
+        return userId;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 }

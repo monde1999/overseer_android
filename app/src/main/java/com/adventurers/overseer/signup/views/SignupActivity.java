@@ -2,8 +2,11 @@ package com.adventurers.overseer.signup.views;
 
 import static com.adventurers.overseer.Constants.EC_EMAIL_REGISTERED;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
+import static com.adventurers.overseer.Constants.preferencesKey;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,6 +24,7 @@ import com.adventurers.overseer.R;
 import com.adventurers.overseer.helpers.LoadingDialog;
 import com.adventurers.overseer.map.views.MapActivity;
 import com.adventurers.overseer.signup.presenters.SignupPresenter;
+import com.adventurers.overseer.user.handlers.UserInfoHandler;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +47,7 @@ public class SignupActivity extends AppCompatActivity implements ISignUpView {
     private TextView tv_password2_error;
     private CheckBox cb_show_password;
     private LoadingDialog loadingDialog;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,7 @@ public class SignupActivity extends AppCompatActivity implements ISignUpView {
         TextView tv_have_account = findViewById(R.id.signup_tv_have_account);
         Button btn_submit = findViewById(R.id.signup_btn_submit);
         setTextListeners();
+        sharedPreferences = getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
 
         tv_have_account.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,10 +139,19 @@ public class SignupActivity extends AppCompatActivity implements ISignUpView {
 
     @Override
     public void renderSignupSuccess() {
+        //view saved user data
+        Toast.makeText(getApplicationContext(), UserInfoHandler.getCurrentUser(sharedPreferences).toString()+
+                "\ntoken: "+ UserInfoHandler.getCurrentAccountToken(sharedPreferences),Toast.LENGTH_LONG).show();
+
         Intent i = new Intent(this, MapActivity.class);
         finishAffinity();
         startActivity(i);
         finish();
+    }
+
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return  sharedPreferences;
     }
 
     // endregion
