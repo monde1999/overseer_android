@@ -30,7 +30,7 @@ public class LoginController implements ILoginController {
         // In case the server failed example
         boolean serverFailed = false;
         if(serverFailed) {
-            loginInteractor.feedBackLoginFailure(EC_SERVER_FAILED, EM_SERVER_FAILED);
+            onServerRequestFailed(EC_SERVER_FAILED, EM_SERVER_FAILED);
             return;
         }
 

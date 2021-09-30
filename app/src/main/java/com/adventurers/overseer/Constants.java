@@ -13,6 +13,9 @@ public class Constants {
     public static final int EC_WRONG_PASSWORD = 4446;
     public static final String EM_WRONG_PASSWORD = "Wrong password.";
 
+    public static final int EC_EMAIL_REGISTERED = 4447;
+    public static final String EM_EMAIL_REGISTERED = "Email is already registered.";
+
     public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
 
     public static String BASE_URL_OVERSEER = "http://192.168.1.11:8000/";

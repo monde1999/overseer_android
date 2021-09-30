@@ -4,12 +4,8 @@ import static com.adventurers.overseer.Constants.EC_ACCOUNT_NOT_EXIST;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EC_WRONG_PASSWORD;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -18,10 +14,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.helpers.LoadingDialog;
 import com.adventurers.overseer.login.presenters.LoginPresenter;
 import com.adventurers.overseer.map.views.MapActivity;
+import com.adventurers.overseer.signup.views.SignupActivity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         loadingDialog = new LoadingDialog(this);
         TextView tv_create_account = findViewById(R.id.login_tv_create_account);
         Button btn_login = findViewById(R.id.login_btn_login);
-        setUsernamePasswordTextListeners();
+        setTextListeners();
 
         // Temporary values
         et_username.setText("overseer@gmail.com");
@@ -68,8 +67,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         tv_create_account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
-//                startActivity(i);
+                Intent i = new Intent(getApplicationContext(), SignupActivity.class);
+                startActivity(i);
             }
         });
     }
@@ -148,7 +147,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
     // endregion
 
-    private void setUsernamePasswordTextListeners(){
+    private void setTextListeners(){
         et_username.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

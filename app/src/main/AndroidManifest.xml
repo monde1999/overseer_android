@@ -32,9 +32,13 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".login.views.LoginActivity"
+            android:name=".signup.views.SignupActivity"
             android:exported="true"
             android:theme="@style/Theme.Overseer.Fullscreen"/>
+        <activity
+            android:name=".login.views.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Overseer.Fullscreen" />
         <activity
             android:name=".splash.SplashActivity"
             android:exported="true"

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.adventurers.overseer.login.views.LoginActivity;
-import com.adventurers.overseer.map.views.MapActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
