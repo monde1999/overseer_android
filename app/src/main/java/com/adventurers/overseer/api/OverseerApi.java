@@ -12,4 +12,15 @@ public interface OverseerApi {
             @Query("latitude") double latitude,
             @Query("longitude") double longitude
         );
+
+    @GET("forecast/reports/")
+    Call<List<ReportData>> getReports(
+            @Query("latitude") double latitude,
+            @Query("longitude") double longitude
+    );
+
+    @GET("forecast/report-images/")
+    Call<List<ReportImage>> getImages(
+            @Query("report_id") int id
+    );
 }

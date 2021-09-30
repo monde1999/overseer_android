@@ -3,6 +3,7 @@ package com.adventurers.overseer.floodforecast.views;
 import static com.adventurers.overseer.Constants.TAG_FLOOD_FORECAST_DETAILED_FRAGMENT;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,12 +18,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.models.ForecastData;
 import com.adventurers.overseer.floodforecast.presenters.FloodForecastPresenter;
 import com.adventurers.overseer.helpers.GeocoderHelper;
 import com.adventurers.overseer.helpers.ImageHelper;
+import com.adventurers.overseer.helpers.ReportsHelper;
 import com.adventurers.overseer.helpers.StringHelper;
 import com.adventurers.overseer.map.models.Location;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -123,6 +127,11 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
             ImageHelper.loadWeatherIcon(forecastData.getIcon(), iv_weather, pb_weather);
             ImageHelper.loadStreetStaticView(forecastData.getLocation(), iv_street, pb_street);
             GeocoderHelper.getLocationAddress(forecastData.getLocation(), tv_location);
+
+            RecyclerView recyclerView = view.findViewById(R.id.reports_rv_posts);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(manager);
+            ReportsHelper.fetchReportsOnLocation(forecastData.getLocation(), recyclerView);
         }
     }
 
