@@ -4,6 +4,7 @@ import com.adventurers.overseer.login.controllers.ILoginController;
 import com.adventurers.overseer.login.controllers.LoginController;
 import com.adventurers.overseer.login.models.LoginData;
 import com.adventurers.overseer.login.presenters.ILoginPresenter;
+import com.adventurers.overseer.user.models.UserInfo;
 
 public class LoginInteractor {
     private final ILoginPresenter loginPresenter;
@@ -14,9 +15,8 @@ public class LoginInteractor {
     }
 
     public void loginUser(String userName, String password){
-        LoginData loginData = new LoginData(userName, password);
         ILoginController loginController = new LoginController(this);
-        loginController.getLoginResults(loginData);
+        loginController.getLoginResults(userName,password);
     }
 
     public void feedBackLoginFailure(int errorCode, String errorMessage){
@@ -25,5 +25,8 @@ public class LoginInteractor {
 
     public void feedBackLoginSuccess(){
         loginPresenter.presentLoginSuccess();
+    }
+    public void rememberUserLogin(UserInfo user, String authToken){
+        loginPresenter.saveCurrentUserToPreferences(user, authToken);
     }
 }

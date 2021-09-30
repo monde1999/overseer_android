@@ -4,7 +4,9 @@ import static com.adventurers.overseer.Constants.EC_ACCOUNT_NOT_EXIST;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EC_WRONG_PASSWORD;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,6 +23,7 @@ import com.adventurers.overseer.helpers.LoadingDialog;
 import com.adventurers.overseer.login.presenters.LoginPresenter;
 import com.adventurers.overseer.map.views.MapActivity;
 import com.adventurers.overseer.signup.views.SignupActivity;
+import com.adventurers.overseer.user.handlers.UserInfoHandler;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,13 +31,13 @@ import java.util.regex.Pattern;
 public class LoginActivity extends AppCompatActivity implements ILoginView {
     private String username;
     private String password;
-
     private EditText et_username;
     private EditText et_password;
     private TextView tv_username_error;
     private TextView tv_password_error;
     private LoadingDialog loadingDialog;
-
+    private final String preferencesKey = "com.adventurers.overseer";
+    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         Button btn_login = findViewById(R.id.login_btn_login);
         setTextListeners();
 
+        sharedPreferences = getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
         // Temporary values
         et_username.setText("overseer@gmail.com");
         et_password.setText("Overseer123");
@@ -99,9 +103,16 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
     @Override
     public void renderLoginSuccess() {
+        Toast.makeText(getApplicationContext(), UserInfoHandler.getCurrentUser(sharedPreferences).toString()+
+                "\ntoken: "+ UserInfoHandler.getCurrentAccountToken(sharedPreferences),Toast.LENGTH_LONG).show();
         Intent i = new Intent(this, MapActivity.class);
         startActivity(i);
         finish();
+    }
+
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
     }
     // endregion
 

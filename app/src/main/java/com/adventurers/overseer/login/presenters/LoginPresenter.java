@@ -5,6 +5,8 @@ import android.os.Looper;
 
 import com.adventurers.overseer.login.interactors.LoginInteractor;
 import com.adventurers.overseer.login.views.ILoginView;
+import com.adventurers.overseer.user.handlers.UserInfoHandler;
+import com.adventurers.overseer.user.models.UserInfo;
 
 public class LoginPresenter implements ILoginPresenter {
     ILoginView loginView;
@@ -26,6 +28,11 @@ public class LoginPresenter implements ILoginPresenter {
     @Override
     public void presentLoginSuccess() {
         loginView.renderLoginSuccess();
+    }
+
+    @Override
+    public void saveCurrentUserToPreferences(UserInfo user, String authToken) {
+        UserInfoHandler.setCurrentUser(user,authToken,loginView.getSharedPreferences());
     }
 
     public void handleLogin(String userName, String password){
