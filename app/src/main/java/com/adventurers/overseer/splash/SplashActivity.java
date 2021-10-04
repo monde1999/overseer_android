@@ -22,6 +22,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
+        //use this to delete all stored info
+        //for testing
+        //sharedPreferences.edit().clear().commit();
         if(UserInfoHandler.hasAccountStored(sharedPreferences)){
             UserInfo currentUser = UserInfoHandler.getCurrentUser(sharedPreferences);
             String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
