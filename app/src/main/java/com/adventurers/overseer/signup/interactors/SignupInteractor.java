@@ -4,6 +4,7 @@ import com.adventurers.overseer.signup.controllers.ISignupController;
 import com.adventurers.overseer.signup.controllers.SignupController;
 import com.adventurers.overseer.signup.models.SignupData;
 import com.adventurers.overseer.signup.presenters.ISignupPresenter;
+import com.adventurers.overseer.user.models.UserInfo;
 
 public class SignupInteractor {
     ISignupPresenter signupPresenter;
@@ -14,16 +15,18 @@ public class SignupInteractor {
     }
 
     public void signup(String email, String firstName, String lastName, String password){
-        SignupData signupData = new SignupData(email, firstName, lastName, password);
         ISignupController signupController = new SignupController(this);;
-        signupController.addUserToDb(signupData);
+        signupController.addUserToDb(email, firstName, lastName, password);
     }
 
     public void feedBackSignupFailure(int errorCode, String errorMessage){
         signupPresenter.presentSignupFailure(errorCode, errorMessage);
     }
 
-    public void feedBackLoginSuccess(){
+    public void feedBackSignupSuccess(){
         signupPresenter.presentSignupSuccess();
+    }
+    public void rememberUser(UserInfo user, String authToken){
+        signupPresenter.saveCurrentUserToPreferences(user,authToken);
     }
 }

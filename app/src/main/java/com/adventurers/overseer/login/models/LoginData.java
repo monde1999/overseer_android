@@ -1,24 +1,56 @@
 package com.adventurers.overseer.login.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class LoginData {
-    private final String username;
-    private final String password;
+
+    @SerializedName("token")
+    @Expose
+    private String token;
+
+    @SerializedName("id")
+    @Expose
+    private int userId;
+
+    @SerializedName("firstName")
+    @Expose
+    private String firstName;
+
+    @SerializedName("lastName")
+    @Expose
+    private String lastName;
+
+    @SerializedName("username")
+    @Expose
+    public String username;
+
+    @SerializedName("isUserNameCorrect")
+    @Expose
     private boolean isUserNameCorrect;
+
+    @SerializedName("isPasswordCorrect")
+    @Expose
     private boolean isPasswordCorrect;
 
-    public LoginData(String username, String password) {
-        this.username = username;
-        this.password = password;
-        isUserNameCorrect = false;
-        isPasswordCorrect = false;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getUsername() {
         return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public boolean isUserNameCorrect() {
@@ -27,13 +59,5 @@ public class LoginData {
 
     public boolean isPasswordCorrect() {
         return isPasswordCorrect;
-    }
-
-    public void setUserNameCorrect(boolean userNameCorrect) {
-        isUserNameCorrect = userNameCorrect;
-    }
-
-    public void setPasswordCorrect(boolean passwordCorrect) {
-        isPasswordCorrect = passwordCorrect;
     }
 }
