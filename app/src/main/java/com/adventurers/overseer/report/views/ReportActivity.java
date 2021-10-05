@@ -62,7 +62,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
 
     private View view;
     private IReportView iReportView;
-    private ReportsRecyclerViewAdapter adapter;
+    private ReportRecyclerViewAdapter adapter;
     private ActivityResultLauncher<Intent> galleryIntentResultLauncher;
     private ActivityResultLauncher<Intent> cameraIntentResultLauncher;
     private List<File> imageFiles;
@@ -82,6 +82,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     @Override
     public void renderReportSuccess(String message) {
         Toast.makeText(getActivity(),  message, Toast.LENGTH_LONG).show();
+        this.dismiss();
     }
 
     @Override
@@ -107,7 +108,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                         + "\nimageFiles: " + imageFiles.size()
                         + "\ndescription: " + description,
                 Toast.LENGTH_LONG).show();
-        presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description);// endregion
+        presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description);
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -238,7 +239,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                     RecyclerView recyclerView = view.findViewById(R.id.report_recycler);
                     LinearLayoutManager horizontal = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
                     recyclerView.setLayoutManager(horizontal);
-                    adapter = new ReportsRecyclerViewAdapter(imageFiles);
+                    adapter = new ReportRecyclerViewAdapter(imageFiles);
                     recyclerView.setAdapter(adapter);
 
                     NumberPicker np_flood_level = view.findViewById(R.id.report_np_flood_level);

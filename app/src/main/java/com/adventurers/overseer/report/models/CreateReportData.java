@@ -1,4 +1,4 @@
-package com.adventurers.overseer.report.server;
+package com.adventurers.overseer.report.models;
 
 import com.adventurers.overseer.map.models.Location;
 

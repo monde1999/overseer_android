@@ -17,22 +17,22 @@ import java.util.List;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
-public class ReportsRecyclerViewAdapter extends RecyclerView.Adapter<ReportsRecyclerViewAdapter.ReportsViewHolder> {
+public class ReportRecyclerViewAdapter extends RecyclerView.Adapter<ReportRecyclerViewAdapter.ReportsViewHolder> {
     private final List<File> mImageFiles;
 
-    public ReportsRecyclerViewAdapter(List<File> imageFiles) {
+    public ReportRecyclerViewAdapter(List<File> imageFiles) {
         mImageFiles = imageFiles;
     }
 
     @NonNull
     @Override
-    public ReportsRecyclerViewAdapter.ReportsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ReportRecyclerViewAdapter.ReportsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.fragment_report_image_item, parent, false);
         return new ReportsViewHolder(view);
     }
     @Override
-    public void onBindViewHolder(@NonNull ReportsRecyclerViewAdapter.ReportsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ReportRecyclerViewAdapter.ReportsViewHolder holder, int position) {
         Transformation transformation = new RoundedCornersTransformation(100,0);
         Picasso.get().load(mImageFiles.get(position)).transform(transformation).resize(400,400).centerCrop().into(holder.image);
     }

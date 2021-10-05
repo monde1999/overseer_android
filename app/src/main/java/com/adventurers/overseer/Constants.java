@@ -12,7 +12,7 @@ public class Constants {
     public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
     public static String TAG_REPORT = "ReportModule";
 
-    public static String BASE_URL_OVERSEER = "http://192.168.254.102:8000/";
+    public static String BASE_URL_OVERSEER = "http://192.168.1.11:8000/";
     public static String BASE_URL_WEATHER = "https://api.openweathermap.org/";
 
     public static String OPENWEATHER_APPID = "67aa636d02df1df62ef01de2db58fa49";

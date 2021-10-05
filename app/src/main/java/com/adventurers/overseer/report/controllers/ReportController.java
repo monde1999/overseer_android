@@ -1,8 +1,10 @@
 package com.adventurers.overseer.report.controllers;
 
+import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
+
+import com.adventurers.overseer.api.OverseerApi;
 import com.adventurers.overseer.report.interactors.ReportInteractor;
-import com.adventurers.overseer.report.server.CreateReportData;
-import com.adventurers.overseer.report.server.ReportApi;
+import com.adventurers.overseer.report.models.CreateReportData;
 
 import java.io.File;
 
@@ -17,7 +19,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ReportController implements IReportController {
-    public static final String BASE_URL = "http://192.168.254.102:8000/report/"; // change to host ip of server accordingly
+    public static final String BASE_URL = BASE_URL_OVERSEER; // change to host ip of server accordingly
     Retrofit retrofit;
     ReportInteractor reportInteractor;
     public  ReportController(ReportInteractor reportInteractor){
@@ -29,7 +31,7 @@ public class ReportController implements IReportController {
     }
     @Override
     public void addReportToDb(CreateReportData reportData) {
-        ReportApi reportApi = retrofit.create(ReportApi.class);
+        OverseerApi overseerApi = retrofit.create(OverseerApi.class);
         MultipartBody.Part[] imagesPart;
         if (reportData.getImages()!= null && !reportData.getImages().isEmpty()){
             imagesPart = new MultipartBody.Part[reportData.getImages().size()];
@@ -46,7 +48,7 @@ public class ReportController implements IReportController {
             imagesPart = null;
         }
         RequestBody description = RequestBody.create(MediaType.parse("text/plain"),reportData.getDescription());
-        Call<okhttp3.ResponseBody> call = reportApi.createReport(reportData.getUser(), reportData.getDescription(),
+        Call<okhttp3.ResponseBody> call = overseerApi.createReport(reportData.getUser(), reportData.getDescription(),
                 reportData.getLatitude(), reportData.getLongitude(), reportData.getFloodLevel(), imagesPart);
         call.enqueue(new Callback<ResponseBody>() {
             @Override

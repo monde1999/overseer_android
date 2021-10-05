@@ -1,4 +1,4 @@
-package com.adventurers.overseer.report.server;
+package com.adventurers.overseer.api;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;

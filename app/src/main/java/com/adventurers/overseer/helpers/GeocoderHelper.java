@@ -3,7 +3,6 @@ package com.adventurers.overseer.helpers;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.widget.TextView;
 
 import com.adventurers.overseer.map.models.Location;
 
