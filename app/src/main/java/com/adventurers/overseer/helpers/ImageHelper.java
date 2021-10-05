@@ -44,4 +44,11 @@ public class ImageHelper {
             }
         });
     }
+
+    public static void loadStreetStaticView(Location location, ImageView imageView) {
+        String size = "size=" + imageView.getWidth() + "x" + imageView.getHeight();
+        String url = "https://maps.googleapis.com/maps/api/streetview?" + size + "&location=" + location.getLatitude() + "," + location.getLongitude() + "&key=" + imageView.getResources().getString(R.string.google_maps_key);
+        Transformation transformation = new RoundedCornersTransformation(80,0);
+        Picasso.get().load(url).transform(transformation).into(imageView);
+    }
 }

@@ -3,6 +3,8 @@ package com.adventurers.overseer;
 public class Constants {
     public static final int RC_ACCESS_FINE_LOCATION = 4003;
     public static final int RC_GPS_SERVICE = 4004;
+    public static final int RC_CAMERA = 4005;
+    public static final int RC_WRITE_EXTERNAL_STORAGE = 4006;
 
     public static final int EC_SERVER_FAILED = 4444;
     public static final String EM_SERVER_FAILED = "Can't connect to server.";
@@ -17,6 +19,7 @@ public class Constants {
     public static final String EM_EMAIL_REGISTERED = "Email is already registered.";
 
     public static String TAG_FLOOD_FORECAST_DETAILED_FRAGMENT = "FloodForecastDetailedFragment";
+    public static String TAG_REPORT = "ReportModule";
 
     public static String BASE_URL_OVERSEER = "http://192.168.1.11:8000/";
     public static String BASE_URL_WEATHER = "https://api.openweathermap.org/";

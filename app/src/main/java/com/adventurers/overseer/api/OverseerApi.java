@@ -5,6 +5,8 @@ import com.adventurers.overseer.signup.models.SignupData;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -31,4 +33,13 @@ public interface OverseerApi {
     @POST("account/login/")
     Call<LoginData> Login(@Part("username") RequestBody username,
                           @Part("password") RequestBody password);
+
+    @Multipart
+    @POST("report/create/")
+    Call<ResponseBody> createReport(@Part("user") int user,
+                                    @Part ("description") String description,
+                                    @Part("latitude") double latitude,
+                                    @Part("longitude") double longitude,
+                                    @Part("floodLevel") int floodLevel,
+                                    @Part MultipartBody.Part[] images);
 }
