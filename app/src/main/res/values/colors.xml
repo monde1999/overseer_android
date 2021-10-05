@@ -13,5 +13,6 @@
     <color name="grey">#95A5A6</color>
     <color name="amber_500">#FFC107</color>
     <color name="grey_900">#424242</color>
+    <color name="red_500">#F44336</color>
 
 </resources>

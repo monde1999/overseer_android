@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".login.views.LoginActivity"
+    android:background="@color/main_color">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dp_100"
+        android:background="@drawable/card_rounded_top"
+        android:elevation="@dimen/dp_15"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/dp_150"
+            android:layout_height="@dimen/dp_150"
+            android:layout_marginTop="@dimen/dp_20"
+            android:src="@drawable/logo_overseer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="Overseer Logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/dp_30"
+            android:text="@string/app_name"
+            android:textSize="@dimen/sp_20" />
+
+        <EditText
+            android:id="@+id/login_et_username"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginHorizontal="@dimen/dp_20"
+            android:background="@drawable/bg_edittext_selector"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="@dimen/dp_20"
+            android:textColor="@color/black"
+            android:autofillHints="username"/>
+
+        <TextView
+            android:id="@+id/login_tv_username_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="Error here"
+            android:textColor="@color/red_500"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/login_et_password"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginHorizontal="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_20"
+            android:background="@drawable/bg_edittext_selector"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:maxLength="16"
+            android:paddingHorizontal="@dimen/dp_20"
+            android:textColor="@color/black"
+            android:autofillHints="password"/>
+
+        <TextView
+            android:id="@+id/login_tv_password_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="Error here"
+            android:textColor="@color/red_500"
+            android:visibility="gone" />
+
+        <android.widget.Button
+            android:id="@+id/login_btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginHorizontal="@dimen/dp_20"
+            android:layout_marginVertical="@dimen/dp_20"
+            android:background="@drawable/bg_button"
+            android:text="Login"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <TextView
+            android:id="@+id/login_tv_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_20"
+            android:text="Forgot Password?"
+            android:textColor="@color/main_color" />
+
+        <TextView
+            android:id="@+id/login_tv_create_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_30"
+            android:text="Create Account"
+            android:textColor="@color/main_color" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,8 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-v24/bg_button.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-v24/bg_scard.xml" value="0.21666666666666667" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-v24/bg_street.xml" value="0.21944444444444444" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-v24/card_rounded_top.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-xxhdpi/bg_edittext_selector.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-xxhdpi/card_shape.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-xxhdpi/edit_text_selector.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable-xxhdpi/edit_text_shape.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable/splash_bg.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/drawable/splash_screen.xml" value="0.22552083333333334" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/activity_login.xml" value="0.209375" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/activity_map.xml" value="0.209375" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/activity_signup.xml" value="0.209375" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/dialog_loading.xml" value="0.209375" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_floodforecast_detailed.xml" value="0.33" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_report.xml" value="0.25" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_report_image_item.xml" value="0.209375" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_street.xml" value="0.22037037037037038" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_weather.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/card_shape.xml" value="0.22552083333333334" />
