@@ -38,7 +38,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
 
     @Override
     public void onBindViewHolder(@NonNull ReportsViewHolder holder, int position) {
-        String name = "Juan Dela Cruz " + reports.get(position).getId();
+        String name = reports.get(position).getUser().getFirst_name() + " " + reports.get(position).getUser().getLast_name();
         holder.tv_name.setText(name);
         holder.tv_time_address.setText(reports.get(position).getTimestamp());
         holder.tv_caption.setText((reports.get(position).getDescription()));
