@@ -1,10 +1,14 @@
 package com.adventurers.overseer.report.views;
 
+import static com.adventurers.overseer.Constants.preferencesKey;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +41,11 @@ import com.adventurers.overseer.helpers.GeocoderHelper;
 import com.adventurers.overseer.helpers.ImageHelper;
 import com.adventurers.overseer.helpers.PermissionHelper;
 import com.adventurers.overseer.map.models.Location;
+import com.adventurers.overseer.map.views.MapActivity;
 import com.adventurers.overseer.report.presenters.ReportPresenter;
+import com.adventurers.overseer.splash.SplashActivity;
+import com.adventurers.overseer.user.handlers.UserInfoHandler;
+import com.adventurers.overseer.user.models.UserInfo;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -94,9 +102,10 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     public void renderReportProgressing(String message) {
         Toast.makeText(getActivity(),  message, Toast.LENGTH_LONG).show();
     }
+    // endregion
+
     // region DialogFragment...
     public void submit(EditText et_description,NumberPicker np_flood_level) {
-        user = 1;
         description = et_description.getText().toString();
         floodLevel = np_flood_level.getValue();
         ReportPresenter presenter = new ReportPresenter(this);
@@ -259,9 +268,22 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                         }
                     });
 
+                    TextView tv_name = view.findViewById(R.id.report_tv_username);
                     TextView tv_location = view.findViewById(R.id.report_tv_location);
                     ImageView iv_location = view.findViewById(R.id.report_iv_location);
                     TextView tv_time_location = view.findViewById(R.id.report_tv_time_location);
+
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
+                    if(UserInfoHandler.hasAccountStored(sharedPreferences)){
+                        UserInfo currentUser = UserInfoHandler.getCurrentUser(sharedPreferences);
+                        String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+                        tv_name.setText(fullName);
+                        user = currentUser.getId();
+                    }
+                    else {
+                        tv_name.setText("Unknown User");
+                        user = -1;
+                    }
 
                     String address = GeocoderHelper.getLocationAddress(reportedLocation, getContext());
                     ImageHelper.loadStreetStaticView(reportedLocation, iv_location);

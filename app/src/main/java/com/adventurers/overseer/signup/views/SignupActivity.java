@@ -78,11 +78,11 @@ public class SignupActivity extends AppCompatActivity implements ISignUpView {
         });
 
         //Temporary values
-        et_username.setText("overseer@gmail.com");
-        et_firstname.setText("Over");
-        et_lastname.setText("Seer");
-        et_password.setText("Overseer123");
-        et_password2.setText("Overseer123");
+//        et_username.setText("overseer@gmail.com");
+//        et_firstname.setText("Over");
+//        et_lastname.setText("Seer");
+//        et_password.setText("Overseer123");
+//        et_password2.setText("Overseer123");
 
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override

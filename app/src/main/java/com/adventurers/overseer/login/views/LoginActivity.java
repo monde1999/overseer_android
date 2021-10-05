@@ -53,8 +53,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
         sharedPreferences = getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
         // Temporary values
-        et_username.setText("overseer@gmail.com");
-        et_password.setText("Overseer123");
+//        et_username.setText("overseer@gmail.com");
+//        et_password.setText("Overseer123");
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
