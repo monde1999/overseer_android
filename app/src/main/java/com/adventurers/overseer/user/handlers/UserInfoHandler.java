@@ -1,6 +1,7 @@
 package com.adventurers.overseer.user.handlers;
 
 import android.content.SharedPreferences;
+
 import com.adventurers.overseer.user.models.UserInfo;
 
 public class UserInfoHandler {

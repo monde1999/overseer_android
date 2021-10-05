@@ -6,13 +6,10 @@ import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EM_EMAIL_REGISTERED;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
-import com.adventurers.overseer.signup.api.SignUpApi;
+import com.adventurers.overseer.api.OverseerApi;
 import com.adventurers.overseer.signup.interactors.SignupInteractor;
 import com.adventurers.overseer.signup.models.SignupData;
-import com.adventurers.overseer.user.handlers.UserInfoHandler;
 import com.adventurers.overseer.user.models.UserInfo;
-
-import java.util.concurrent.RecursiveTask;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -36,12 +33,12 @@ public class SignupController implements ISignupController {
 
     @Override
     public void addUserToDb(String email, String firstName, String lastName, String password) {
-        SignUpApi signUpApi = retrofit.create(SignUpApi.class);
+        OverseerApi overseerApi = retrofit.create(OverseerApi.class);
         RequestBody user = RequestBody.create(MediaType.parse("text/plain"),email);
         RequestBody pass = RequestBody.create(MediaType.parse("text/plain"),password);
         RequestBody fName = RequestBody.create(MediaType.parse("text/plain"),firstName);
         RequestBody lName = RequestBody.create(MediaType.parse("text/plain"),lastName);
-        Call<SignupData> call = signUpApi.SignUp(user, pass,
+        Call<SignupData> call = overseerApi.SignUp(user, pass,
                 fName, lName);
         call.enqueue(new Callback<SignupData>() {
             @Override

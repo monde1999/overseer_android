@@ -2,7 +2,6 @@ package com.adventurers.overseer.signup.interactors;
 
 import com.adventurers.overseer.signup.controllers.ISignupController;
 import com.adventurers.overseer.signup.controllers.SignupController;
-import com.adventurers.overseer.signup.models.SignupData;
 import com.adventurers.overseer.signup.presenters.ISignupPresenter;
 import com.adventurers.overseer.user.models.UserInfo;
 

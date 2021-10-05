@@ -8,7 +8,7 @@ import static com.adventurers.overseer.Constants.EM_ACCOUNT_NOT_EXIST;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EM_WRONG_PASSWORD;
 
-import com.adventurers.overseer.login.api.LoginApi;
+import com.adventurers.overseer.api.OverseerApi;
 import com.adventurers.overseer.login.interactors.LoginInteractor;
 import com.adventurers.overseer.login.models.LoginData;
 import com.adventurers.overseer.user.models.UserInfo;
@@ -35,10 +35,10 @@ public class LoginController implements ILoginController {
 
     @Override
     public void getLoginResults(String username, String password) {
-        LoginApi loginApi = retrofit.create(LoginApi.class);
+        OverseerApi overseerApi = retrofit.create(OverseerApi.class);
         RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
         RequestBody pass = RequestBody.create(MediaType.parse("text/plain"),password);
-        Call<LoginData> call = loginApi.Login(user,pass);
+        Call<LoginData> call = overseerApi.Login(user,pass);
         call.enqueue(new Callback<LoginData>() {
             @Override
             public void onResponse(Call<LoginData> call, Response<LoginData> response) {

@@ -2,7 +2,6 @@ package com.adventurers.overseer.login.interactors;
 
 import com.adventurers.overseer.login.controllers.ILoginController;
 import com.adventurers.overseer.login.controllers.LoginController;
-import com.adventurers.overseer.login.models.LoginData;
 import com.adventurers.overseer.login.presenters.ILoginPresenter;
 import com.adventurers.overseer.user.models.UserInfo;
 
