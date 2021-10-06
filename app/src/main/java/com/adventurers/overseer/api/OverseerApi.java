@@ -23,4 +23,9 @@ public interface OverseerApi {
     Call<List<ReportImage>> getImages(
             @Query("report_id") int id
     );
+
+    @GET("forecast/report-reactions-count/")
+    Call<ReactionsCount> getReactionsCount(
+            @Query("report_id") int id
+    );
 }

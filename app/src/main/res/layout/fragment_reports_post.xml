@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_thumbs_up_15dp"
                     android:drawablePadding="@dimen/dp_5"
-                    android:text="321"
+                    android:text="\?"
                     android:foregroundGravity="center"
                     android:textSize="@dimen/sp_14"
                     tools:ignore="UseCompatTextViewDrawableXml" />
@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_thumbs_down_15dp"
                     android:drawablePadding="@dimen/dp_5"
-                    android:text="123"
+                    android:text="\?"
                     android:foregroundGravity="center"
                     android:textSize="@dimen/sp_14"
                     android:layout_marginLeft="@dimen/dp_10"
@@ -90,21 +90,23 @@
                 android:layout_marginTop="@dimen/dp_10"
                 android:weightSum="2">
                 <ImageButton
+                    android:id="@+id/reports_post_btn_like"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_button"
+                    android:background="@drawable/bg_btn_grey_border"
                     android:layout_marginEnd="@dimen/dp_5"
-                    android:src="@drawable/ic_thumbs_up_20dp"
+                    android:src="@drawable/ic_thumbs_up_20dp_grey"
                     android:padding="@dimen/dp_10"/>
                 <ImageButton
+                    android:id="@+id/reports_post_btn_dislike"
                     android:layout_marginStart="@dimen/dp_5"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:padding="@dimen/dp_10"
-                    android:background="@drawable/bg_button"
-                    android:src="@drawable/ic_thumbs_down_20dp"/>
+                    android:background="@drawable/bg_btn_grey_border"
+                    android:src="@drawable/ic_thumbs_down_20dp_grey"/>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

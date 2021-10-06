@@ -2,6 +2,9 @@ package com.adventurers.overseer.helpers;
 
 import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -9,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adventurers.overseer.api.OverseerApi;
+import com.adventurers.overseer.api.ReactionsCount;
 import com.adventurers.overseer.api.ReportData;
 import com.adventurers.overseer.api.ReportImage;
 import com.adventurers.overseer.map.models.Location;
@@ -48,13 +52,13 @@ public class ReportsHelper {
         });
     }
 
-    public static void fetchImagesForReport(ReportData reportData, RecyclerView recyclerView) {
+    public static void fetchImagesForReport(int id, RecyclerView recyclerView) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_OVERSEER)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
-        Call<List<ReportImage>> call = overseerApi.getImages(reportData.getId());
+        Call<List<ReportImage>> call = overseerApi.getImages(id);
         call.enqueue(new Callback<List<ReportImage>>() {
             @Override
             public void onResponse(@NonNull Call<List<ReportImage>> call, @NonNull Response<List<ReportImage>> response) {
@@ -69,6 +73,30 @@ public class ReportsHelper {
 
             @Override
             public void onFailure(@NonNull Call<List<ReportImage>> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
+    public static void fetchReactionsCountForReport(int id) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL_OVERSEER)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        OverseerApi overseerApi = retrofit.create(OverseerApi.class);
+        Call<ReactionsCount> call = overseerApi.getReactionsCount(id);
+        call.enqueue(new Callback<ReactionsCount>() {
+            @Override
+            public void onResponse(@NonNull Call<ReactionsCount> call, @NonNull Response<ReactionsCount> response) {
+                if(!response.isSuccessful()){
+                    return;
+                }
+                if (response.body() != null) {
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReactionsCount> call, @NonNull Throwable t) {
 
             }
         });
