@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.api.ReportData;
+import com.adventurers.overseer.api.ReportReactData;
 
 import java.util.List;
 
@@ -48,16 +49,16 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             @Override
             public void onClick(View view) {
                 holder.toggleLikeDislike(true);
-//                ReportReact reportReact  = new ReportReact(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),true);
-//                ReportsHelper.postReportReaction(reportReact);
+                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),true);
+                ReportsHelper.postReportReaction(reportReact);
             }
         });
         holder.btn_dislike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 holder.toggleLikeDislike(false);
-//                ReportReact reportReact  = new ReportReact(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),false);
-//                ReportsHelper.postReportReaction(reportReact);
+                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),false);
+                ReportsHelper.postReportReaction(reportReact);
             }
         });
     }
