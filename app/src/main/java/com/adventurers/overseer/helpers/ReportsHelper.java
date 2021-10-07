@@ -78,7 +78,7 @@ public class ReportsHelper {
         });
     }
 
-    public static void fetchReactionsCountForReport(int id) {
+    public static void fetchReactionsCountForReport(int id, TextView tv_likes, TextView tv_dislikes) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_OVERSEER)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -92,6 +92,10 @@ public class ReportsHelper {
                     return;
                 }
                 if (response.body() != null) {
+                    String likes = response.body().getPositive()+"";
+                    String dislikes = response.body().getNegative()+"";
+                    tv_likes.setText(likes);
+                    tv_dislikes.setText(dislikes);
                 }
             }
 

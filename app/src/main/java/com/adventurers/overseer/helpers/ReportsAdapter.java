@@ -38,7 +38,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
         holder.tv_caption.setText((reports.get(position).getDescription()));
         LinearLayoutManager manager = new LinearLayoutManager(holder.rv_images.getContext(), LinearLayoutManager.HORIZONTAL, false);
         holder.rv_images.setLayoutManager(manager);
-        ReportsHelper.fetchReactionsCountForReport(reports.get(position).getId());
+        ReportsHelper.fetchReactionsCountForReport(reports.get(position).getId(), holder.tv_likes, holder.tv_dislikes);
         ReportsHelper.fetchImagesForReport(reports.get(position).getId(), holder.rv_images);
 
         holder.btn_like.setOnClickListener(new View.OnClickListener() {
