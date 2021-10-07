@@ -1,7 +1,5 @@
 package com.adventurers.overseer.api;
 
-import com.google.gson.annotations.SerializedName;
-
 public class ReportData {
     private int id;
     private ReportDataUser user;

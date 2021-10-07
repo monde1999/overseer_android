@@ -3,7 +3,6 @@ package com.adventurers.overseer.helpers;
 import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;

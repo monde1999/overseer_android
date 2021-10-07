@@ -3,7 +3,6 @@ package com.adventurers.overseer.floodforecast.views;
 import static com.adventurers.overseer.Constants.TAG_FLOOD_FORECAST_DETAILED_FRAGMENT;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
