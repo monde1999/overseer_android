@@ -15,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"/>
     <androidx.recyclerview.widget.RecyclerView
+        android:descendantFocusability="blocksDescendants"
         android:layout_marginTop="@dimen/dp_10"
         android:id="@+id/reports_rv_posts"
         android:layout_width="match_parent"

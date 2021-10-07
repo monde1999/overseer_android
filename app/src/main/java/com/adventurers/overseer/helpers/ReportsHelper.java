@@ -131,7 +131,7 @@ public class ReportsHelper {
         });
     }
 
-    public static void postReportReaction(ReportReactData reportReactData) {
+    public static void postReportReaction(ReportReactData reportReactData, TextView tv_likes, TextView tv_dislikes) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_OVERSEER)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -145,7 +145,8 @@ public class ReportsHelper {
                     return;
                 }
                 if (response.body() != null) {
-
+                    // Update report reactions count
+                    ReportsHelper.fetchReactionsCountForReport(reportReactData.getReport(), tv_likes, tv_dislikes);
                 }
             }
 

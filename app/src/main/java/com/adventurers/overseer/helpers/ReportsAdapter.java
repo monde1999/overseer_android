@@ -50,7 +50,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             public void onClick(View view) {
                 holder.toggleLikeDislike(true);
                 ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),true);
-                ReportsHelper.postReportReaction(reportReact);
+                ReportsHelper.postReportReaction(reportReact, holder.tv_likes, holder.tv_dislikes);
             }
         });
         holder.btn_dislike.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +58,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             public void onClick(View view) {
                 holder.toggleLikeDislike(false);
                 ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),false);
-                ReportsHelper.postReportReaction(reportReact);
+                ReportsHelper.postReportReaction(reportReact, holder.tv_likes, holder.tv_dislikes);
             }
         });
     }
