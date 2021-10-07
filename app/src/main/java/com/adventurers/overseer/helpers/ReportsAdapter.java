@@ -33,70 +33,31 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
     @Override
     public void onBindViewHolder(@NonNull ReportsViewHolder holder, int position) {
         String name = reports.get(position).getUser().getFirst_name() + " " + reports.get(position).getUser().getLast_name();
+        int reportId = reports.get(position).getId();
+        int userId = reports.get(position).getUser().getId();
         holder.tv_name.setText(name);
         holder.tv_time_address.setText(reports.get(position).getTimestamp());
         holder.tv_caption.setText((reports.get(position).getDescription()));
         LinearLayoutManager manager = new LinearLayoutManager(holder.rv_images.getContext(), LinearLayoutManager.HORIZONTAL, false);
         holder.rv_images.setLayoutManager(manager);
-        ReportsHelper.fetchReactionsCountForReport(reports.get(position).getId(), holder.tv_likes, holder.tv_dislikes);
-        ReportsHelper.fetchImagesForReport(reports.get(position).getId(), holder.rv_images);
+        ReportsHelper.fetchReactionForReport(reportId, userId, holder);
+        ReportsHelper.fetchReactionsCountForReport(reportId, holder.tv_likes, holder.tv_dislikes);
+        ReportsHelper.fetchImagesForReport(reportId, holder.rv_images);
 
         holder.btn_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (holder.selected) {
-                    case 0:
-                        // Activate like
-                        holder.btn_like.setBackgroundResource(R.drawable.bg_btn_main_fill);
-                        holder.btn_like.setImageResource(R.drawable.ic_thumbs_up_20dp_white);
-                        holder.selected = 1;
-                        break;
-                    case 1:
-                        // Deactivate like
-                        holder.btn_like.setBackgroundResource(R.drawable.bg_btn_grey_border);
-                        holder.btn_like.setImageResource(R.drawable.ic_thumbs_up_20dp_grey);
-                        holder.selected = 0;
-                        break;
-                    case -1:
-                        // Deactivate dislike
-                        holder.btn_dislike.setBackgroundResource(R.drawable.bg_btn_grey_border);
-                        holder.btn_dislike.setImageResource(R.drawable.ic_thumbs_down_20dp_grey);
-
-                        // Activate like
-                        holder.btn_like.setBackgroundResource(R.drawable.bg_btn_main_fill);
-                        holder.btn_like.setImageResource(R.drawable.ic_thumbs_up_20dp_white);
-                        holder.selected = 1;
-                        break;
-                }
+                holder.toggleLikeDislike(true);
+//                ReportReact reportReact  = new ReportReact(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),true);
+//                ReportsHelper.postReportReaction(reportReact);
             }
         });
         holder.btn_dislike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (holder.selected) {
-                    case 0:
-                        // Activate dislike
-                        holder.btn_dislike.setBackgroundResource(R.drawable.bg_btn_main_fill);
-                        holder.btn_dislike.setImageResource(R.drawable.ic_thumbs_down_20dp_white);
-                        holder.selected = -1;
-                        break;
-                    case 1:
-                        // Deactivate like
-                        holder.btn_like.setBackgroundResource(R.drawable.bg_btn_grey_border);
-                        holder.btn_like.setImageResource(R.drawable.ic_thumbs_up_20dp_grey);
-
-                        // Activate dislike
-                        holder.btn_dislike.setBackgroundResource(R.drawable.bg_btn_main_fill);
-                        holder.btn_dislike.setImageResource(R.drawable.ic_thumbs_down_20dp_white);
-                        holder.selected = -1;
-                        break;
-                    case -1:
-                        // Deactivate dislike
-                        holder.btn_dislike.setBackgroundResource(R.drawable.bg_btn_grey_border);
-                        holder.btn_dislike.setImageResource(R.drawable.ic_thumbs_down_20dp_grey);
-                        holder.selected = 0;
-                        break;
-                }
+                holder.toggleLikeDislike(false);
+//                ReportReact reportReact  = new ReportReact(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),false);
+//                ReportsHelper.postReportReaction(reportReact);
             }
         });
     }
@@ -128,6 +89,65 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             btn_like = itemView.findViewById(R.id.reports_post_btn_like);
             btn_dislike = itemView.findViewById(R.id.reports_post_btn_dislike);
             selected = 0;
+        }
+
+        public void toggleLikeDislike(boolean isLike) {
+            switch (selected) {
+                case 0:
+                    if(isLike) {
+                        switchLike(true);
+                        selected = 1;
+                    }
+                    else {
+                        switchDislike(true);
+                        selected = -1;
+                    }
+                    break;
+                case 1:
+                    if(isLike) {
+                        switchLike(false);
+                        selected = 0;
+                    }
+                    else {
+                        switchLike(false);
+                        switchDislike(true);
+                        selected = -1;
+                    }
+                    break;
+                case -1:
+                    if(isLike) {
+                        switchDislike(false);
+                        switchLike(true);
+                        selected = 1;
+                    }
+                    else {
+                        switchDislike(false);
+                        selected = 0;
+                    }
+                    break;
+            }
+        }
+
+        private void switchLike(boolean isOn) {
+            if(isOn) {
+                btn_like.setBackgroundResource(R.drawable.bg_btn_main_fill);
+                btn_like.setImageResource(R.drawable.ic_thumbs_up_20dp_white);
+            }
+            else {
+                btn_like.setBackgroundResource(R.drawable.bg_btn_grey_border);
+                btn_like.setImageResource(R.drawable.ic_thumbs_up_20dp_grey);
+            }
+        }
+
+        private void switchDislike(boolean isOn) {
+            if(isOn) {
+                btn_dislike.setBackgroundResource(R.drawable.bg_btn_main_fill);
+                btn_dislike.setImageResource(R.drawable.ic_thumbs_down_20dp_white);
+            }
+            else {
+                btn_dislike.setBackgroundResource(R.drawable.bg_btn_grey_border);
+                btn_dislike.setImageResource(R.drawable.ic_thumbs_down_20dp_grey);
+            }
         }
     }
 }

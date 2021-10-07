@@ -3,7 +3,9 @@ package com.adventurers.overseer.api;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface OverseerApi {
@@ -24,8 +26,17 @@ public interface OverseerApi {
             @Query("report_id") int id
     );
 
+    @GET("forecast/report-reactions/")
+    Call<List<ReportReaction>> getReportReaction(
+            @Query("report_id") int reportId,
+            @Query("user_id") int userId
+    );
+
     @GET("forecast/report-reactions-count/")
     Call<ReactionsCount> getReactionsCount(
             @Query("report_id") int id
     );
+
+    @POST("report/react/")
+    Call<ReportReactResponse> postReportReaction(@Body ReportReactData reportReactData);
 }
