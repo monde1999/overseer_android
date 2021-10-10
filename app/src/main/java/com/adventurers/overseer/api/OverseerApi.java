@@ -9,7 +9,9 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -42,4 +44,29 @@ public interface OverseerApi {
                                     @Part("longitude") double longitude,
                                     @Part("floodLevel") int floodLevel,
                                     @Part MultipartBody.Part[] images);
+
+    @GET("forecast/reports/")
+    Call<List<ReportData>> getReports(
+            @Query("latitude") double latitude,
+            @Query("longitude") double longitude
+    );
+
+    @GET("forecast/report-images/")
+    Call<List<ReportImage>> getImages(
+            @Query("report_id") int id
+    );
+
+    @GET("forecast/report-reactions/")
+    Call<List<ReportReaction>> getReportReaction(
+            @Query("report_id") int reportId,
+            @Query("user_id") int userId
+    );
+
+    @GET("forecast/report-reactions-count/")
+    Call<ReactionsCount> getReactionsCount(
+            @Query("report_id") int id
+    );
+
+    @POST("report/react/")
+    Call<ReportReactResponse> postReportReaction(@Body ReportReactData reportReactData);
 }

@@ -6,8 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/dp_10"
-    android:paddingBottom="@dimen/dp_20">
+    android:paddingTop="@dimen/dp_30">
     <ImageButton
         android:id="@+id/forecast_btn_back"
         android:layout_width="wrap_content"
@@ -37,7 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/forecast_btn_back"
-        android:layout_marginTop="@dimen/dp_20"
         android:layout_marginHorizontal="10dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -275,6 +273,14 @@
                     </LinearLayout>
                 </TableRow>
             </TableLayout>
+
+            <include
+                layout="@layout/fragment_reports"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/weatherTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_10"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

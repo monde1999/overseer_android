@@ -51,7 +51,8 @@ public class FloodForecastController implements IFloodForecastController {
                     Daily today = weather.getDaily().get(0);
                     forecastData.setLocation(location);
                     forecastData.setCurrent_temp(TempHelper.toCelsiusInt(current.getTemp()));
-                    forecastData.setRain(today.getRain());
+                    if(today.getRain()!=null)
+                        forecastData.setRain(today.getRain());
                     forecastData.setClouds(current.getClouds());
                     forecastData.setWeather_status(current.getWeather().get(0).getDescription());
                     forecastData.setMorn_temp(TempHelper.toCelsiusInt(today.getTemp().getMorn()));
