@@ -1,6 +1,6 @@
 package com.adventurers.overseer.api;
 
-public class ReactionsCount {
+public class ReportReactionCount {
     private int positive;
     private int negative;
 

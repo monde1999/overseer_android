@@ -2,7 +2,9 @@ package com.adventurers.overseer.map.controllers;
 
 
 import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
+import static com.adventurers.overseer.Constants.EC_SERVER_ERROR;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
+import static com.adventurers.overseer.Constants.EM_SERVER_ERROR;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,7 @@ public class MapController implements IMapController {
             public void onResponse(@NonNull Call<List<FloodArea>> call, @NonNull Response<List<FloodArea>> response) {
                 //
                 if(!response.isSuccessful()){
+                    onServerRequestFailed(EC_SERVER_ERROR, EM_SERVER_ERROR);
                     return;
                 }
                 if (response.body() != null) {
@@ -51,18 +54,20 @@ public class MapController implements IMapController {
                     }
                     mMapInteractor.onSuccessRequest(new MapData(forecasts));
                 }
+                else {
+                    onServerRequestFailed(EC_SERVER_ERROR, EM_SERVER_ERROR);
+                }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<FloodArea>> call, @NonNull Throwable t) {
-                // can't connect
-                onServerRequestFailed();
+                onServerRequestFailed(EC_SERVER_FAILED, EM_SERVER_FAILED);
             }
         });
         return null;
     }
 
-    private void onServerRequestFailed(){
-        mMapInteractor.showRequestFailure(EC_SERVER_FAILED, EM_SERVER_FAILED);
+    private void onServerRequestFailed(int code, String errorMessage){
+        mMapInteractor.showRequestFailure(code, errorMessage);
     }
 }

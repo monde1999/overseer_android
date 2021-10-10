@@ -1,6 +1,7 @@
 package com.adventurers.overseer.signup.views;
 
 import static com.adventurers.overseer.Constants.EC_EMAIL_REGISTERED;
+import static com.adventurers.overseer.Constants.EC_SERVER_ERROR;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.preferencesKey;
 
@@ -122,6 +123,7 @@ public class SignupActivity extends AppCompatActivity implements ISignUpView {
     public void renderSignupFailure(int errorCode, String errorMessage) {
         switch (errorCode){
             case EC_SERVER_FAILED:
+            case EC_SERVER_ERROR:
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
                 break;
             case EC_EMAIL_REGISTERED:

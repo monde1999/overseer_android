@@ -1,4 +1,4 @@
-package com.adventurers.overseer.helpers;
+package com.adventurers.overseer.floodforecast.views;
 
 import static com.adventurers.overseer.Constants.preferencesKey;
 
@@ -16,7 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.api.ReportData;
-import com.adventurers.overseer.api.ReportReactData;
+import com.adventurers.overseer.api.ReportReactionData;
+import com.adventurers.overseer.helpers.ReportsHelper;
 import com.adventurers.overseer.user.handlers.UserInfoHandler;
 import com.adventurers.overseer.user.models.UserInfo;
 
@@ -54,7 +55,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             @Override
             public void onClick(View view) {
                 holder.toggleLikeDislike(true);
-                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(), holder.currentUserId, true);
+                ReportReactionData reportReact  = new ReportReactionData(reports.get(holder.getAdapterPosition()).getId(), holder.currentUserId, true);
                 ReportsHelper.postReportReaction(reportReact, holder.tv_likes, holder.tv_dislikes);
             }
         });
@@ -62,7 +63,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             @Override
             public void onClick(View view) {
                 holder.toggleLikeDislike(false);
-                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(), holder.currentUserId, false);
+                ReportReactionData reportReact  = new ReportReactionData(reports.get(holder.getAdapterPosition()).getId(), holder.currentUserId, false);
                 ReportsHelper.postReportReaction(reportReact, holder.tv_likes, holder.tv_dislikes);
             }
         });

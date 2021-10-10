@@ -2,9 +2,13 @@ package com.adventurers.overseer.signup.controllers;
 
 import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 import static com.adventurers.overseer.Constants.EC_EMAIL_REGISTERED;
+import static com.adventurers.overseer.Constants.EC_SERVER_ERROR;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EM_EMAIL_REGISTERED;
+import static com.adventurers.overseer.Constants.EM_SERVER_ERROR;
 import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
+
+import androidx.annotation.NonNull;
 
 import com.adventurers.overseer.api.OverseerApi;
 import com.adventurers.overseer.signup.interactors.SignupInteractor;
@@ -42,8 +46,12 @@ public class SignupController implements ISignupController {
                 fName, lName);
         call.enqueue(new Callback<SignupData>() {
             @Override
-            public void onResponse(Call<SignupData> call, Response<SignupData> response) {
-                if (response.isSuccessful()){
+            public void onResponse(@NonNull Call<SignupData> call, @NonNull Response<SignupData> response) {
+                if(!response.isSuccessful()) {
+                    onServerRequestFailed(EC_SERVER_ERROR,EM_SERVER_ERROR);
+                    return;
+                }
+                if (response.body() != null) {
                     SignupData result = response.body();
                     if(!result.getIsEmailUnique()){
                         onServerRequestFailed(EC_EMAIL_REGISTERED, EM_EMAIL_REGISTERED);
@@ -53,12 +61,9 @@ public class SignupController implements ISignupController {
                         onServerRequestSuccess();
                     }
                 }
-                else {
-                    onServerRequestFailed(EC_SERVER_FAILED,EM_SERVER_FAILED);
-                }
             }
             @Override
-            public void onFailure(Call<SignupData> call, Throwable t) {
+            public void onFailure(@NonNull Call<SignupData> call, @NonNull Throwable t) {
                 t.printStackTrace();
                 System.out.println("Sign Up. Unable to Connect");
                 onServerRequestFailed(EC_SERVER_FAILED, EM_SERVER_FAILED);

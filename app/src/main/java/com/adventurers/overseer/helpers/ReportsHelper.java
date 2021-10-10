@@ -8,12 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adventurers.overseer.api.OverseerApi;
-import com.adventurers.overseer.api.ReactionsCount;
 import com.adventurers.overseer.api.ReportData;
 import com.adventurers.overseer.api.ReportImage;
-import com.adventurers.overseer.api.ReportReactData;
 import com.adventurers.overseer.api.ReportReactResponse;
-import com.adventurers.overseer.api.ReportReaction;
+import com.adventurers.overseer.api.ReportReactionCount;
+import com.adventurers.overseer.api.ReportReactionData;
+import com.adventurers.overseer.api.ReportUserReaction;
+import com.adventurers.overseer.floodforecast.views.ReportsAdapter;
+import com.adventurers.overseer.floodforecast.views.ReportsImagesAdapter;
 import com.adventurers.overseer.map.models.Location;
 
 import java.util.List;
@@ -57,7 +59,7 @@ public class ReportsHelper {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
-        Call<List<ReportImage>> call = overseerApi.getImages(id);
+        Call<List<ReportImage>> call = overseerApi.getReportImages(id);
         call.enqueue(new Callback<List<ReportImage>>() {
             @Override
             public void onResponse(@NonNull Call<List<ReportImage>> call, @NonNull Response<List<ReportImage>> response) {
@@ -83,10 +85,10 @@ public class ReportsHelper {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
-        Call<ReactionsCount> call = overseerApi.getReactionsCount(id);
-        call.enqueue(new Callback<ReactionsCount>() {
+        Call<ReportReactionCount> call = overseerApi.getReportReactionCount(id);
+        call.enqueue(new Callback<ReportReactionCount>() {
             @Override
-            public void onResponse(@NonNull Call<ReactionsCount> call, @NonNull Response<ReactionsCount> response) {
+            public void onResponse(@NonNull Call<ReportReactionCount> call, @NonNull Response<ReportReactionCount> response) {
                 if(!response.isSuccessful()){
                     return;
                 }
@@ -99,7 +101,7 @@ public class ReportsHelper {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ReactionsCount> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ReportReactionCount> call, @NonNull Throwable t) {
 
             }
         });
@@ -111,10 +113,10 @@ public class ReportsHelper {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
-        Call<List<ReportReaction>> call = overseerApi.getReportReaction(reportId, userId);
-        call.enqueue(new Callback<List<ReportReaction>>() {
+        Call<List<ReportUserReaction>> call = overseerApi.getReportUserReaction(reportId, userId);
+        call.enqueue(new Callback<List<ReportUserReaction>>() {
             @Override
-            public void onResponse(@NonNull Call<List<ReportReaction>> call, @NonNull Response<List<ReportReaction>> response) {
+            public void onResponse(@NonNull Call<List<ReportUserReaction>> call, @NonNull Response<List<ReportUserReaction>> response) {
                 if(!response.isSuccessful()){
                     return;
                 }
@@ -124,19 +126,19 @@ public class ReportsHelper {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<ReportReaction>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<ReportUserReaction>> call, @NonNull Throwable t) {
 
             }
         });
     }
 
-    public static void postReportReaction(ReportReactData reportReactData, TextView tv_likes, TextView tv_dislikes) {
+    public static void postReportReaction(ReportReactionData reportReactionData, TextView tv_likes, TextView tv_dislikes) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_OVERSEER)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
-        Call<ReportReactResponse> call = overseerApi.postReportReaction(reportReactData);
+        Call<ReportReactResponse> call = overseerApi.postReportReaction(reportReactionData);
         call.enqueue(new Callback<ReportReactResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReportReactResponse> call, @NonNull Response<ReportReactResponse> response) {
@@ -145,7 +147,7 @@ public class ReportsHelper {
                 }
                 if (response.body() != null) {
                     // Update report reactions count
-                    ReportsHelper.fetchReactionsCountForReport(reportReactData.getReport(), tv_likes, tv_dislikes);
+                    ReportsHelper.fetchReactionsCountForReport(reportReactionData.getReport(), tv_likes, tv_dislikes);
                 }
             }
 

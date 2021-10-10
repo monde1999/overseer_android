@@ -2,7 +2,7 @@ package com.adventurers.overseer.floodforecast.controllers;
 
 import static com.adventurers.overseer.Constants.BASE_URL_WEATHER;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
-import static com.adventurers.overseer.Constants.OPENWEATHER_APPID;
+import static com.adventurers.overseer.Constants.OPEN_WEATHER_APP_ID;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +12,7 @@ import com.adventurers.overseer.api.openweather.Weather;
 import com.adventurers.overseer.api.openweather.WeatherApi;
 import com.adventurers.overseer.floodforecast.interactors.ForecastInteractor;
 import com.adventurers.overseer.floodforecast.models.ForecastData;
-import com.adventurers.overseer.helpers.TempHelper;
+import com.adventurers.overseer.helpers.TemperatureHelper;
 import com.adventurers.overseer.map.models.Location;
 
 import retrofit2.Call;
@@ -36,7 +36,7 @@ public class FloodForecastController implements IFloodForecastController {
                 .build();
         WeatherApi weatherApi = retrofit.create(WeatherApi.class);
         String exclude = "hourly,minutely,alerts";
-        String appid = OPENWEATHER_APPID;
+        String appid = OPEN_WEATHER_APP_ID;
         Call<Weather> call = weatherApi.getWeather(location.getLatitude(), location.getLongitude(), exclude,appid);
         call.enqueue(new Callback<Weather>() {
             @Override
@@ -50,15 +50,15 @@ public class FloodForecastController implements IFloodForecastController {
                     Current current = weather.getCurrent();
                     Daily today = weather.getDaily().get(0);
                     forecastData.setLocation(location);
-                    forecastData.setCurrent_temp(TempHelper.toCelsiusInt(current.getTemp()));
+                    forecastData.setCurrent_temp(TemperatureHelper.toCelsiusInt(current.getTemp()));
                     if(today.getRain()!=null)
                         forecastData.setRain(today.getRain());
                     forecastData.setClouds(current.getClouds());
                     forecastData.setWeather_status(current.getWeather().get(0).getDescription());
-                    forecastData.setMorn_temp(TempHelper.toCelsiusInt(today.getTemp().getMorn()));
-                    forecastData.setAft_temp(TempHelper.toCelsiusInt(today.getTemp().getDay()));
-                    forecastData.setEve_temp(TempHelper.toCelsiusInt(today.getTemp().getEve()));
-                    forecastData.setNight_temp(TempHelper.toCelsiusInt(today.getTemp().getNight()));
+                    forecastData.setMorn_temp(TemperatureHelper.toCelsiusInt(today.getTemp().getMorn()));
+                    forecastData.setAft_temp(TemperatureHelper.toCelsiusInt(today.getTemp().getDay()));
+                    forecastData.setEve_temp(TemperatureHelper.toCelsiusInt(today.getTemp().getEve()));
+                    forecastData.setNight_temp(TemperatureHelper.toCelsiusInt(today.getTemp().getNight()));
                     forecastData.setIcon(current.getWeather().get(0).getIcon());
                     mForecastInteractor.onSuccessRequest(forecastData);
                 }

@@ -1,11 +1,11 @@
 package com.adventurers.overseer.api;
 
-public class ReportReactData {
+public class ReportReactionData {
     private int report;
     private int user;
     private boolean isPositive;
 
-    public ReportReactData(int report, int user, boolean isPositive) {
+    public ReportReactionData(int report, int user, boolean isPositive) {
         this.report = report;
         this.user = user;
         this.isPositive = isPositive;

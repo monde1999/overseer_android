@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -121,6 +120,7 @@ public class MapActivity extends FragmentActivity
             public void onClick(View view) {
                 Intent i = new Intent(MapActivity.this, LoginActivity.class);
                 startActivity(i);
+                stopLocationUpdates();
                 MapActivity.this.finish();
             }
         });
