@@ -1,5 +1,9 @@
 package com.adventurers.overseer.helpers;
 
+import static com.adventurers.overseer.Constants.preferencesKey;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.api.ReportData;
 import com.adventurers.overseer.api.ReportReactData;
+import com.adventurers.overseer.user.handlers.UserInfoHandler;
+import com.adventurers.overseer.user.models.UserInfo;
 
 import java.util.List;
 
@@ -35,13 +41,12 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
     public void onBindViewHolder(@NonNull ReportsViewHolder holder, int position) {
         String name = reports.get(position).getUser().getFirst_name() + " " + reports.get(position).getUser().getLast_name();
         int reportId = reports.get(position).getId();
-        int userId = reports.get(position).getUser().getId();
         holder.tv_name.setText(name);
         holder.tv_time_address.setText(reports.get(position).getTimestamp());
         holder.tv_caption.setText((reports.get(position).getDescription()));
         LinearLayoutManager manager = new LinearLayoutManager(holder.rv_images.getContext(), LinearLayoutManager.HORIZONTAL, false);
         holder.rv_images.setLayoutManager(manager);
-        ReportsHelper.fetchReactionForReport(reportId, userId, holder);
+        ReportsHelper.fetchReactionForReport(reportId, holder.currentUserId, holder);
         ReportsHelper.fetchReactionsCountForReport(reportId, holder.tv_likes, holder.tv_dislikes);
         ReportsHelper.fetchImagesForReport(reportId, holder.rv_images);
 
@@ -49,7 +54,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             @Override
             public void onClick(View view) {
                 holder.toggleLikeDislike(true);
-                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),true);
+                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(), holder.currentUserId, true);
                 ReportsHelper.postReportReaction(reportReact, holder.tv_likes, holder.tv_dislikes);
             }
         });
@@ -57,7 +62,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             @Override
             public void onClick(View view) {
                 holder.toggleLikeDislike(false);
-                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(),reports.get(holder.getAdapterPosition()).getUser().getId(),false);
+                ReportReactData reportReact  = new ReportReactData(reports.get(holder.getAdapterPosition()).getId(), holder.currentUserId, false);
                 ReportsHelper.postReportReaction(reportReact, holder.tv_likes, holder.tv_dislikes);
             }
         });
@@ -78,6 +83,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
         ImageButton btn_like;
         ImageButton btn_dislike;
         int selected;   // 0 = neutral, 1 = like, -1 = dislike
+        int currentUserId;
 
         public ReportsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -90,6 +96,14 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
             btn_like = itemView.findViewById(R.id.reports_post_btn_like);
             btn_dislike = itemView.findViewById(R.id.reports_post_btn_dislike);
             selected = 0;
+            currentUserId = -1;
+            SharedPreferences sharedPreferences = itemView.getContext().getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
+            if(UserInfoHandler.hasAccountStored(sharedPreferences)){
+                UserInfo currentUser = UserInfoHandler.getCurrentUser(sharedPreferences);
+                String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+                tv_name.setText(fullName);
+                currentUserId = currentUser.getId();
+            }
         }
 
         public void toggleLikeDislike(boolean isLike) {

@@ -29,7 +29,7 @@ public class SplashActivity extends AppCompatActivity {
             UserInfo currentUser = UserInfoHandler.getCurrentUser(sharedPreferences);
             String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
             //show simple welcome message
-            Toast.makeText(getApplicationContext(), "Welcome Back, "+fullName,Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Welcome back, "+fullName,Toast.LENGTH_LONG).show();
             startActivity(new Intent(SplashActivity.this, MapActivity.class));
         }
         else{
