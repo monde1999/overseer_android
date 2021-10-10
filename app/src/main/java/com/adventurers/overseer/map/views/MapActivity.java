@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
 import com.adventurers.overseer.helpers.MapHelper;
 import com.adventurers.overseer.helpers.PermissionHelper;
 import com.adventurers.overseer.helpers.StatusBarHelper;
+import com.adventurers.overseer.login.views.LoginActivity;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
 import com.adventurers.overseer.report.views.ReportActivity;
@@ -112,6 +114,16 @@ public class MapActivity extends FragmentActivity
                 onActorMove();
             }
         };
+
+        FloatingActionButton fab_logout = findViewById(R.id.map_fab_logout);
+        fab_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MapActivity.this, LoginActivity.class);
+                startActivity(i);
+                MapActivity.this.finish();
+            }
+        });
     }
 
     /**
@@ -126,6 +138,7 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        MapHelper.adjustMyLocationButton(this);
         PermissionHelper.ensureLocationAndGPS(this);
         startActivity();
     }
