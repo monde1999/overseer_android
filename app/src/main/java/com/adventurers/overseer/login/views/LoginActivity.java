@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         Toast.makeText(getApplicationContext(), UserInfoHandler.getCurrentUser(sharedPreferences).toString()+
                 "\ntoken: "+ UserInfoHandler.getCurrentAccountToken(sharedPreferences),Toast.LENGTH_LONG).show();
 
-        Intent i = new Intent(this, MapActivity.class);
+        Intent i = new Intent(this, MapActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
         finish();
     }
