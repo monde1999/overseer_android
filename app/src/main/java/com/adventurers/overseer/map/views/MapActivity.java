@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.direction.models.DirectionData;
+import com.adventurers.overseer.direction.models.Route;
 import com.adventurers.overseer.direction.presenters.DirectionPresenter;
 import com.adventurers.overseer.direction.views.IDirectionView;
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
@@ -232,7 +233,7 @@ public class MapActivity extends FragmentActivity
     // region IDirectionView
 
     @Override
-    public void renderPaths(List<List<Location>> paths) {
+    public void renderPaths(List<Route> routes) {
 //        new Handler(Looper.getMainLooper()).post(new Runnable() {
 //            @Override
 //            public void run() {
@@ -245,8 +246,8 @@ public class MapActivity extends FragmentActivity
 //                polyline.setClickable(true);
 //            }
 //        });
-        for(List<Location> path : paths) {
-            DirectionData.renderPath(path,mMap);
+        for(Route route : routes) {
+            DirectionData.renderPath(route,mMap,this);
         }
     }
 

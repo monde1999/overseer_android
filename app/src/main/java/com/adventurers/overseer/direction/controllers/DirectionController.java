@@ -4,6 +4,7 @@ import static com.adventurers.overseer.Constants.MAPS_API_KEY;
 
 import com.adventurers.overseer.direction.interactors.DirectionInteractor;
 import com.adventurers.overseer.direction.models.DirectionData;
+import com.adventurers.overseer.direction.models.Route;
 import com.adventurers.overseer.map.models.Location;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -35,17 +36,17 @@ public class DirectionController implements IDirectionController {
         directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                List<List<Location>> paths = new ArrayList<>();
+                List<Route> routes = new ArrayList<>();
                 for (DirectionsRoute route : result.routes) {
                     List<LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
-                    List<Location> path = new ArrayList<>();
+                    List<Location> mRoute = new ArrayList<>();
                     // This loops through all the LatLng coordinates of ONE polyline.
                     for (LatLng latLng : decodedPath) {
-                        path.add(new Location(latLng.lat, latLng.lng));
+                        mRoute.add(new Location(latLng.lat, latLng.lng));
                     }
-                    paths.add(path);
+                    routes.add(new Route(mRoute));
                 }
-                mDirectionInteractor.onSuccessRequest(new DirectionData(paths, currentLocation, goal));
+                mDirectionInteractor.onSuccessRequest(new DirectionData(routes, currentLocation, goal));
             }
 
             @Override
