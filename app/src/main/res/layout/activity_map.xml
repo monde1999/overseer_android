@@ -34,25 +34,4 @@
         app:layout_anchorGravity="bottom|right"
         android:clickable="false"
         app:backgroundTint="@color/grey" />
-
-<!--    <com.google.android.material.button.MaterialButton-->
-<!--        android:id="@+id/search_bar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="55dp"-->
-<!--        android:layout_margin="24dp"-->
-<!--        android:text="Search"-->
-<!--        android:textSize="18sp"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textAlignment="viewStart"-->
-<!--        android:layout_gravity="start"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:paddingHorizontal="25dp"-->
-<!--        app:layout_anchor="@id/maps"-->
-<!--        app:layout_anchorGravity="bottom"-->
-<!--        app:backgroundTint="@color/white"-->
-<!--        app:cornerRadius="25dp"-->
-<!--        app:icon="@drawable/ic_search_24dp"-->
-<!--        app:iconGravity="end"-->
-<!--        app:iconTint="@color/black"-->
-<!--        />-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

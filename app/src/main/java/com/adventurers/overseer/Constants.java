@@ -6,6 +6,7 @@ public class Constants {
     public static final int RC_GPS_SERVICE = 4002;
     public static final int RC_CAMERA = 4003;
     public static final int RC_WRITE_EXTERNAL_STORAGE = 4004;
+    public static final int RC_SEARCH_TYPE = 4005;
 
     // Error Codes
     public static final int EC_SERVER_FAILED = 4444;
@@ -32,4 +33,10 @@ public class Constants {
     // Keys
     public static String OPEN_WEATHER_APP_ID = "67aa636d02df1df62ef01de2db58fa49";
     public static final String preferencesKey = "com.adventurers.overseer";
+    public static String OPENWEATHER_APPID = "67aa636d02df1df62ef01de2db58fa49";
+    public static String TAG_FLOOD_FORECAST_MODULE = "FloodForecastModule";
+    public static String TAG_DIRECTION_MODULE = "DirectionModule";
+    public static String TAG_MAP_MODULE = "MapModule";
+
+    public static String MAPS_API_KEY = "AIzaSyC-Aad2Zl-pfaVAJg5VnJUyflfdjJogjIY";
 }
