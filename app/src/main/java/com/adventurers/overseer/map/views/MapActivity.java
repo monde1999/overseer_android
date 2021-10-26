@@ -1,6 +1,7 @@
 package com.adventurers.overseer.map.views;
 
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
+import static com.adventurers.overseer.Constants.RC_SEARCH_TYPE;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,9 +9,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
@@ -25,6 +28,7 @@ import com.adventurers.overseer.helpers.PermissionHelper;
 import com.adventurers.overseer.helpers.StatusBarHelper;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
+import com.adventurers.overseer.searchtype.SearchType;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -42,6 +46,9 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.material.button.MaterialButton;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.List;
@@ -136,6 +143,14 @@ public class MapActivity extends FragmentActivity
             directionOrigin = new Location(10.197100, 123.747842);
             directionGoal = new Location(10.2947348, 123.8801183);
             directionPresenter.present(directionOrigin, directionGoal);
+
+            MaterialButton fab_search = findViewById(R.id.map_fab_search);
+            fab_search.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SearchType.launch(MapActivity.this);
+                }
+            });
         }
     }
 
@@ -240,6 +255,12 @@ public class MapActivity extends FragmentActivity
 
     private void onZoomRateChange() {
 
+    }
+    // endregion
+
+    // region SearchType...
+    private void searchTypeSuccess(Place place) {
+        Toast.makeText(this, place.getAddress(), Toast.LENGTH_SHORT).show();
     }
     // endregion
 
@@ -354,6 +375,10 @@ public class MapActivity extends FragmentActivity
                     PermissionHelper.requestLocationAndGPS(this);
                     break;
             }
+        }
+        else if(requestCode == RC_SEARCH_TYPE && resultCode == RESULT_OK) {
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            searchTypeSuccess(place);
         }
     }
     // endregion
