@@ -29,30 +29,28 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_pen_20dp"
         android:layout_marginEnd="@dimen/dp_20"
-        android:layout_marginBottom="@dimen/dp_30"
+        android:layout_marginBottom="@dimen/dp_100"
         app:layout_anchor="@id/maps"
         app:layout_anchorGravity="bottom|right"
         android:clickable="false"
         app:backgroundTint="@color/grey" />
-
-<!--    <com.google.android.material.button.MaterialButton-->
-<!--        android:id="@+id/search_bar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="55dp"-->
-<!--        android:layout_margin="24dp"-->
-<!--        android:text="Search"-->
-<!--        android:textSize="18sp"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textAlignment="viewStart"-->
-<!--        android:layout_gravity="start"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:paddingHorizontal="25dp"-->
-<!--        app:layout_anchor="@id/maps"-->
-<!--        app:layout_anchorGravity="bottom"-->
-<!--        app:backgroundTint="@color/white"-->
-<!--        app:cornerRadius="25dp"-->
-<!--        app:icon="@drawable/ic_search_24dp"-->
-<!--        app:iconGravity="end"-->
-<!--        app:iconTint="@color/black"-->
-<!--        />-->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/map_fab_search"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_margin="24dp"
+        android:text="Search"
+        android:textSize="18sp"
+        android:textColor="@color/grey_900"
+        android:textAlignment="viewStart"
+        android:layout_gravity="start"
+        android:textAllCaps="false"
+        android:paddingHorizontal="25dp"
+        app:layout_anchor="@id/maps"
+        app:layout_anchorGravity="bottom"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="25dp"
+        app:icon="@drawable/ic_magnifying_glass_24dp"
+        app:iconGravity="end"
+        app:iconTint="@color/grey_900" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
