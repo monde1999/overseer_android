@@ -173,11 +173,6 @@ public class MapActivity extends FragmentActivity
                 }
             });
 
-            DirectionPresenter directionPresenter = new DirectionPresenter(this);
-            directionOrigin = new Location(10.197100, 123.747842);
-            directionGoal = new Location(10.2947348, 123.8801183);
-            directionPresenter.present(directionOrigin, directionGoal);
-
             MaterialButton fab_search = findViewById(R.id.map_fab_search);
             fab_search.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -298,7 +293,11 @@ public class MapActivity extends FragmentActivity
 
     // region SearchType...
     private void searchTypeSuccess(Place place) {
-        Toast.makeText(this, place.getAddress(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, place.getAddress(), Toast.LENGTH_SHORT).show();
+        DirectionPresenter directionPresenter = new DirectionPresenter(this);
+        directionOrigin = new Location(userLocation.getLatitude(), userLocation.getLongitude());
+        directionGoal = new Location(place.getLatLng().latitude, place.getLatLng().longitude);
+        directionPresenter.present(directionOrigin, directionGoal);
     }
     // endregion
 
