@@ -63,6 +63,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -81,7 +82,6 @@ public class MapActivity extends FragmentActivity
     private boolean mHazardVisibility;
     private GoogleMap mMap;
     private MapPresenter mMapPresenter;
-
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
@@ -316,6 +316,10 @@ public class MapActivity extends FragmentActivity
             Location directionGoal = new Location(place.getLatLng());
             directionPresenter.present(mUserLocation, directionGoal);
         }
+//        View bottomSheet = findViewById(R.id.selection_fragment);
+//        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+//        bottomSheetBehavior.setHideable(false);
+//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
     // endregion
 
@@ -341,9 +345,7 @@ public class MapActivity extends FragmentActivity
                 // Select first route polyline as default
                 if (mRoutesPolyline != null) {
                     selectPolyline(mRoutesPolyline.get(0));
-                    findViewById(R.id.map_fab_logout).setVisibility(View.GONE);
-                    findViewById(R.id.map_fab_report).setVisibility(View.GONE);
-                    findViewById(R.id.map_fab_search).setVisibility(View.GONE);
+                    findViewById(R.id.map_hud).setVisibility(View.GONE);
                     stopFollowingDevice();
                     mState = DIRECTIONS;
                 }
@@ -456,9 +458,7 @@ public class MapActivity extends FragmentActivity
                     }
                     mRoutesPolyline.clear();
                 }
-                findViewById(R.id.map_fab_logout).setVisibility(View.VISIBLE);
-                findViewById(R.id.map_fab_report).setVisibility(View.VISIBLE);
-                findViewById(R.id.map_fab_search).setVisibility(View.VISIBLE);
+                findViewById(R.id.map_hud).setVisibility(View.VISIBLE);
                 mState = MAP;
                 break;
         }
