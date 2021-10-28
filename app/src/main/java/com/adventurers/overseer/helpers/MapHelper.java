@@ -31,8 +31,6 @@ public class MapHelper {
     }
 
     public static void zoomCameraTo(GoogleMap map, int zoom) {
-//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(map.getCameraPosition().target, 10);
-//        map.animateCamera(cameraUpdate);
         map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
     }
 

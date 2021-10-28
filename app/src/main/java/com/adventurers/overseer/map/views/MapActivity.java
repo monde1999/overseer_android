@@ -326,6 +326,7 @@ public class MapActivity extends FragmentActivity
             @Override
             public void onClick(View view) {
                 if(place.getLatLng() != null) {
+                    mMap.setPadding(0, 0, 0, 0);
                     DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
                     Location directionGoal = new Location(place.getLatLng());
                     directionPresenter.present(mUserLocation, directionGoal);
@@ -334,11 +335,17 @@ public class MapActivity extends FragmentActivity
             }
         });
         if(place.getLatLng() != null) {
-            stopFollowingDevice();
-            MapHelper.zoomCameraTo(mMap, 13);
-            MapHelper.moveCameraToLocation(mMap, place.getLatLng().latitude, place.getLatLng().longitude, 15, true);
-            mFocusedMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
-            mState = SELECTION;
+            mSelectionActivity.setOnExpandedHeightReady(new SelectionActivity.OnExpandedHeightReady() {
+                @Override
+                public void onExpandedHeightReady(int height) {
+                    stopFollowingDevice();
+                    mMap.setPadding(0, 0, 0, height);
+                    MapHelper.zoomCameraTo(mMap, 13);
+                    MapHelper.moveCameraToLocation(mMap, place.getLatLng().latitude, place.getLatLng().longitude, 15, true);
+                    mFocusedMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+                    mState = SELECTION;
+                }
+            });
         }
     }
     // endregion
@@ -477,6 +484,7 @@ public class MapActivity extends FragmentActivity
                 mState = MAP;
                 mSelectionActivity.hide();
                 mFocusedMarker.remove();
+                mMap.setPadding(0, 0, 0, 0);
                 showHud();
                 break;
             case DIRECTIONS:
