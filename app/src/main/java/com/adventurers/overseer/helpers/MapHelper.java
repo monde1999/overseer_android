@@ -30,6 +30,12 @@ public class MapHelper {
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
 
+    public static void zoomCameraTo(GoogleMap map, int zoom) {
+//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(map.getCameraPosition().target, 10);
+//        map.animateCamera(cameraUpdate);
+        map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+    }
+
     public static void adjustMyLocationButton(Activity activity) {
         View locationButton = ((View) activity.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();

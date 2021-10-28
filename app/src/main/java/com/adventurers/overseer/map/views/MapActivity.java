@@ -57,6 +57,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -89,11 +90,11 @@ public class MapActivity extends FragmentActivity
     private boolean mFollowUser;
     private Location mUserLocation;
     private int mState;
-
     private List<FloodForecastPopupFragment> mPopupFragments;
     FloatingActionButton mFab_report;
     private List<Polyline> mRoutesPolyline;
-    private SelectionActivity selectionActivity;
+    private SelectionActivity mSelectionActivity;
+    private Marker mFocusedMarker;
 
     private static final String TAG = "MapActivity";
     private final int MAP = 0;
@@ -157,7 +158,7 @@ public class MapActivity extends FragmentActivity
         });
 
         View bottomSheet = findViewById(R.id.selection_fragment);
-        selectionActivity = new SelectionActivity(this, BottomSheetBehavior.from(bottomSheet));
+        mSelectionActivity = new SelectionActivity(this, BottomSheetBehavior.from(bottomSheet));
     }
 
     /**
@@ -320,19 +321,25 @@ public class MapActivity extends FragmentActivity
 
     // region SearchType...
     private void searchTypeSuccess(Place place) {
-        selectionActivity.show();
-        selectionActivity.setOnDirectionsClickListener(new View.OnClickListener() {
+        mSelectionActivity.show();
+        mSelectionActivity.setOnDirectionsClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(place.getLatLng() != null) {
                     DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
                     Location directionGoal = new Location(place.getLatLng());
                     directionPresenter.present(mUserLocation, directionGoal);
-                    selectionActivity.hide();
+                    mSelectionActivity.hide();
                 }
             }
         });
-        mState = SELECTION;
+        if(place.getLatLng() != null) {
+            stopFollowingDevice();
+            MapHelper.zoomCameraTo(mMap, 13);
+            MapHelper.moveCameraToLocation(mMap, place.getLatLng().latitude, place.getLatLng().longitude, 15, true);
+            mFocusedMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+            mState = SELECTION;
+        }
     }
     // endregion
 
@@ -358,7 +365,6 @@ public class MapActivity extends FragmentActivity
                 // Select first route polyline as default
                 if (mRoutesPolyline != null) {
                     selectPolyline(mRoutesPolyline.get(0));
-                    stopFollowingDevice();
                     mState = DIRECTIONS;
                 }
             }
@@ -469,7 +475,8 @@ public class MapActivity extends FragmentActivity
                 break;
             case SELECTION:
                 mState = MAP;
-                selectionActivity.hide();
+                mSelectionActivity.hide();
+                mFocusedMarker.remove();
                 showHud();
                 break;
             case DIRECTIONS:
@@ -480,7 +487,7 @@ public class MapActivity extends FragmentActivity
                     }
                     mRoutesPolyline.clear();
                 }
-                selectionActivity.show();
+                mSelectionActivity.show();
                 break;
         }
     }
