@@ -69,6 +69,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -298,8 +299,8 @@ public class MapActivity extends FragmentActivity
                         p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
                         p.setZIndex(0);
                     }
-                    p.setStartCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
-                    p.setEndCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
+                    p.setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+                    p.setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
                 }
             }
         });
@@ -348,8 +349,8 @@ public class MapActivity extends FragmentActivity
                 if (mRoutesPolyline != null) {
                     mRoutesPolyline.get(0).setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
                     mRoutesPolyline.get(0).setZIndex(1);
-                    mRoutesPolyline.get(0).setStartCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
-                    mRoutesPolyline.get(0).setEndCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
+                    mRoutesPolyline.get(0).setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+                    mRoutesPolyline.get(0).setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
                 }
             }
 
@@ -358,8 +359,6 @@ public class MapActivity extends FragmentActivity
 
     private BitmapDescriptor getBitmapDescriptor(int id) {
         Drawable vectorDrawable = AppCompatResources.getDrawable(this, id);
-//        int h = ((int) Utils.convertDpToPixel(42, context));
-//        int w = ((int) Utils.convertDpToPixel(25, context));
         if(vectorDrawable != null) {
             int w = vectorDrawable.getIntrinsicWidth();
             int h = vectorDrawable.getIntrinsicHeight();
