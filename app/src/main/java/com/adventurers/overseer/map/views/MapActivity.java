@@ -10,6 +10,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -297,8 +300,8 @@ public class MapActivity extends FragmentActivity
                         p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
                         p.setZIndex(0);
                     }
-                    p.setStartCap(new RoundCap());
-                    p.setEndCap(new RoundCap());
+                    p.setStartCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
+                    p.setEndCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
                 }
             }
         });
@@ -346,12 +349,26 @@ public class MapActivity extends FragmentActivity
                 if (mRoutesPolyline != null) {
                     mRoutesPolyline.get(0).setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
                     mRoutesPolyline.get(0).setZIndex(1);
-                    mRoutesPolyline.get(0).setStartCap(new RoundCap());
-                    mRoutesPolyline.get(0).setEndCap(new RoundCap());
+                    mRoutesPolyline.get(0).setStartCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
+                    mRoutesPolyline.get(0).setEndCap(new CustomCap(getBitmapDescriptor(R.drawable.ic_circle_cap)));
                 }
             }
 
         });
+    }
+
+    private BitmapDescriptor getBitmapDescriptor(int id) {
+        Drawable vectorDrawable = getDrawable(id);
+//        int h = ((int) Utils.convertDpToPixel(42, context));
+//        int w = ((int) Utils.convertDpToPixel(25, context));
+        int w = vectorDrawable.getIntrinsicWidth();
+        int h = vectorDrawable.getIntrinsicHeight();
+        vectorDrawable.setBounds(0, 0, w, h);
+        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bm);
+        vectorDrawable.draw(canvas);
+        Bitmap sbm = Bitmap.createScaledBitmap(bm, w, h, false);
+        return BitmapDescriptorFactory.fromBitmap(sbm);
     }
 
     @Override
