@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,10 +48,15 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.ButtCap;
+import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -263,7 +269,7 @@ public class MapActivity extends FragmentActivity
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                runLocationUpdates();
+                startFollowingDevice();
                 return false;
             }
         });
@@ -291,6 +297,8 @@ public class MapActivity extends FragmentActivity
                         p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
                         p.setZIndex(0);
                     }
+                    p.setStartCap(new RoundCap());
+                    p.setEndCap(new RoundCap());
                 }
             }
         });
@@ -338,6 +346,8 @@ public class MapActivity extends FragmentActivity
                 if (mRoutesPolyline != null) {
                     mRoutesPolyline.get(0).setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
                     mRoutesPolyline.get(0).setZIndex(1);
+                    mRoutesPolyline.get(0).setStartCap(new RoundCap());
+                    mRoutesPolyline.get(0).setEndCap(new RoundCap());
                 }
             }
 
