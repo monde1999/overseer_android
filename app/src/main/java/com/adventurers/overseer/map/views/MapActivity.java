@@ -290,18 +290,7 @@ public class MapActivity extends FragmentActivity
         mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
             @Override
             public void onPolylineClick(@NonNull Polyline polyline) {
-                for (Polyline p : mRoutesPolyline) {
-                    if(p.equals(polyline)) {
-                        p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
-                        p.setZIndex(1);
-                    }
-                    else {
-                        p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
-                        p.setZIndex(0);
-                    }
-                    p.setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
-                    p.setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
-                }
+                selectPolyline(polyline);
             }
         });
     }
@@ -347,14 +336,26 @@ public class MapActivity extends FragmentActivity
                 }
                 // Select first route polyline as default
                 if (mRoutesPolyline != null) {
-                    mRoutesPolyline.get(0).setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
-                    mRoutesPolyline.get(0).setZIndex(1);
-                    mRoutesPolyline.get(0).setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
-                    mRoutesPolyline.get(0).setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+                    selectPolyline(mRoutesPolyline.get(0));
                 }
             }
 
         });
+    }
+
+    private void selectPolyline(Polyline polyline) {
+        for (Polyline p : mRoutesPolyline) {
+            if(p.equals(polyline)) {
+                p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
+                p.setZIndex(1);
+            }
+            else {
+                p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                p.setZIndex(0);
+            }
+            p.setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+            p.setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+        }
     }
 
     private BitmapDescriptor getBitmapDescriptor(int id) {
