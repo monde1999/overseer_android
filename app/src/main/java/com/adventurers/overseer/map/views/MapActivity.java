@@ -2,22 +2,27 @@ package com.adventurers.overseer.map.views;
 
 import static com.adventurers.overseer.Constants.RC_ACCESS_FINE_LOCATION;
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
-import static com.adventurers.overseer.Constants.TAG_REPORT;
 import static com.adventurers.overseer.Constants.RC_SEARCH_TYPE;
+import static com.adventurers.overseer.Constants.TAG_REPORT;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
@@ -26,7 +31,6 @@ import com.adventurers.overseer.direction.presenters.DirectionPresenter;
 import com.adventurers.overseer.direction.views.IDirectionView;
 import com.adventurers.overseer.floodforecast.views.FloodForecast;
 import com.adventurers.overseer.floodforecast.views.FloodForecastPopupFragment;
-import com.adventurers.overseer.helpers.DirectionHelper;
 import com.adventurers.overseer.helpers.MapHelper;
 import com.adventurers.overseer.helpers.PermissionHelper;
 import com.adventurers.overseer.helpers.StatusBarHelper;
@@ -47,18 +51,25 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CustomCap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -71,20 +82,20 @@ public class MapActivity extends FragmentActivity
     private GoogleMap mMap;
     private MapPresenter mMapPresenter;
 
-
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
-    private boolean followUser;
-    private Location userLocation;
+    private boolean mFollowUser;
+    private Location mUserLocation;
+    private int mState;
 
     private List<FloodForecastPopupFragment> mPopupFragments;
-    FloatingActionButton fab_report;
-    private Location directionOrigin;
-    private Location directionGoal;
-    private DirectionHelper directionHelper;
+    FloatingActionButton mFab_report;
+    private List<Polyline> mRoutesPolyline;
 
     private static final String TAG = "MapActivity";
+    private final int MAP = 0;
+    private final int DIRECTIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,9 +117,11 @@ public class MapActivity extends FragmentActivity
         mLocationRequest.setInterval(2000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        followUser = true;
-        userLocation = new Location(0,0);
-        fab_report = findViewById(R.id.map_fab_report);
+        mFollowUser = true;
+        mUserLocation = new Location(0,0);
+        mFab_report = findViewById(R.id.map_fab_report);
+        mRoutesPolyline = new ArrayList<>();
+        mState = MAP;
 
         // Called when device location is updated
         mLocationCallback = new LocationCallback() {
@@ -116,12 +129,12 @@ public class MapActivity extends FragmentActivity
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 for(android.location.Location location : locationResult.getLocations()) {
-                    if(followUser) {
+                    if(mFollowUser) {
                         MapHelper.moveCameraToLocation(mMap, location.getLatitude(), location.getLongitude(),
                                 15, true);
                     }
-                    userLocation.setLatitude(location.getLatitude());
-                    userLocation.setLongitude(location.getLongitude());
+                    mUserLocation.setLatitude(location.getLatitude());
+                    mUserLocation.setLongitude(location.getLongitude());
                     mMapPresenter.present(new Location(location.getLatitude(), location.getLongitude()), .5);
                 }
                 onActorMove();
@@ -165,10 +178,10 @@ public class MapActivity extends FragmentActivity
             renderUserLocation();
             runLocationUpdates();
 
-            fab_report.setOnClickListener(new View.OnClickListener() {
+            mFab_report.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ReportActivity reportFragment = ReportActivity.newInstance(userLocation);
+                    ReportActivity reportFragment = ReportActivity.newInstance(mUserLocation);
                     reportFragment.show(getSupportFragmentManager(), TAG_REPORT);
                 }
             });
@@ -199,8 +212,8 @@ public class MapActivity extends FragmentActivity
         for(FloodForecastPopupFragment popupFragment : forecasts) {
             popupFragment.renderForecastOnLocation(null);
         }
-        fab_report.setClickable(true);
-        fab_report.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(52,152,219)));
+        mFab_report.setClickable(true);
+        mFab_report.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(52,152,219)));
     }
 
     @SuppressLint("MissingPermission")
@@ -225,8 +238,14 @@ public class MapActivity extends FragmentActivity
     @Override
     public void renderError(int errorCode, String errorString) {
         Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show();
-        fab_report.setClickable(false);
-        fab_report.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.grey)));
+        mFab_report.setClickable(false);
+        mFab_report.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.grey)));
+        // Remove previous popupFragments from the map
+        if(mPopupFragments!=null) {
+            for(FloodForecastPopupFragment popupFragment : mPopupFragments) {
+                popupFragment.remove();
+            }
+        }
     }
     // endregion
 
@@ -261,7 +280,7 @@ public class MapActivity extends FragmentActivity
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                runLocationUpdates();
+                startFollowingDevice();
                 return false;
             }
         });
@@ -280,8 +299,7 @@ public class MapActivity extends FragmentActivity
         mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
             @Override
             public void onPolylineClick(@NonNull Polyline polyline) {
-                directionHelper.selectPolyline(polyline);
-//                polyline.setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
+                selectPolyline(polyline);
             }
         });
     }
@@ -293,20 +311,85 @@ public class MapActivity extends FragmentActivity
 
     // region SearchType...
     private void searchTypeSuccess(Place place) {
-//        Toast.makeText(this, place.getAddress(), Toast.LENGTH_SHORT).show();
-        DirectionPresenter directionPresenter = new DirectionPresenter(this);
-        directionOrigin = new Location(userLocation.getLatitude(), userLocation.getLongitude());
-        directionGoal = new Location(place.getLatLng().latitude, place.getLatLng().longitude);
-        directionPresenter.present(directionOrigin, directionGoal);
+        if(place.getLatLng() != null) {
+            DirectionPresenter directionPresenter = new DirectionPresenter(this);
+            Location directionGoal = new Location(place.getLatLng());
+            directionPresenter.present(mUserLocation, directionGoal);
+        }
     }
     // endregion
 
     // region IDirectionView
-
     @Override
     public void renderPaths(List<Route> routes) {
-        directionHelper = new DirectionHelper(routes, directionOrigin, directionGoal, this);
-        directionHelper.renderRoutes(mMap);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                // Remove existing routes polyline on map
+                clearRoutesPolyline();
+                // Render new routes polyline
+                for (Route route : routes) {
+                    List<LatLng> steps = new ArrayList<>();
+                    for (Location step : route.getRoute()) {
+                        steps.add(new LatLng(step.getLatitude(), step.getLongitude()));
+                    }
+                    Polyline polyline = mMap.addPolyline(new PolylineOptions().addAll(steps));
+                    polyline.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                    polyline.setClickable(true);
+                    mRoutesPolyline.add(polyline);
+                }
+                // Select first route polyline as default
+                if (mRoutesPolyline != null) {
+                    selectPolyline(mRoutesPolyline.get(0));
+                    findViewById(R.id.map_fab_logout).setVisibility(View.GONE);
+                    findViewById(R.id.map_fab_report).setVisibility(View.GONE);
+                    findViewById(R.id.map_fab_search).setVisibility(View.GONE);
+                    stopFollowingDevice();
+                    mState = DIRECTIONS;
+                }
+            }
+
+        });
+    }
+
+    private void selectPolyline(Polyline polyline) {
+        for (Polyline p : mRoutesPolyline) {
+            if(p.equals(polyline)) {
+                p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
+                p.setZIndex(1);
+            }
+            else {
+                p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
+                p.setZIndex(0);
+            }
+            p.setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+            p.setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+            MapHelper.moveCameraToBounds(mMap, MapHelper.getBounds(p));
+        }
+    }
+
+    private void clearRoutesPolyline() {
+        if(mRoutesPolyline != null) {
+            for (Polyline polyline : mRoutesPolyline) {
+                polyline.remove();
+            }
+            mRoutesPolyline.clear();
+        }
+    }
+
+    private BitmapDescriptor getBitmapDescriptor(int id) {
+        Drawable vectorDrawable = AppCompatResources.getDrawable(this, id);
+        if(vectorDrawable != null) {
+            int w = vectorDrawable.getIntrinsicWidth();
+            int h = vectorDrawable.getIntrinsicHeight();
+            vectorDrawable.setBounds(0, 0, w, h);
+            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm);
+            vectorDrawable.draw(canvas);
+            Bitmap sbm = Bitmap.createScaledBitmap(bm, w, h, false);
+            return BitmapDescriptorFactory.fromBitmap(sbm);
+        }
+        return null;
     }
 
     @Override
@@ -344,11 +427,11 @@ public class MapActivity extends FragmentActivity
     }
 
     private void startFollowingDevice() {
-        followUser = true;
+        mFollowUser = true;
     }
 
     private void stopFollowingDevice() {
-        followUser = false;
+        mFollowUser = false;
     }
 
     @SuppressLint("MissingPermission")
@@ -359,6 +442,28 @@ public class MapActivity extends FragmentActivity
     private void stopLocationUpdates() {
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
+
+    @Override
+    public void onBackPressed() {
+        switch (mState) {
+            case MAP:
+                super.onBackPressed();
+                break;
+            case DIRECTIONS:
+                if(mRoutesPolyline != null) {
+                    for (Polyline polyline : mRoutesPolyline) {
+                        polyline.remove();
+                    }
+                    mRoutesPolyline.clear();
+                }
+                findViewById(R.id.map_fab_logout).setVisibility(View.VISIBLE);
+                findViewById(R.id.map_fab_report).setVisibility(View.VISIBLE);
+                findViewById(R.id.map_fab_search).setVisibility(View.VISIBLE);
+                mState = MAP;
+                break;
+        }
+    }
+
     // endregion
 
     // region Permissions...
