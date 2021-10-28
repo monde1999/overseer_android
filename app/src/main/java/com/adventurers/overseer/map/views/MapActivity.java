@@ -355,6 +355,7 @@ public class MapActivity extends FragmentActivity
             }
             p.setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
             p.setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
+            MapHelper.moveCameraToBounds(mMap, MapHelper.getBounds(p));
         }
     }
 

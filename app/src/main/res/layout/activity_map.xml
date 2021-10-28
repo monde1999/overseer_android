@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/map_layout">
-    <include layout="@layout/fragment_maps"
-        android:id="@+id/maps"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/map_fab_logout"
         android:layout_width="wrap_content"
@@ -53,4 +51,6 @@
         app:icon="@drawable/ic_magnifying_glass_24dp"
         app:iconGravity="end"
         app:iconTint="@color/grey_900" />
+    <include layout="@layout/fragment_maps"
+        android:id="@+id/maps"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
