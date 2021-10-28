@@ -240,6 +240,12 @@ public class MapActivity extends FragmentActivity
         Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show();
         mFab_report.setClickable(false);
         mFab_report.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.grey)));
+        // Remove previous popupFragments from the map
+        if(mPopupFragments!=null) {
+            for(FloodForecastPopupFragment popupFragment : mPopupFragments) {
+                popupFragment.remove();
+            }
+        }
     }
     // endregion
 
