@@ -2,8 +2,8 @@ package com.adventurers.overseer.map.views;
 
 import static com.adventurers.overseer.Constants.RC_ACCESS_FINE_LOCATION;
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
-import static com.adventurers.overseer.Constants.TAG_REPORT;
 import static com.adventurers.overseer.Constants.RC_SEARCH_TYPE;
+import static com.adventurers.overseer.Constants.TAG_REPORT;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -22,6 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -53,20 +53,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.ButtCap;
 import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.ArrayList;
@@ -314,10 +312,11 @@ public class MapActivity extends FragmentActivity
 
     // region SearchType...
     private void searchTypeSuccess(Place place) {
-//        Toast.makeText(this, place.getAddress(), Toast.LENGTH_SHORT).show();
-        DirectionPresenter directionPresenter = new DirectionPresenter(this);
-        Location directionGoal = new Location(place.getLatLng());
-        directionPresenter.present(mUserLocation, directionGoal);
+        if(place.getLatLng() != null) {
+            DirectionPresenter directionPresenter = new DirectionPresenter(this);
+            Location directionGoal = new Location(place.getLatLng());
+            directionPresenter.present(mUserLocation, directionGoal);
+        }
     }
     // endregion
 
@@ -358,17 +357,20 @@ public class MapActivity extends FragmentActivity
     }
 
     private BitmapDescriptor getBitmapDescriptor(int id) {
-        Drawable vectorDrawable = getDrawable(id);
+        Drawable vectorDrawable = AppCompatResources.getDrawable(this, id);
 //        int h = ((int) Utils.convertDpToPixel(42, context));
 //        int w = ((int) Utils.convertDpToPixel(25, context));
-        int w = vectorDrawable.getIntrinsicWidth();
-        int h = vectorDrawable.getIntrinsicHeight();
-        vectorDrawable.setBounds(0, 0, w, h);
-        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bm);
-        vectorDrawable.draw(canvas);
-        Bitmap sbm = Bitmap.createScaledBitmap(bm, w, h, false);
-        return BitmapDescriptorFactory.fromBitmap(sbm);
+        if(vectorDrawable != null) {
+            int w = vectorDrawable.getIntrinsicWidth();
+            int h = vectorDrawable.getIntrinsicHeight();
+            vectorDrawable.setBounds(0, 0, w, h);
+            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm);
+            vectorDrawable.draw(canvas);
+            Bitmap sbm = Bitmap.createScaledBitmap(bm, w, h, false);
+            return BitmapDescriptorFactory.fromBitmap(sbm);
+        }
+        return null;
     }
 
     @Override
