@@ -8,8 +8,8 @@
     <include layout="@layout/fragment_maps" />
     <include layout="@layout/fragment_map_hud"
         android:id="@+id/map_hud"/>
-<!--    <include layout="@layout/fragment_selection"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_width="match_parent"-->
-<!--        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />-->
+    <include layout="@layout/fragment_selection"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

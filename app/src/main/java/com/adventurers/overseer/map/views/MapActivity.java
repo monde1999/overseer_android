@@ -39,6 +39,7 @@ import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
 import com.adventurers.overseer.report.views.ReportActivity;
 import com.adventurers.overseer.searchtype.SearchType;
+import com.adventurers.overseer.selection.SelectionActivity;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -92,10 +93,12 @@ public class MapActivity extends FragmentActivity
     private List<FloodForecastPopupFragment> mPopupFragments;
     FloatingActionButton mFab_report;
     private List<Polyline> mRoutesPolyline;
+    private SelectionActivity selectionActivity;
 
     private static final String TAG = "MapActivity";
     private final int MAP = 0;
-    private final int DIRECTIONS = 1;
+    private final int SELECTION = 1;
+    private final int DIRECTIONS = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +154,9 @@ public class MapActivity extends FragmentActivity
                 MapActivity.this.finish();
             }
         });
+
+        View bottomSheet = findViewById(R.id.selection_fragment);
+        selectionActivity = new SelectionActivity(this, BottomSheetBehavior.from(bottomSheet));
     }
 
     /**
@@ -311,15 +317,19 @@ public class MapActivity extends FragmentActivity
 
     // region SearchType...
     private void searchTypeSuccess(Place place) {
-        if(place.getLatLng() != null) {
-            DirectionPresenter directionPresenter = new DirectionPresenter(this);
-            Location directionGoal = new Location(place.getLatLng());
-            directionPresenter.present(mUserLocation, directionGoal);
-        }
-//        View bottomSheet = findViewById(R.id.selection_fragment);
-//        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-//        bottomSheetBehavior.setHideable(false);
-//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        selectionActivity.show();
+        selectionActivity.setOnDirectionsClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(place.getLatLng() != null) {
+                    DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
+                    Location directionGoal = new Location(place.getLatLng());
+                    directionPresenter.present(mUserLocation, directionGoal);
+                    selectionActivity.hide();
+                }
+            }
+        });
+        mState = SELECTION;
     }
     // endregion
 
@@ -450,6 +460,10 @@ public class MapActivity extends FragmentActivity
         switch (mState) {
             case MAP:
                 super.onBackPressed();
+                break;
+            case SELECTION:
+                selectionActivity.hide();
+                mState = MAP;
                 break;
             case DIRECTIONS:
                 if(mRoutesPolyline != null) {
