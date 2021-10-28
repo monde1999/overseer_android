@@ -358,7 +358,6 @@ public class MapActivity extends FragmentActivity
                 // Select first route polyline as default
                 if (mRoutesPolyline != null) {
                     selectPolyline(mRoutesPolyline.get(0));
-                    hideHud();
                     stopFollowingDevice();
                     mState = DIRECTIONS;
                 }
@@ -465,21 +464,23 @@ public class MapActivity extends FragmentActivity
                 super.onBackPressed();
                 break;
             case SEARCH:
+                mState = MAP;
                 showHud();
-                mState = MAP;
+                break;
             case SELECTION:
-                selectionActivity.hide();
                 mState = MAP;
+                selectionActivity.hide();
+                showHud();
                 break;
             case DIRECTIONS:
+                mState = SELECTION;
                 if(mRoutesPolyline != null) {
                     for (Polyline polyline : mRoutesPolyline) {
                         polyline.remove();
                     }
                     mRoutesPolyline.clear();
                 }
-                showHud();
-                mState = SELECTION;
+                selectionActivity.show();
                 break;
         }
     }
