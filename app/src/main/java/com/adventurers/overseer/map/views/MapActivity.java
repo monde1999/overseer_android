@@ -97,8 +97,9 @@ public class MapActivity extends FragmentActivity
 
     private static final String TAG = "MapActivity";
     private final int MAP = 0;
-    private final int SELECTION = 1;
-    private final int DIRECTIONS = 2;
+    private final int SEARCH = 1;
+    private final int SELECTION = 2;
+    private final int DIRECTIONS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +198,8 @@ public class MapActivity extends FragmentActivity
                 @Override
                 public void onClick(View view) {
                     SearchType.launch(MapActivity.this);
+                    hideHud();
+                    mState = SEARCH;
                 }
             });
         }
@@ -355,7 +358,7 @@ public class MapActivity extends FragmentActivity
                 // Select first route polyline as default
                 if (mRoutesPolyline != null) {
                     selectPolyline(mRoutesPolyline.get(0));
-                    findViewById(R.id.map_hud).setVisibility(View.GONE);
+                    hideHud();
                     stopFollowingDevice();
                     mState = DIRECTIONS;
                 }
@@ -461,6 +464,9 @@ public class MapActivity extends FragmentActivity
             case MAP:
                 super.onBackPressed();
                 break;
+            case SEARCH:
+                showHud();
+                mState = MAP;
             case SELECTION:
                 selectionActivity.hide();
                 mState = MAP;
@@ -472,10 +478,18 @@ public class MapActivity extends FragmentActivity
                     }
                     mRoutesPolyline.clear();
                 }
-                findViewById(R.id.map_hud).setVisibility(View.VISIBLE);
-                mState = MAP;
+                showHud();
+                mState = SELECTION;
                 break;
         }
+    }
+
+    private void showHud() {
+        findViewById(R.id.map_hud).setVisibility(View.VISIBLE);
+    }
+
+    private void hideHud() {
+        findViewById(R.id.map_hud).setVisibility(View.GONE);
     }
 
     // endregion
@@ -534,9 +548,17 @@ public class MapActivity extends FragmentActivity
                     break;
             }
         }
-        else if(requestCode == RC_SEARCH_TYPE && resultCode == RESULT_OK) {
-            Place place = Autocomplete.getPlaceFromIntent(data);
-            searchTypeSuccess(place);
+        else if(requestCode == RC_SEARCH_TYPE) {
+            switch (resultCode) {
+                case RESULT_OK:
+                    Place place = Autocomplete.getPlaceFromIntent(data);
+                    searchTypeSuccess(place);
+                    break;
+                case RESULT_CANCELED:
+                    onBackPressed();
+                    break;
+            }
+
         }
     }
     // endregion
