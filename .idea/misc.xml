@@ -11,10 +11,12 @@
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/activity_login.xml" value="0.18055555555555555" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/activity_map.xml" value="0.1" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_floodforecast_detailed.xml" value="0.33" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_maps.xml" value="0.20615384615384616" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_report.xml" value="0.18055555555555555" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_reports.xml" value="0.209375" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_reports_post.xml" value="0.1" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_selection.xml" value="0.1953125" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/hud.xml" value="0.20615384615384616" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_street.xml" value="0.22037037037037038" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/bg_weather.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/drawable-v24/card_shape.xml" value="0.22552083333333334" />

@@ -82,18 +82,20 @@ public class MapActivity extends FragmentActivity
     private GoogleMap mMap;
     private MapPresenter mMapPresenter;
 
-
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
     private boolean mFollowUser;
     private Location mUserLocation;
+    private int mState;
 
     private List<FloodForecastPopupFragment> mPopupFragments;
     FloatingActionButton mFab_report;
     private List<Polyline> mRoutesPolyline;
 
     private static final String TAG = "MapActivity";
+    private final int MAP = 0;
+    private final int DIRECTIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,7 @@ public class MapActivity extends FragmentActivity
         mUserLocation = new Location(0,0);
         mFab_report = findViewById(R.id.map_fab_report);
         mRoutesPolyline = new ArrayList<>();
+        mState = MAP;
 
         // Called when device location is updated
         mLocationCallback = new LocationCallback() {
@@ -317,12 +320,7 @@ public class MapActivity extends FragmentActivity
             @Override
             public void run() {
                 // Remove existing routes polyline on map
-                if(mRoutesPolyline != null) {
-                    for (Polyline polyline : mRoutesPolyline) {
-                        polyline.remove();
-                    }
-                    mRoutesPolyline.clear();
-                }
+                clearRoutesPolyline();
                 // Render new routes polyline
                 for (Route route : routes) {
                     List<LatLng> steps = new ArrayList<>();
@@ -337,6 +335,11 @@ public class MapActivity extends FragmentActivity
                 // Select first route polyline as default
                 if (mRoutesPolyline != null) {
                     selectPolyline(mRoutesPolyline.get(0));
+                    findViewById(R.id.map_fab_logout).setVisibility(View.GONE);
+                    findViewById(R.id.map_fab_report).setVisibility(View.GONE);
+                    findViewById(R.id.map_fab_search).setVisibility(View.GONE);
+                    stopFollowingDevice();
+                    mState = DIRECTIONS;
                 }
             }
 
@@ -356,6 +359,15 @@ public class MapActivity extends FragmentActivity
             p.setStartCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
             p.setEndCap(new CustomCap(Objects.requireNonNull(getBitmapDescriptor(R.drawable.ic_circle_cap))));
             MapHelper.moveCameraToBounds(mMap, MapHelper.getBounds(p));
+        }
+    }
+
+    private void clearRoutesPolyline() {
+        if(mRoutesPolyline != null) {
+            for (Polyline polyline : mRoutesPolyline) {
+                polyline.remove();
+            }
+            mRoutesPolyline.clear();
         }
     }
 
@@ -424,6 +436,28 @@ public class MapActivity extends FragmentActivity
     private void stopLocationUpdates() {
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
+
+    @Override
+    public void onBackPressed() {
+        switch (mState) {
+            case MAP:
+                super.onBackPressed();
+                break;
+            case DIRECTIONS:
+                if(mRoutesPolyline != null) {
+                    for (Polyline polyline : mRoutesPolyline) {
+                        polyline.remove();
+                    }
+                    mRoutesPolyline.clear();
+                }
+                findViewById(R.id.map_fab_logout).setVisibility(View.VISIBLE);
+                findViewById(R.id.map_fab_report).setVisibility(View.VISIBLE);
+                findViewById(R.id.map_fab_search).setVisibility(View.VISIBLE);
+                mState = MAP;
+                break;
+        }
+    }
+
     // endregion
 
     // region Permissions...
