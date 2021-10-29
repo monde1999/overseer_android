@@ -1,0 +1,108 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/dp_10"
+    android:paddingBottom="@dimen/dp_20"
+    android:id="@+id/selection_fragment"
+    android:background="@drawable/card_rounded_top">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_20">
+
+            <TableRow
+                android:id="@+id/selection_tr_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:weightSum="2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:paddingRight="@dimen/dp_5"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/selection_tv_name"
+                        android:text="This is the location"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16"
+                        android:layout_marginBottom="@dimen/dp_5" />
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/selection_tv_address"
+                        android:text="This is the address"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_14"
+                        android:layout_marginBottom="@dimen/dp_5"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/selection_tv_distance"
+                        android:text="0 km"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_14" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/selection_iv_location"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_150"
+                    android:layout_column="1"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/street_snapshot"
+                    android:src="@drawable/bg_street" />
+            </TableRow>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/selection_tr_address"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dp_30"
+                android:weightSum="2">
+                <Button
+                    android:id="@+id/selection_btn_directions"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_btn_main_fill"
+                    android:layout_marginEnd="@dimen/dp_5"
+                    android:text="Directions"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:id="@+id/selection_btn_start"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/dp_5"
+                    android:text="Start"
+                    android:textColor="@color/main_color"
+                    android:textAllCaps="false"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@drawable/bg_btn_main_border"/>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
