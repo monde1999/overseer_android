@@ -330,6 +330,7 @@ public class MapActivity extends FragmentActivity
                     DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
                     Location directionGoal = new Location(place.getLatLng());
                     directionPresenter.present(mUserLocation, directionGoal);
+                    mFocusedMarker.remove();
                     mSelectionActivity.hide();
                 }
             }
