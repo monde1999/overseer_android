@@ -27,7 +27,7 @@ public class MapHelper {
     }
 
     public static void moveCameraToBounds(GoogleMap map, LatLngBounds bounds) {
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
 
     public static void zoomCameraTo(GoogleMap map, int zoom) {
