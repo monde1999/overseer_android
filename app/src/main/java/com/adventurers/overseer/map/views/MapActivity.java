@@ -321,20 +321,6 @@ public class MapActivity extends FragmentActivity
 
     // region SearchType...
     private void searchTypeSuccess(Place place) {
-        mSelectionActivity.show();
-        mSelectionActivity.setOnDirectionsClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(place.getLatLng() != null) {
-                    mMap.setPadding(0, 0, 0, 0);
-                    DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
-                    Location directionGoal = new Location(place.getLatLng());
-                    directionPresenter.present(mUserLocation, directionGoal);
-                    mFocusedMarker.remove();
-                    mSelectionActivity.hide();
-                }
-            }
-        });
         if(place.getLatLng() != null) {
             mSelectionActivity.setOnExpandedHeightReady(new SelectionActivity.OnExpandedHeightReady() {
                 @Override
@@ -348,6 +334,22 @@ public class MapActivity extends FragmentActivity
                     mState = SELECTION;
                 }
             });
+            mSelectionActivity.setOnDirectionsClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                        mMap.setPadding(0, 0, 0, 0);
+                        DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
+                        Location directionGoal = new Location(place.getLatLng());
+                        directionPresenter.present(mUserLocation, directionGoal);
+                        mFocusedMarker.remove();
+                        mSelectionActivity.hide();
+                }
+            });
+            mSelectionActivity.show();
+            mSelectionActivity.setContents(
+                    place.getName(), place.getAddress(),
+                    mUserLocation, new Location(Objects.requireNonNull(place.getLatLng()))
+            );
         }
     }
     // endregion
