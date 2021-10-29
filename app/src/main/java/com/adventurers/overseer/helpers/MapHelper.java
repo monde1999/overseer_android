@@ -30,7 +30,7 @@ public class MapHelper {
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
 
-    public static void zoomCameraTo(GoogleMap map, int zoom) {
+    public static void zoomCameraTo(GoogleMap map, float zoom) {
         map.animateCamera(CameraUpdateFactory.zoomTo(zoom));
     }
 

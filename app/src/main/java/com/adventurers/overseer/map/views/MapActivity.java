@@ -341,8 +341,9 @@ public class MapActivity extends FragmentActivity
                 public void onExpandedHeightReady(int height) {
                     stopFollowingDevice();
                     mMap.setPadding(0, 0, 0, height);
+                    float currentZoom = mMap.getCameraPosition().zoom;
                     MapHelper.zoomCameraTo(mMap, 13);
-                    MapHelper.moveCameraToLocation(mMap, place.getLatLng().latitude, place.getLatLng().longitude, 15, true);
+                    MapHelper.moveCameraToLocation(mMap, place.getLatLng().latitude, place.getLatLng().longitude, currentZoom, true);
                     mFocusedMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
                     mState = SELECTION;
                 }
