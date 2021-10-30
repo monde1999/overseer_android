@@ -1,4 +1,4 @@
-package com.adventurers.overseer.selection;
+package com.adventurers.overseer.direction;
 
 
 
@@ -19,9 +19,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.text.DecimalFormat;
 
 
-public class SelectionActivity {
+public class DirectionActivity {
     private final BottomSheetBehavior<View> mSelectionFragment;
-    private final Button btn_directions;
     private final Button btn_start;
     private final TextView tv_name;
     private final TextView tv_address;
@@ -29,15 +28,14 @@ public class SelectionActivity {
     private final ImageView iv_location;
     private OnExpandedHeightReady onExpandedHeightReady;
 
-    public SelectionActivity(Activity activity, BottomSheetBehavior<View> selectionFragment) {
+    public DirectionActivity(Activity activity, BottomSheetBehavior<View> selectionFragment) {
         mSelectionFragment = selectionFragment;
         hide();
-        btn_directions = activity.findViewById(R.id.selection_btn_directions);
-        btn_start = activity.findViewById(R.id.selection_btn_start);
-        tv_name = activity.findViewById(R.id.selection_tv_name);
-        tv_address = activity.findViewById(R.id.selection_tv_address);
-        tv_distance = activity.findViewById(R.id.selection_tv_distance);
-        iv_location = activity.findViewById(R.id.selection_iv_location);
+        btn_start = activity.findViewById(R.id.direction_btn_start);
+        tv_name = activity.findViewById(R.id.direction_tv_name);
+        tv_address = activity.findViewById(R.id.direction_tv_address);
+        tv_distance = activity.findViewById(R.id.direction_tv_distance);
+        iv_location = activity.findViewById(R.id.direction_iv_location);
         mSelectionFragment.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -63,10 +61,6 @@ public class SelectionActivity {
         mSelectionFragment.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
-    public void setOnDirectionsClickListener(View.OnClickListener l) {
-        btn_directions.setOnClickListener(l);
-    }
-
     public void setOnStartClickListener(View.OnClickListener l) {
         btn_start.setOnClickListener(l);
     }
@@ -79,16 +73,6 @@ public class SelectionActivity {
         void onExpandedHeightReady(int height);
     }
 
-    private double getDistanceKm(Location origin, Location destination) {
-        float[] results = new float[5];
-        android.location.Location.distanceBetween(
-                origin.getLatitude(), origin.getLongitude(),
-                destination.getLatitude(), destination.getLongitude(),
-                results
-        );
-        return results[0] / 1000;
-    }
-
     public void setName(String name) {
         tv_name.setText(name);
     }
@@ -97,29 +81,11 @@ public class SelectionActivity {
         tv_address.setText(address);
     }
 
-    public void setDistance(Location origin, Location destination) {
-        DecimalFormat df=new DecimalFormat("#.## km");
-        double distance = getDistanceKm(origin, destination);
-        tv_distance.setText(df.format(distance));
+    public void setDistance(String distance) {
+        tv_distance.setText(distance);
     }
 
-    public void setImage(Location location) {
-        ImageHelper.loadStreetStaticView(location, iv_location);
-    }
-
-    public String getName() {
-        return tv_name.getText().toString();
-    }
-
-    public String getAddress() {
-        return tv_address.getText().toString();
-    }
-
-    public String getDistance() {
-        return tv_distance.getText().toString();
-    }
-
-    public Drawable getImage() {
-        return iv_location.getDrawable();
+    public void setImage(Drawable drawable) {
+        iv_location.setImageDrawable(drawable);
     }
 }

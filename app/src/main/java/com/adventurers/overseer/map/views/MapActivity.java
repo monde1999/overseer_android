@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.adventurers.overseer.R;
+import com.adventurers.overseer.direction.DirectionActivity;
 import com.adventurers.overseer.direction.models.Route;
 import com.adventurers.overseer.direction.presenters.DirectionPresenter;
 import com.adventurers.overseer.direction.views.IDirectionView;
@@ -94,6 +95,7 @@ public class MapActivity extends FragmentActivity
     FloatingActionButton mFab_report;
     private List<Polyline> mRoutesPolyline;
     private SelectionActivity mSelectionActivity;
+    DirectionActivity mDirectionActivity;
     private Marker mFocusedMarker;
 
     private static final String TAG = "MapActivity";
@@ -159,6 +161,9 @@ public class MapActivity extends FragmentActivity
 
         View bottomSheet = findViewById(R.id.selection_fragment);
         mSelectionActivity = new SelectionActivity(this, BottomSheetBehavior.from(bottomSheet));
+
+        bottomSheet = findViewById(R.id.direction_fragment);
+        mDirectionActivity = new DirectionActivity(this, BottomSheetBehavior.from(bottomSheet));
     }
 
     /**
@@ -337,20 +342,35 @@ public class MapActivity extends FragmentActivity
             mSelectionActivity.setOnDirectionsClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                        mMap.setPadding(0, 0, 0, 0);
-                        DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
-                        Location directionGoal = new Location(place.getLatLng());
-                        directionPresenter.present(mUserLocation, directionGoal);
-                        mFocusedMarker.remove();
-                        mSelectionActivity.hide();
+                    startDirectionActivity();
+                    DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
+                    Location directionGoal = new Location(place.getLatLng());
+                    directionPresenter.present(mUserLocation, directionGoal);
+                    mFocusedMarker.remove();
+                    mSelectionActivity.hide();
                 }
             });
+            Location destination = new Location(Objects.requireNonNull(place.getLatLng()));
             mSelectionActivity.show();
-            mSelectionActivity.setContents(
-                    place.getName(), place.getAddress(),
-                    mUserLocation, new Location(Objects.requireNonNull(place.getLatLng()))
-            );
+            mSelectionActivity.setName(place.getName());
+            mSelectionActivity.setAddress(place.getAddress());
+            mSelectionActivity.setDistance(mUserLocation, destination);
+            mSelectionActivity.setImage(destination);
         }
+    }
+
+    private void startDirectionActivity() {
+        mDirectionActivity.setOnExpandedHeightReady(new DirectionActivity.OnExpandedHeightReady() {
+            @Override
+            public void onExpandedHeightReady(int height) {
+                mMap.setPadding(0, 0, 0, height);
+            }
+        });
+        mDirectionActivity.show();
+        mDirectionActivity.setName(mSelectionActivity.getName());
+        mDirectionActivity.setAddress(mSelectionActivity.getAddress());
+        mDirectionActivity.setDistance(mSelectionActivity.getDistance());
+        mDirectionActivity.setImage(mSelectionActivity.getImage());
     }
     // endregion
 
@@ -500,6 +520,7 @@ public class MapActivity extends FragmentActivity
                     mRoutesPolyline.clear();
                 }
                 mSelectionActivity.show();
+                mDirectionActivity.hide();
                 break;
         }
     }
