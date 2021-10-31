@@ -38,7 +38,7 @@ import com.adventurers.overseer.helpers.StatusBarHelper;
 import com.adventurers.overseer.login.views.LoginActivity;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
-import com.adventurers.overseer.navigation.NavigationActivity;
+import com.adventurers.overseer.navigation.PlayVoiceInstructionsActivity;
 import com.adventurers.overseer.report.views.ReportActivity;
 import com.adventurers.overseer.searchtype.SearchType;
 import com.adventurers.overseer.selection.SelectionActivity;
@@ -71,6 +71,7 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.ArrayList;
@@ -99,6 +100,7 @@ public class MapActivity extends FragmentActivity
     private SelectionActivity mSelectionActivity;
     DirectionActivity mDirectionActivity;
     private Marker mFocusedMarker;
+    private Polyline mFocusedRoute;
 
     private static final String TAG = "MapActivity";
     private final int MAP = 0;
@@ -355,7 +357,7 @@ public class MapActivity extends FragmentActivity
             mSelectionActivity.setOnStartClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+                    Intent i = new Intent(getApplicationContext(), PlayVoiceInstructionsActivity.class);
                     startActivity(i);
                 }
             });
@@ -380,6 +382,20 @@ public class MapActivity extends FragmentActivity
         mDirectionActivity.setAddress(mSelectionActivity.getAddress());
         mDirectionActivity.setDistance(mSelectionActivity.getDistance());
         mDirectionActivity.setImage(mSelectionActivity.getImage());
+        mDirectionActivity.setOnStartClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), PlayVoiceInstructionsActivity.class);
+                Gson gson = new Gson();
+                ArrayList<String> route = new ArrayList<>();
+                for(LatLng latLng : mFocusedRoute.getPoints()) {
+                    String json = gson.toJson(latLng);
+                    route.add(json);
+                }
+                i.putStringArrayListExtra("Route", route);
+                startActivity(i);
+            }
+        });
     }
     // endregion
 
@@ -417,6 +433,7 @@ public class MapActivity extends FragmentActivity
             if(p.equals(polyline)) {
                 p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.main_color));
                 p.setZIndex(1);
+                mFocusedRoute = p;
             }
             else {
                 p.setColor(ContextCompat.getColor(getApplicationContext(), R.color.grey));
