@@ -38,9 +38,11 @@ import com.adventurers.overseer.helpers.StatusBarHelper;
 import com.adventurers.overseer.login.views.LoginActivity;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
+import com.adventurers.overseer.navigation.NavigationActivity;
 import com.adventurers.overseer.report.views.ReportActivity;
 import com.adventurers.overseer.searchtype.SearchType;
 import com.adventurers.overseer.selection.SelectionActivity;
+import com.adventurers.overseer.signup.views.SignupActivity;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -348,6 +350,13 @@ public class MapActivity extends FragmentActivity
                     directionPresenter.present(mUserLocation, directionGoal);
                     mFocusedMarker.remove();
                     mSelectionActivity.hide();
+                }
+            });
+            mSelectionActivity.setOnStartClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+                    startActivity(i);
                 }
             });
             Location destination = new Location(Objects.requireNonNull(place.getLatLng()));
