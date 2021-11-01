@@ -408,6 +408,7 @@ public class MapActivity extends FragmentActivity
                 // Remove existing routes polyline on map
                 clearRoutesPolyline();
                 // Render new routes polyline
+                Toast.makeText(getApplicationContext(), routes.get(0).getRoute().size()+"", Toast.LENGTH_LONG).show();
                 for (Route route : routes) {
                     List<LatLng> steps = new ArrayList<>();
                     for (Location step : route.getRoute()) {

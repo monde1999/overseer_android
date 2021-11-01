@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 
 import com.mapbox.api.directions.v5.DirectionsCriteria
+import com.mapbox.api.directions.v5.DirectionsCriteria.*
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.matching.v5.MapboxMapMatching
 import com.mapbox.api.matching.v5.models.MapMatchingResponse
@@ -301,29 +302,54 @@ class PlayVoiceInstructionsActivity : AppCompatActivity() {
             val latLng = gson.fromJson(r, LatLng::class.java)
             gRoute.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
         }
+        if(gRoute.size>100) {
+            val mustRemove = gRoute.size - 98
+            val xPoints = ArrayList<Point>()
+            val x = (1 until gRoute.size - 1).shuffled()
+            for(i in 0 until mustRemove) {
+                xPoints.add(gRoute[x[i]])
+            }
+            gRoute.removeAll(xPoints)
+            // Render new routes polyline
+            Toast.makeText(
+                applicationContext,
+                gRoute.size.toString() + " gRoute"+mustRemove,
+                Toast.LENGTH_LONG
+            ).show()
+        }
 //        Toast.makeText(this, "gRoute"+gRoute[0].toString(),Toast.LENGTH_SHORT).show()
         val mapboxMapMatching = MapboxMapMatching.builder()
-                .accessToken(getString(R.string.mapbox_access_token))
-                .coordinates(gRoute)
-                .steps(true)
-                .voiceInstructions(true)
-                .bannerInstructions(true)
-                .profile(DirectionsCriteria.PROFILE_DRIVING)
-                .build()
+            .accessToken(getString(R.string.mapbox_access_token))
+            .coordinates(gRoute)
+            .steps(true)
+            .voiceInstructions(true)
+            .bannerInstructions(true)
+            .profile(PROFILE_DRIVING)
+            .overview(OVERVIEW_FULL)
+            .waypointIndices(0, gRoute.lastIndex)
+            .build()
         mapboxMapMatching.enqueueCall(object : Callback<MapMatchingResponse> {
             override fun onResponse(call: Call<MapMatchingResponse>, response: Response<MapMatchingResponse>) {
                 if (response.isSuccessful) {
-                    route2 = response.body()?.matchings()?.get(0)?.toDirectionRoute()!!
-                    mapboxMap.loadStyleUri(
-                        Style.MAPBOX_STREETS
-                    ) {
-                        // The initial camera point to the origin where the route line starts from.
-//                        updateCamera(Point.fromLngLat(-122.4192, 37.7627))
-                        val start = route2.legs()?.get(0)?.steps()?.get(0)?.maneuver()?.location()!!
-                        updateCamera(Point.fromLngLat(start.longitude(), start.latitude()))
-                        binding.actionButton.visibility = View.VISIBLE
-                    }
+//                    route2 = response.body()?.matchings()?.get(0)?.toDirectionRoute()!!
+//                    mapboxMap.loadStyleUri(
+//                        Style.MAPBOX_STREETS
+//                    ) {
+//                        // The initial camera point to the origin where the route line starts from.
+////                        updateCamera(Point.fromLngLat(-122.4192, 37.7627))
+//                        val start = route2.legs()?.get(0)?.steps()?.get(0)?.maneuver()?.location()!!
+//                        updateCamera(Point.fromLngLat(start.longitude(), start.latitude()))
+//                        binding.actionButton.visibility = View.VISIBLE
+//                    }
 //                    Toast.makeText(applicationContext, "route1"+route1?.distance().toString(),Toast.LENGTH_LONG).show()
+                    response.body()?.matchings()?.let { matchingList ->
+                        matchingList[0].toDirectionRoute().apply {
+                            mapboxNavigation.setRoutes(listOf(this))
+                            route2 = this
+                            val start = route2.legs()?.get(0)?.steps()?.get(0)?.maneuver()?.location()!!
+                            updateCamera(Point.fromLngLat(start.longitude(), start.latitude()))
+                        }
+                    }
                 }
                 else {
                     Toast.makeText(applicationContext, "UNSUCCESSFUL "+response.errorBody().toString(),Toast.LENGTH_LONG).show()
@@ -354,13 +380,13 @@ class PlayVoiceInstructionsActivity : AppCompatActivity() {
             )
         }
 
-//        mapboxMap.loadStyleUri(
-//            Style.MAPBOX_STREETS
-//        ) {
-//            // The initial camera point to the origin where the route line starts from.
+        mapboxMap.loadStyleUri(
+            Style.MAPBOX_STREETS
+        ) {
+            // The initial camera point to the origin where the route line starts from.
 //            updateCamera(Point.fromLngLat(-122.4192, 37.7627))
-//            binding.actionButton.visibility = View.VISIBLE
-//        }
+            binding.actionButton.visibility = View.VISIBLE
+        }
 
         speechApi = MapboxSpeechApi(
             this,
