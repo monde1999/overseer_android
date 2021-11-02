@@ -502,7 +502,7 @@ public class NavigationActivity extends AppCompatActivity {
                     new NavigationOptions.Builder(NavigationActivity.this)
                             .accessToken(getString(R.string.mapbox_access_token))
                             // comment out the location engine setting block to disable simulation
-//                            .locationEngine(replayLocationEngine)
+                            .locationEngine(replayLocationEngine)
                             .build()
             );
         }
@@ -769,7 +769,10 @@ public class NavigationActivity extends AppCompatActivity {
         tripProgressCard.setVisibility(View.VISIBLE);
 
         // move the camera to overview when new route is available
-        navigationCamera.requestNavigationCameraToOverview();
+        // navigationCamera.requestNavigationCameraToOverview();
+
+        // move the camera to following when new route is available
+        recenter.callOnClick();
     }
 
     private void clearRouteAndStopNavigation() {
