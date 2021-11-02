@@ -36,7 +36,11 @@
         <activity
             android:name=".navigation.PlayVoiceInstructionsActivity"
             android:exported="true"
-            android:theme="@style/Theme.Overseer.Fullscreen"/>
+            android:theme="@style/Theme.Overseer.Fullscreen" />
+        <activity
+            android:name=".navigation.NavigationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Overseer.Fullscreen" />
         <activity
             android:name=".signup.views.SignupActivity"
             android:exported="true"

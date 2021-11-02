@@ -1,305 +1,682 @@
-//package com.adventurers.overseer.navigation;
-//
-//import android.annotation.SuppressLint;
-//import android.location.Location;
-//import android.os.Bundle;
-//import android.util.Log;
-//
-//import androidx.annotation.NonNull;
-//import androidx.appcompat.app.AppCompatActivity;
-//
-//import com.adventurers.overseer.R;
-//import com.adventurers.overseer.helpers.StatusBarHelper;
-//import com.mapbox.api.directions.v5.models.DirectionsRoute;
-//import com.mapbox.api.directions.v5.models.VoiceInstructions;
-//import com.mapbox.bindgen.Expected;
-//import com.mapbox.mapboxsdk.location.LocationComponent;
-//import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-//import com.mapbox.mapboxsdk.location.modes.CameraMode;
-//import com.mapbox.mapboxsdk.location.modes.RenderMode;
-//import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-//import com.mapbox.mapboxsdk.maps.Style;
-//import com.mapbox.maps.MapView;
-//import com.mapbox.maps.MapboxMap;
-//import com.mapbox.maps.plugin.Plugin;
-//import com.mapbox.navigation.core.MapboxNavigation;
-//import com.mapbox.navigation.core.directions.session.RoutesObserver;
-//import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
-//import com.mapbox.navigation.core.replay.MapboxReplayer;
-//import com.mapbox.navigation.core.replay.ReplayLocationEngine;
-//import com.mapbox.navigation.core.replay.route.ReplayProgressObserver;
-//import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
-//import com.mapbox.navigation.core.trip.session.LocationObserver;
-//import com.mapbox.navigation.core.trip.session.VoiceInstructionsObserver;
-//import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer;
-//import com.mapbox.navigation.ui.maps.camera.NavigationCamera;
-//import com.mapbox.navigation.ui.maps.camera.data.MapboxNavigationViewportDataSource;
-//import com.mapbox.navigation.ui.maps.camera.transition.NavigationCameraTransitionOptions;
-//import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
-//import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
-//import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
-//import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions;
-//import com.mapbox.navigation.ui.maps.route.line.model.RouteLine;
-//import com.mapbox.navigation.ui.maps.route.line.model.RouteLineError;
-//import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources;
-//import com.mapbox.navigation.ui.maps.route.line.model.RouteSetValue;
-//import com.mapbox.navigation.ui.voice.api.MapboxSpeechApi;
-//import com.mapbox.navigation.ui.voice.api.MapboxVoiceInstructionsPlayer;
-//import com.mapbox.navigation.ui.voice.model.SpeechAnnouncement;
-//import com.mapbox.navigation.ui.voice.model.SpeechError;
-//import com.mapbox.navigation.ui.voice.model.SpeechValue;
-//import com.mapbox.navigation.ui.voice.model.SpeechVolume;
-//import com.mapbox.navigation.ui.voice.view.MapboxSoundButton;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//public class NavigationActivity extends AppCompatActivity {
-//    private final DirectionsRoute route = DirectionsRoute.fromJson(getString(R.string.fix_route));
-//    private final MapboxReplayer mapboxReplayer = new MapboxReplayer();
-//    private final ReplayLocationEngine replayLocationEngine = new ReplayLocationEngine(mapboxReplayer);
-//    private final ReplayProgressObserver replayProgressObserver = new ReplayProgressObserver(mapboxReplayer);
-//    private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
-//    private MapboxNavigation mapboxNavigation;
-//    private MapboxMap mapboxMap;
-//    private NavigationCamera navigationCamera;
-//    private MapboxNavigationViewportDataSource viewportDataSource;
-//    private final MapboxSoundButton soundButton = findViewById(R.id.soundButton);
-//    private final MapView mapView = findViewById(R.id.mapView);
-//    private MapboxSpeechApi speechApi;
-//    private MapboxVoiceInstructionsPlayer voiceInstructionsPlayer;
-//    private boolean isVoiceInstructionsMuted = false;
-//    private void setIsVoiceInstructed(boolean isVoiceInstructedMuted) {
-//        this.isVoiceInstructionsMuted = isVoiceInstructedMuted;
-//        if (isVoiceInstructedMuted) {
-//            soundButton.muteAndExtend(1500L);
-//            voiceInstructionsPlayer.volume(new SpeechVolume(0f));
-//        } else {
-//            soundButton.unmuteAndExtend(1500L);
-//            voiceInstructionsPlayer.volume(new SpeechVolume(1f));
-//        }
-//    }
-//    private final MapboxRouteLineOptions options = new MapboxRouteLineOptions.Builder(this)
-//            .withRouteLineResources(new RouteLineResources.Builder().build())
-//            .withRouteLineBelowLayerId("road-label")
-//            .build();
-//    private final MapboxRouteLineView routeLineView = new MapboxRouteLineView(options);
-//    private final MapboxRouteLineApi routeLineApi = new MapboxRouteLineApi(options);
-//    private final MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>> speechCallback =
-//            new MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>>() {
-//                @Override
-//                public void accept(Expected<SpeechError, SpeechValue> expected) {
-//                    expected.fold(
-//                            new Expected.Transformer<SpeechError, Object>() {
-//                                @NonNull
-//                                @Override
-//                                public Object invoke(@NonNull SpeechError input) {
-//                                    Log.d("abhishek_testing", "speechCallback: $error");
-//                                    // play the instruction via fallback text-to-speech engine
-//                                    voiceInstructionsPlayer.play(
-//                                            input.getFallback(),
-//                                            voiceInstructionsPlayerCallback
-//                                    );
-//                                    return null;
-//                                }
-//                            },
-//                            new Expected.Transformer<SpeechValue, Object>() {
-//                                @NonNull
-//                                @Override
-//                                public Object invoke(@NonNull SpeechValue input) {
-//                                    Log.d("abhishek_testing", "speechCallback: $error");
-//                                    // play the sound file from the external generator
-//                                    voiceInstructionsPlayer.play(
-//                                            input.getAnnouncement(),
-//                                            voiceInstructionsPlayerCallback
-//                                    );
-//                                    return null;
-//                                }
-//                            }
-//                    );
-//                }
-//            };
-//    private final MapboxNavigationConsumer<SpeechAnnouncement> voiceInstructionsPlayerCallback =
-//            new MapboxNavigationConsumer<SpeechAnnouncement>() {
-//                @Override
-//                public void accept(SpeechAnnouncement speechAnnouncement) {
-//                    speechApi.clean(speechAnnouncement);
-//                }
-//            };
-//    private final LocationObserver locationObserver = new LocationObserver() {
-//        boolean firstLocationUpdateReceived = false;
-//        @Override
-//        public void onNewRawLocation(@NonNull Location location) {
-//
-//        }
-//
-//        @Override
-//        public void onNewLocationMatcherResult(@NonNull LocationMatcherResult locationMatcherResult) {
-//            Location enhancedLocation = locationMatcherResult.getEnhancedLocation();
-//            navigationLocationProvider.changePosition(
-//                    enhancedLocation,
-//                    locationMatcherResult.getKeyPoints(), null, null
-//                    );
-//
-//            viewportDataSource.onLocationChanged(enhancedLocation);
-//            viewportDataSource.evaluate();
-//
-//            if (!firstLocationUpdateReceived) {
-//                firstLocationUpdateReceived = true;
-//                navigationCamera.requestNavigationCameraToOverview(
-//                        new NavigationCameraTransitionOptions.Builder()
-//                                .maxDuration(0) // instant transition
-//                                .build()
-//                );
-//            }
-//        }
-//    };
-//    private final RoutesObserver routesObserver = new RoutesObserver() {
-//        @Override
-//        public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
-//            List<DirectionsRoute> directionsRoutes = routesUpdatedResult.getRoutes();
-//            List<RouteLine> routeLines = new ArrayList<>();
-//            for (DirectionsRoute route : directionsRoutes) {
-//                routeLines.add(new RouteLine(route, null));
-//            }
-//            routeLineApi.setRoutes(routeLines, new MapboxNavigationConsumer<Expected<RouteLineError, RouteSetValue>>() {
-//                @Override
-//                public void accept(Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) {
-//                    if(mapboxMap.getStyle()!=null) {
-//                        routeLineView.renderRouteDrawData(mapboxMap.getStyle(), routeLineErrorRouteSetValueExpected);
-//                    }
-//                }
-//            });
-//        }
-//    };
-//    private final VoiceInstructionsObserver voiceInstructionsObserver = new VoiceInstructionsObserver() {
-//        @Override
-//        public void onNewVoiceInstructions(@NonNull VoiceInstructions voiceInstructions) {
-//            Log.d("abhishek_testing", "voiceInstructionsObserver: $voiceInstructions");
-//            speechApi.generate(voiceInstructions, speechCallback);
-//        }
-//    };
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_navigation);
-//        mapboxMap = mapView.getMapboxMap();
-//        StatusBarHelper.makeTransparent(this);
-//
-//        mapView.createPlugin();
-//
-////        MapboxMapMatching mapboxMapMatching = MapboxMapMatching.builder()
-////                .accessToken(getString(R.string.mapbox_access_token))
-////                .profile(PROFILE_DRIVING)
-////                .coordinates(getRouteCoordinates())
-////                .overview(OVERVIEW_FULL)
-////                .steps(false)
-////                .build();
-////
-////        mapboxMapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
-////            @Override
-////            public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
-////                if(!response.isSuccessful()){
-////                    return;
-////                }
-////                if (response.body() != null && response.body().matchings()!=null) {
-////                    DirectionsRoute route = response.body().matchings().get(0).toDirectionRoute();
-////                }
-////            }
-////
-////            @Override
-////            public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
-////
-////            }
-////        });
-//
-//
-//    }
-//
-//    public void setVoiceInstructionsMuted(boolean voiceInstructionsMuted) {
-//
-//    }
-//
-////    private List<Point> getRouteCoordinates() {
-////        List<Point> route = new ArrayList<>();
-////        for(LatLng latLng : googleRoute) {
-////            route.add(Point.fromLngLat(latLng.lat, latLng.lng));
-////        }
-////        return route;
-////    }
-//
-//    @Override
-//    public void onMapReady(@NonNull MapboxMap mapboxMap) {
-//        this.mapboxMap = mapboxMap;
-//
-//        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/streets-v11"),
-//                new Style.OnStyleLoaded() {
-//                    @Override
-//                    public void onStyleLoaded(@NonNull Style style) {
-//                        enableLocationComponent(style);
-//                    }
-//                });
-//    }
-//
-//    @SuppressLint("MissingPermission")
-//    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
-//        // Get an instance of the component
-//        LocationComponent locationComponent = mapboxMap.getLocationComponent();
-//
-//        // Activate with options
-//        locationComponent.activateLocationComponent(
-//                LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
-//
-//        // Enable to make component visible
-//        locationComponent.setLocationComponentEnabled(true);
-//
-//        // Set the component's camera mode
-//        locationComponent.setCameraMode(CameraMode.TRACKING);
-//
-//        // Set the component's render mode
-//        locationComponent.setRenderMode(RenderMode.COMPASS);
-//    }
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        mapView.onStart();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        mapView.onResume();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        mapView.onPause();
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        mapView.onStop();
-//    }
-//
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        mapView.onSaveInstanceState(outState);
-//    }
-//
-//    @Override
-//    public void onLowMemory() {
-//        super.onLowMemory();
-//        mapView.onLowMemory();
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        mapView.onDestroy();
-//    }
-//}
+package com.adventurers.overseer.navigation;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.location.Location;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.adventurers.overseer.R;
+import com.mapbox.api.directions.v5.models.Bearing;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.directions.v5.models.RouteOptions;
+import com.mapbox.api.directions.v5.models.VoiceInstructions;
+import com.mapbox.bindgen.Expected;
+import com.mapbox.geojson.Point;
+import com.mapbox.maps.EdgeInsets;
+import com.mapbox.maps.MapView;
+import com.mapbox.maps.MapboxMap;
+import com.mapbox.maps.Style;
+import com.mapbox.maps.plugin.LocationPuck2D;
+import com.mapbox.maps.plugin.MapPlugin;
+import com.mapbox.maps.plugin.Plugin;
+import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin;
+import com.mapbox.maps.plugin.gestures.GesturesPlugin;
+import com.mapbox.maps.plugin.gestures.OnMapLongClickListener;
+import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
+import com.mapbox.navigation.base.TimeFormat;
+import com.mapbox.navigation.base.extensions.RouteOptionsExtensions;
+import com.mapbox.navigation.base.formatter.DistanceFormatterOptions;
+import com.mapbox.navigation.base.options.NavigationOptions;
+import com.mapbox.navigation.base.route.RouterCallback;
+import com.mapbox.navigation.base.route.RouterFailure;
+import com.mapbox.navigation.base.route.RouterOrigin;
+import com.mapbox.navigation.base.trip.model.RouteProgress;
+import com.mapbox.navigation.core.MapboxNavigation;
+import com.mapbox.navigation.core.MapboxNavigationProvider;
+import com.mapbox.navigation.core.directions.session.RoutesObserver;
+import com.mapbox.navigation.core.directions.session.RoutesUpdatedResult;
+import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter;
+import com.mapbox.navigation.core.replay.MapboxReplayer;
+import com.mapbox.navigation.core.replay.ReplayLocationEngine;
+import com.mapbox.navigation.core.replay.history.ReplayEventBase;
+import com.mapbox.navigation.core.replay.route.ReplayProgressObserver;
+import com.mapbox.navigation.core.replay.route.ReplayRouteMapper;
+import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
+import com.mapbox.navigation.core.trip.session.LocationObserver;
+import com.mapbox.navigation.core.trip.session.RouteProgressObserver;
+import com.mapbox.navigation.core.trip.session.VoiceInstructionsObserver;
+import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer;
+import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi;
+import com.mapbox.navigation.ui.maneuver.model.Maneuver;
+import com.mapbox.navigation.ui.maneuver.model.ManeuverError;
+import com.mapbox.navigation.ui.maneuver.view.MapboxManeuverView;
+import com.mapbox.navigation.ui.maps.camera.NavigationCamera;
+import com.mapbox.navigation.ui.maps.camera.data.MapboxNavigationViewportDataSource;
+import com.mapbox.navigation.ui.maps.camera.lifecycle.NavigationBasicGesturesHandler;
+import com.mapbox.navigation.ui.maps.camera.state.NavigationCameraState;
+import com.mapbox.navigation.ui.maps.camera.state.NavigationCameraStateChangedObserver;
+import com.mapbox.navigation.ui.maps.camera.transition.MapboxNavigationCameraStateTransition;
+import com.mapbox.navigation.ui.maps.camera.transition.MapboxNavigationCameraTransition;
+import com.mapbox.navigation.ui.maps.camera.transition.NavigationCameraTransition;
+import com.mapbox.navigation.ui.maps.camera.transition.NavigationCameraTransitionOptions;
+import com.mapbox.navigation.ui.maps.camera.view.MapboxRecenterButton;
+import com.mapbox.navigation.ui.maps.camera.view.MapboxRouteOverviewButton;
+import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider;
+import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowApi;
+import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowView;
+import com.mapbox.navigation.ui.maps.route.arrow.model.InvalidPointError;
+import com.mapbox.navigation.ui.maps.route.arrow.model.RouteArrowOptions;
+import com.mapbox.navigation.ui.maps.route.arrow.model.UpdateManeuverArrowValue;
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi;
+import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView;
+import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLine;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineClearValue;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineError;
+import com.mapbox.navigation.ui.maps.route.line.model.RouteSetValue;
+import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi;
+import com.mapbox.navigation.ui.tripprogress.model.DistanceRemainingFormatter;
+import com.mapbox.navigation.ui.tripprogress.model.EstimatedTimeToArrivalFormatter;
+import com.mapbox.navigation.ui.tripprogress.model.PercentDistanceTraveledFormatter;
+import com.mapbox.navigation.ui.tripprogress.model.TimeRemainingFormatter;
+import com.mapbox.navigation.ui.tripprogress.model.TripProgressUpdateFormatter;
+import com.mapbox.navigation.ui.tripprogress.view.MapboxTripProgressView;
+import com.mapbox.navigation.ui.voice.api.MapboxSpeechApi;
+import com.mapbox.navigation.ui.voice.api.MapboxVoiceInstructionsPlayer;
+import com.mapbox.navigation.ui.voice.model.SpeechAnnouncement;
+import com.mapbox.navigation.ui.voice.model.SpeechError;
+import com.mapbox.navigation.ui.voice.model.SpeechValue;
+import com.mapbox.navigation.ui.voice.model.SpeechVolume;
+import com.mapbox.navigation.ui.voice.view.MapboxSoundButton;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+public class NavigationActivity extends AppCompatActivity {
+    private static final Long BUTTON_ANIMATION_DURATION = 1500L;
+    private final MapboxReplayer mapboxReplayer = new MapboxReplayer();
+    private final ReplayLocationEngine replayLocationEngine = new ReplayLocationEngine(mapboxReplayer);
+    private final ReplayProgressObserver replayProgressObserver = new ReplayProgressObserver(mapboxReplayer);
+    // Layout binding
+    private MapView mapView;
+    private CardView tripProgressCard;
+    private MapboxTripProgressView tripProgressView;
+    private ImageView stop;
+    private MapboxManeuverView maneuverView;
+    private MapboxSoundButton soundButton;
+    private MapboxRouteOverviewButton routeOverview;
+    private MapboxRecenterButton recenter;
+    // end
+    private MapboxMap mapboxMap;
+    private MapboxNavigation mapboxNavigation;
+    private NavigationCamera navigationCamera;
+    private MapboxNavigationViewportDataSource viewportDataSource;
+    private final float pixelDensity = Resources.getSystem().getDisplayMetrics().density;
+    private final EdgeInsets overviewPadding =
+            new EdgeInsets(
+                    140.0 * pixelDensity,
+                    40.0 * pixelDensity,
+                    120.0 * pixelDensity,
+                    40.0 * pixelDensity
+            );
+    private final EdgeInsets landscapeOverviewPadding =
+            new EdgeInsets(
+                    30.0 * pixelDensity,
+                    380.0 * pixelDensity,
+                    110.0 * pixelDensity,
+                    20.0 * pixelDensity
+            );
+    private final EdgeInsets followingPadding =
+            new EdgeInsets(
+                    180.0 * pixelDensity,
+                    40.0 * pixelDensity,
+                    150.0 * pixelDensity,
+                    40.0 * pixelDensity
+            );
+    private final EdgeInsets landscapeFollowingPadding =
+            new EdgeInsets(
+                    30.0 * pixelDensity,
+                    380.0 * pixelDensity,
+                    110.0 * pixelDensity,
+                    40.0 * pixelDensity
+            );
+    private MapboxManeuverApi maneuverApi;
+    private MapboxTripProgressApi tripProgressApi;
+    private MapboxRouteLineApi routeLineApi;
+    private MapboxRouteLineView routeLineView;
+    private final MapboxRouteArrowApi routeArrowApi = new MapboxRouteArrowApi();
+    private MapboxRouteArrowView routeArrowView;
+    private boolean isVoiceInstructionsMuted = false;
+
+    private void setVoiceInstructionsMuted(boolean voiceInstructionsMuted) {
+        isVoiceInstructionsMuted = voiceInstructionsMuted;
+        if (voiceInstructionsMuted) {
+            soundButton.muteAndExtend(BUTTON_ANIMATION_DURATION);
+            voiceInstructionsPlayer.volume(new SpeechVolume(0f));
+        } else {
+            soundButton.unmuteAndExtend(BUTTON_ANIMATION_DURATION);
+            voiceInstructionsPlayer.volume(new SpeechVolume(1f));
+        }
+    }
+
+    private MapboxSpeechApi speechApi;
+    private MapboxVoiceInstructionsPlayer voiceInstructionsPlayer;
+    private final VoiceInstructionsObserver voiceInstructionsObserver = new VoiceInstructionsObserver() {
+        @Override
+        public void onNewVoiceInstructions(@NonNull VoiceInstructions voiceInstructions) {
+            speechApi.generate(voiceInstructions, speechCallback);
+        }
+    };
+    private final MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>> speechCallback =
+            new MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>>() {
+                @Override
+                public void accept(Expected<SpeechError, SpeechValue> speechErrorSpeechValueExpected) {
+                    speechErrorSpeechValueExpected.fold(
+                            new Expected.Transformer<SpeechError, Object>() {
+                                @NonNull
+                                @Override
+                                public Object invoke(@NonNull SpeechError input) {
+                                    // play the instruction via fallback text-to-speech engine
+                                    voiceInstructionsPlayer.play(
+                                            input.getFallback(),
+                                            voiceInstructionsPlayerCallback
+                                    );
+                                    return null;
+                                }
+                            },
+                            new Expected.Transformer<SpeechValue, Object>() {
+                                @NonNull
+                                @Override
+                                public Object invoke(@NonNull SpeechValue input) {
+                                    // play the sound file from the external generator
+                                    voiceInstructionsPlayer.play(
+                                            input.getAnnouncement(),
+                                            voiceInstructionsPlayerCallback
+                                    );
+                                    return null;
+                                }
+                            }
+                    );
+                }
+            };
+    private final MapboxNavigationConsumer<SpeechAnnouncement> voiceInstructionsPlayerCallback =
+            new MapboxNavigationConsumer<SpeechAnnouncement>() {
+                @Override
+                public void accept(SpeechAnnouncement speechAnnouncement) {
+                    // remove already consumed file to free-up space
+                    speechApi.clean(speechAnnouncement);
+                }
+            };
+    private final NavigationLocationProvider navigationLocationProvider = new NavigationLocationProvider();
+    private final LocationObserver locationObserver = new LocationObserver() {
+        boolean firstLocationUpdateReceived = false;
+
+        @Override
+        public void onNewRawLocation(@NonNull Location location) {
+            // not handled
+        }
+
+        @Override
+        public void onNewLocationMatcherResult(@NonNull LocationMatcherResult locationMatcherResult) {
+            Location enhancedLocation = locationMatcherResult.getEnhancedLocation();
+            // update location puck's position on the map
+            navigationLocationProvider.changePosition(
+                    enhancedLocation,
+                    locationMatcherResult.getKeyPoints(), null, null
+            );
+            // update camera position to account for new location
+            viewportDataSource.onLocationChanged(enhancedLocation);
+            viewportDataSource.evaluate();
+            // if this is the first location update the activity has received,
+            // it's best to immediately move the camera to the current user location
+            if (!firstLocationUpdateReceived) {
+                firstLocationUpdateReceived = true;
+                navigationCamera.requestNavigationCameraToOverview(
+                        new NavigationCameraTransitionOptions.Builder()
+                                .maxDuration(0) // instant transition
+                                .build()
+                );
+            }
+        }
+    };
+    private final RouteProgressObserver routeProgressObserver = new RouteProgressObserver() {
+        // update the camera position to account for the progressed fragment of the route
+        @Override
+        public void onRouteProgressChanged(@NonNull RouteProgress routeProgress) {
+            viewportDataSource.onRouteProgressChanged(routeProgress);
+            viewportDataSource.evaluate();
+            // draw the upcoming maneuver arrow on the map
+            Style style = mapboxMap.getStyle();
+            if (style != null) {
+                Expected<InvalidPointError, UpdateManeuverArrowValue> maneuverArrowResult =
+                        routeArrowApi.addUpcomingManeuverArrow(routeProgress);
+                routeArrowView.renderManeuverUpdate(style, maneuverArrowResult);
+            }
+            Expected<ManeuverError, List<Maneuver>> maneuvers = maneuverApi.getManeuvers(routeProgress);
+            maneuvers.fold(
+                    new Expected.Transformer<ManeuverError, Object>() {
+
+                        @NonNull
+                        @Override
+                        public Object invoke(@NonNull ManeuverError input) {
+                            Toast.makeText(
+                                    NavigationActivity.this,
+                                    input.getErrorMessage(),
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                            return null;
+                        }
+                    },
+                    new Expected.Transformer<List<Maneuver>, Object>() {
+                        @NonNull
+                        @Override
+                        public Object invoke(@NonNull List<Maneuver> input) {
+                            maneuverView.setVisibility(View.VISIBLE);
+                            maneuverView.renderManeuvers(maneuvers);
+                            return null;
+                        }
+                    }
+            );
+            // update bottom trip progress summary
+            tripProgressView.render(
+                    tripProgressApi.getTripProgress(routeProgress)
+            );
+        }
+    };
+    private final RoutesObserver routesObserver = new RoutesObserver() {
+        @Override
+        public void onRoutesChanged(@NonNull RoutesUpdatedResult routesUpdatedResult) {
+            if (!routesUpdatedResult.getRoutes().isEmpty()) {
+                // generate route geometries asynchronously and render them
+                List<RouteLine> routeLines = new ArrayList<>();
+                for (DirectionsRoute route : routesUpdatedResult.getRoutes()) {
+                    routeLines.add(new RouteLine(route, null));
+                }
+                routeLineApi.setRoutes(
+                        routeLines,
+                        new MapboxNavigationConsumer<Expected<RouteLineError, RouteSetValue>>() {
+                            @Override
+                            public void accept(Expected<RouteLineError, RouteSetValue> routeLineErrorRouteSetValueExpected) {
+                                if (mapboxMap.getStyle() != null) {
+                                    routeLineView.renderRouteDrawData(mapboxMap.getStyle(), routeLineErrorRouteSetValueExpected);
+                                }
+                            }
+                        }
+                );
+                // update the camera position to account for the new route
+                viewportDataSource.onRouteChanged(routesUpdatedResult.getRoutes().get(0));
+                viewportDataSource.evaluate();
+            } else {
+                // remove the route line and route arrow from the map
+                Style style = mapboxMap.getStyle();
+                if (style != null) {
+                    routeLineApi.clearRouteLine(
+                            new MapboxNavigationConsumer<Expected<RouteLineError, RouteLineClearValue>>() {
+                                @Override
+                                public void accept(Expected<RouteLineError, RouteLineClearValue> routeLineErrorRouteLineClearValueExpected) {
+                                    routeLineView.renderClearRouteLineValue(
+                                            style,
+                                            routeLineErrorRouteLineClearValueExpected
+                                    );
+                                }
+                            }
+                    );
+                    routeArrowView.render(style, routeArrowApi.clearArrows());
+                }
+                // remove the route reference from camera position evaluations
+                viewportDataSource.clearRouteData();
+                viewportDataSource.evaluate();
+            }
+        }
+    };
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_navigation2);
+        mapView = findViewById(R.id.mapView);
+        tripProgressCard = findViewById(R.id.tripProgressCard);
+        tripProgressView = findViewById(R.id.tripProgressView);
+        stop = findViewById(R.id.stop);
+        maneuverView = findViewById(R.id.maneuverView);
+        soundButton = findViewById(R.id.soundButton);
+        routeOverview = findViewById(R.id.routeOverview);
+        recenter = findViewById(R.id.recenter);
+        mapboxMap = mapView.getMapboxMap();
+
+        // initialize the location puck
+        LocationComponentPlugin locationComponent =
+                mapView.getPlugin(Plugin.MAPBOX_LOCATION_COMPONENT_PLUGIN_ID);
+        if (locationComponent != null) {
+            locationComponent.setLocationPuck(new LocationPuck2D(
+                    ContextCompat.getDrawable(
+                            NavigationActivity.this,
+                            R.drawable.mapbox_navigation_puck_icon
+                    )
+            ));
+            locationComponent.setLocationProvider(navigationLocationProvider);
+            locationComponent.setEnabled(true);
+        }
+
+        // initialize Mapbox Navigation
+        if (MapboxNavigationProvider.isCreated()) {
+            mapboxNavigation = MapboxNavigationProvider.retrieve();
+        } else {
+            mapboxNavigation = MapboxNavigationProvider.create(
+                    new NavigationOptions.Builder(NavigationActivity.this)
+                            .accessToken(getString(R.string.mapbox_access_token))
+                            .locationEngine(replayLocationEngine)
+                            .build()
+            );
+        }
+
+        // initialize Navigation Camera
+        viewportDataSource = new MapboxNavigationViewportDataSource(mapboxMap);
+        CameraAnimationsPlugin cameraPlugin = mapView.getPlugin(Plugin.MAPBOX_CAMERA_PLUGIN_ID);
+        NavigationCameraTransition navigationCameraTransition =
+                new MapboxNavigationCameraTransition(mapboxMap, cameraPlugin);
+        MapboxNavigationCameraStateTransition navigationCameraStateTransition =
+                new MapboxNavigationCameraStateTransition(mapboxMap, cameraPlugin, navigationCameraTransition);
+        navigationCamera = new NavigationCamera(
+                mapboxMap,
+                cameraPlugin,
+                viewportDataSource,
+                navigationCameraStateTransition
+
+        );
+        // set the animations lifecycle listener to ensure the NavigationCamera stops
+        // automatically following the user location when the map is interacted with
+        cameraPlugin.addCameraAnimationsLifecycleListener(
+                new NavigationBasicGesturesHandler(navigationCamera)
+        );
+        navigationCamera.registerNavigationCameraStateChangeObserver(new NavigationCameraStateChangedObserver() {
+            @Override
+            public void onNavigationCameraStateChanged(@NonNull NavigationCameraState navigationCameraState) {
+                switch (navigationCameraState) {
+                    case TRANSITION_TO_FOLLOWING:
+                    case FOLLOWING:
+                        recenter.setVisibility(View.INVISIBLE);
+                        break;
+                    case TRANSITION_TO_OVERVIEW:
+                    case OVERVIEW:
+                    case IDLE:
+                        recenter.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+        // set the padding values depending on screen orientation and visible view layout
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            viewportDataSource.setOverviewPadding(landscapeOverviewPadding);
+        } else {
+            viewportDataSource.setOverviewPadding(overviewPadding);
+        }
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            viewportDataSource.setFollowingPadding(landscapeFollowingPadding);
+        } else {
+            viewportDataSource.setFollowingPadding(followingPadding);
+        }
+
+        // make sure to use the same DistanceFormatterOptions across different features
+        DistanceFormatterOptions distanceFormatterOptions = mapboxNavigation.getNavigationOptions().getDistanceFormatterOptions();
+
+        // initialize maneuver api that feeds the data to the top banner maneuver view
+        maneuverApi = new MapboxManeuverApi(
+                new MapboxDistanceFormatter(distanceFormatterOptions)
+        );
+
+        // initialize bottom progress view
+        tripProgressApi = new MapboxTripProgressApi(
+                new TripProgressUpdateFormatter.Builder(this)
+                        .distanceRemainingFormatter(
+                                new DistanceRemainingFormatter(distanceFormatterOptions)
+                        )
+                        .timeRemainingFormatter(
+                                new TimeRemainingFormatter(this, null)
+                        )
+                        .percentRouteTraveledFormatter(
+                                new PercentDistanceTraveledFormatter()
+                        )
+                        .estimatedTimeToArrivalFormatter(
+                                new EstimatedTimeToArrivalFormatter(this, TimeFormat.NONE_SPECIFIED)
+                        )
+                        .build()
+        );
+
+        // initialize voice instructions api and the voice instruction player
+        speechApi = new MapboxSpeechApi(
+                this,
+                getString(R.string.mapbox_access_token),
+                Locale.US.getLanguage()
+        );
+        voiceInstructionsPlayer = new MapboxVoiceInstructionsPlayer(
+                this,
+                getString(R.string.mapbox_access_token),
+                Locale.US.getLanguage()
+        );
+
+        // initialize route line, the withRouteLineBelowLayerId is specified to place
+        // the route line below road labels layer on the map
+        // the value of this option will depend on the style that you are using
+        // and under which layer the route line should be placed on the map layers stack
+        MapboxRouteLineOptions mapboxRouteLineOptions = new MapboxRouteLineOptions.Builder(this)
+                .withRouteLineBelowLayerId("road-label")
+                .build();
+        routeLineApi = new MapboxRouteLineApi(mapboxRouteLineOptions);
+        routeLineView = new MapboxRouteLineView(mapboxRouteLineOptions);
+
+        // initialize maneuver arrow view to draw arrows on the map
+        RouteArrowOptions routeArrowOptions = new RouteArrowOptions.Builder(this).build();
+        routeArrowView = new MapboxRouteArrowView(routeArrowOptions);
+
+        // load map style
+        mapboxMap.loadStyleUri(
+                Style.MAPBOX_STREETS,
+                new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+                        GesturesPlugin gesture = mapView.getPlugin(Plugin.MAPBOX_GESTURES_PLUGIN_ID);
+                        gesture.addOnMapLongClickListener(new OnMapLongClickListener() {
+                            @Override
+                            public boolean onMapLongClick(@NonNull Point point) {
+                                findRoute(point);
+                                return true;
+                            }
+                        });
+                    }
+                }
+        );
+
+        // initialize view interactions
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearRouteAndStopNavigation();
+            }
+        });
+        recenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigationCamera.requestNavigationCameraToFollowing();
+                routeOverview.showTextAndExtend(BUTTON_ANIMATION_DURATION);
+            }
+        });
+        routeOverview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigationCamera.requestNavigationCameraToOverview();
+                recenter.showTextAndExtend(BUTTON_ANIMATION_DURATION);
+            }
+        });
+        soundButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // mute/unmute voice instructions
+                setVoiceInstructionsMuted(!isVoiceInstructionsMuted);
+            }
+        });
+
+        // set initial sounds button state
+        soundButton.unmute();
+
+        // start the trip session to being receiving location updates in free drive
+        // and later when a route is set also receiving route progress updates
+        mapboxNavigation.startTripSession();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // register event listeners
+        mapboxNavigation.registerRoutesObserver(routesObserver);
+        mapboxNavigation.registerRouteProgressObserver(routeProgressObserver);
+        mapboxNavigation.registerLocationObserver(locationObserver);
+        mapboxNavigation.registerVoiceInstructionsObserver(voiceInstructionsObserver);
+        mapboxNavigation.registerRouteProgressObserver(replayProgressObserver);
+
+        if (mapboxNavigation.getRoutes().isEmpty()) {
+            // if simulation is enabled (ReplayLocationEngine set to NavigationOptions)
+            // but we're not simulating yet,
+            // push a single location sample to establish origin
+            mapboxReplayer.pushEvents(
+                    Collections.singletonList(
+                            ReplayRouteMapper.mapToUpdateLocation(
+                                    0.0,
+                                    Point.fromLngLat(123.746122, 10.194461)
+                            )
+                    )
+            );
+        }
+        mapboxReplayer.playFirstLocation();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // unregister event listeners to prevent leaks or unnecessary resource consumption
+        mapboxNavigation.unregisterRoutesObserver(routesObserver);
+        mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver);
+        mapboxNavigation.unregisterLocationObserver(locationObserver);
+        mapboxNavigation.unregisterVoiceInstructionsObserver(voiceInstructionsObserver);
+        mapboxNavigation.unregisterRouteProgressObserver(replayProgressObserver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MapboxNavigationProvider.destroy();
+        speechApi.cancel();
+        voiceInstructionsPlayer.shutdown();
+    }
+
+    private void findRoute(Point destination) {
+        Location originLocation = navigationLocationProvider.getLastLocation();
+        if(originLocation==null) return;
+        Point originPoint = Point.fromLngLat(originLocation.getLongitude(), originLocation.getLatitude());
+
+        // execute a route request
+        // it's recommended to use the
+        // applyDefaultNavigationOptions and applyLanguageAndVoiceUnitOptions
+        // that make sure the route request is optimized
+        // to allow for support of all of the Navigation SDK features
+        RouteOptions.Builder routeOptionsBuilder = RouteOptions.builder()
+                .coordinatesList(Arrays.asList(originPoint, destination))
+                .bearingsList(
+                        // provide the bearing for the origin of the request to ensure
+                        // that the returned route faces in the direction of the current user movement
+                        Arrays.asList(
+                                Bearing.builder()
+                                        .angle(originLocation.getBearing())
+                                        .degrees(45.0)
+                                        .build(), null
+                        )
+                );
+        RouteOptionsExtensions.applyDefaultNavigationOptions(routeOptionsBuilder);
+        RouteOptionsExtensions.applyLanguageAndVoiceUnitOptions(routeOptionsBuilder, this);
+        mapboxNavigation.requestRoutes(
+                routeOptionsBuilder.build(),
+                new RouterCallback() {
+                    @Override
+                    public void onRoutesReady(@NonNull List<? extends DirectionsRoute> list, @NonNull RouterOrigin routerOrigin) {
+                        List<DirectionsRoute> routes = new ArrayList<>(list);
+                        setRouteAndStartNavigation(routes);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull List<RouterFailure> list, @NonNull RouteOptions routeOptions) {
+                        // no impl
+                    }
+
+                    @Override
+                    public void onCanceled(@NonNull RouteOptions routeOptions, @NonNull RouterOrigin routerOrigin) {
+                        // no impl
+                    }
+                }
+        );
+    }
+
+    private void setRouteAndStartNavigation(List<DirectionsRoute> routes) {
+        // set routes, where the first route in the list is the primary route that
+        // will be used for active guidance
+        Toast.makeText(this, "HERES", Toast.LENGTH_LONG).show();
+        try {
+            mapboxNavigation.setRoutes(routes);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        // start location simulation along the primary route
+        startSimulation(routes.get(0));
+
+        // show UI elements
+        soundButton.setVisibility(View.VISIBLE);
+        routeOverview.setVisibility(View.VISIBLE);
+        tripProgressCard.setVisibility(View.VISIBLE);
+
+        // move the camera to overview when new route is available
+        navigationCamera.requestNavigationCameraToOverview();
+    }
+
+    private void clearRouteAndStopNavigation() {
+        // clear
+        mapboxNavigation.setRoutes(Collections.emptyList());
+
+        // stop simulation
+        mapboxReplayer.stop();
+
+        // hide UI elements
+        soundButton.setVisibility(View.INVISIBLE);
+        maneuverView.setVisibility(View.INVISIBLE);
+        routeOverview.setVisibility(View.INVISIBLE);
+        tripProgressCard.setVisibility(View.INVISIBLE);
+    }
+
+    private void startSimulation(DirectionsRoute route) {
+        mapboxReplayer.stop();
+        mapboxReplayer.clearEvents();
+        List<ReplayEventBase> replayEvents = new ReplayRouteMapper().mapDirectionsRouteGeometry(route);
+        mapboxReplayer.pushEvents(replayEvents);
+        mapboxReplayer.seekTo(replayEvents.get(0));
+        mapboxReplayer.play();
+    }
+}

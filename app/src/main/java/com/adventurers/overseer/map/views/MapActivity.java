@@ -38,6 +38,7 @@ import com.adventurers.overseer.helpers.StatusBarHelper;
 import com.adventurers.overseer.login.views.LoginActivity;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
+import com.adventurers.overseer.navigation.NavigationActivity;
 import com.adventurers.overseer.navigation.PlayVoiceInstructionsActivity;
 import com.adventurers.overseer.report.views.ReportActivity;
 import com.adventurers.overseer.searchtype.SearchType;
@@ -156,10 +157,12 @@ public class MapActivity extends FragmentActivity
         fab_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MapActivity.this, LoginActivity.class);
+//                Intent i = new Intent(MapActivity.this, LoginActivity.class);
+//                startActivity(i);
+//                stopLocationUpdates();
+//                MapActivity.this.finish();
+                Intent i = new Intent(MapActivity.this, NavigationActivity.class);
                 startActivity(i);
-                stopLocationUpdates();
-                MapActivity.this.finish();
             }
         });
 
