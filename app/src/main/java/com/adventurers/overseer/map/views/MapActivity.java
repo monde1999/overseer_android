@@ -157,12 +157,10 @@ public class MapActivity extends FragmentActivity
         fab_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent i = new Intent(MapActivity.this, LoginActivity.class);
-//                startActivity(i);
-//                stopLocationUpdates();
-//                MapActivity.this.finish();
-                Intent i = new Intent(MapActivity.this, NavigationActivity.class);
+                Intent i = new Intent(MapActivity.this, LoginActivity.class);
                 startActivity(i);
+                stopLocationUpdates();
+                MapActivity.this.finish();
             }
         });
 
@@ -360,8 +358,8 @@ public class MapActivity extends FragmentActivity
             mSelectionActivity.setOnStartClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(getApplicationContext(), PlayVoiceInstructionsActivity.class);
-                    startActivity(i);
+//                    Intent i = new Intent(getApplicationContext(), PlayVoiceInstructionsActivity.class);
+//                    startActivity(i);
                 }
             });
             Location destination = new Location(Objects.requireNonNull(place.getLatLng()));
@@ -388,7 +386,7 @@ public class MapActivity extends FragmentActivity
         mDirectionActivity.setOnStartClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), PlayVoiceInstructionsActivity.class);
+                Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
                 Gson gson = new Gson();
                 ArrayList<String> route = new ArrayList<>();
                 for(LatLng latLng : mFocusedRoute.getPoints()) {

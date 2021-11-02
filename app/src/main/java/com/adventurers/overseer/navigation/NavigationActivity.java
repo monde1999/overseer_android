@@ -1,13 +1,13 @@
 package com.adventurers.overseer.navigation;
 
-import android.Manifest;
+import static com.mapbox.api.directions.v5.DirectionsCriteria.OVERVIEW_FULL;
+import static com.mapbox.api.directions.v5.DirectionsCriteria.PROFILE_DRIVING;
+
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -16,14 +16,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.adventurers.overseer.R;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.mapbox.api.directions.v5.models.Bearing;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.api.directions.v5.models.VoiceInstructions;
+import com.mapbox.api.matching.v5.MapboxMapMatching;
+import com.mapbox.api.matching.v5.models.MapMatchingMatching;
+import com.mapbox.api.matching.v5.models.MapMatchingResponse;
 import com.mapbox.bindgen.Expected;
 import com.mapbox.geojson.Point;
 import com.mapbox.maps.EdgeInsets;
@@ -31,11 +35,8 @@ import com.mapbox.maps.MapView;
 import com.mapbox.maps.MapboxMap;
 import com.mapbox.maps.Style;
 import com.mapbox.maps.plugin.LocationPuck2D;
-import com.mapbox.maps.plugin.MapPlugin;
 import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin;
-import com.mapbox.maps.plugin.gestures.GesturesPlugin;
-import com.mapbox.maps.plugin.gestures.OnMapLongClickListener;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.navigation.base.TimeFormat;
 import com.mapbox.navigation.base.extensions.RouteOptionsExtensions;
@@ -108,6 +109,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NavigationActivity extends AppCompatActivity {
     private static final Long BUTTON_ANIMATION_DURATION = 1500L;
@@ -464,6 +469,7 @@ public class NavigationActivity extends AppCompatActivity {
             }
         }
     };
+    private Point origin;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -479,6 +485,18 @@ public class NavigationActivity extends AppCompatActivity {
         routeOverview = findViewById(R.id.routeOverview);
         recenter = findViewById(R.id.recenter);
         mapboxMap = mapView.getMapboxMap();
+
+        // Retrieve route from intent
+        ArrayList<String> sRoute = getIntent().getStringArrayListExtra("Route");
+        ArrayList<Point> gRoute = new ArrayList<>();
+        Gson gson = new Gson();
+        for(String s : sRoute) {
+            LatLng latLng = gson.fromJson(s, LatLng.class);
+            gRoute.add(Point.fromLngLat(latLng.longitude, latLng.latitude));
+        }
+
+        // Set route origin
+        origin = Point.fromLngLat(gRoute.get(0).longitude(), gRoute.get(0).latitude());
 
         // initialize the location puck
         LocationComponentPlugin locationComponent =
@@ -502,7 +520,7 @@ public class NavigationActivity extends AppCompatActivity {
                     new NavigationOptions.Builder(NavigationActivity.this)
                             .accessToken(getString(R.string.mapbox_access_token))
                             // comment out the location engine setting block to disable simulation
-                            .locationEngine(replayLocationEngine)
+//                            .locationEngine(replayLocationEngine)
                             .build()
             );
         }
@@ -613,14 +631,15 @@ public class NavigationActivity extends AppCompatActivity {
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
-                        GesturesPlugin gesture = mapView.getPlugin(Plugin.MAPBOX_GESTURES_PLUGIN_ID);
-                        gesture.addOnMapLongClickListener(new OnMapLongClickListener() {
-                            @Override
-                            public boolean onMapLongClick(@NonNull Point point) {
-                                findRoute(point);
-                                return true;
-                            }
-                        });
+//                        GesturesPlugin gesture = mapView.getPlugin(Plugin.MAPBOX_GESTURES_PLUGIN_ID);
+//                        gesture.addOnMapLongClickListener(new OnMapLongClickListener() {
+//                            @Override
+//                            public boolean onMapLongClick(@NonNull Point point) {
+//                                findRoute(point);
+//                                return true;
+//                            }
+//                        });
+                        snapRoute(gRoute);
                     }
                 }
         );
@@ -673,20 +692,21 @@ public class NavigationActivity extends AppCompatActivity {
         mapboxNavigation.registerVoiceInstructionsObserver(voiceInstructionsObserver);
         mapboxNavigation.registerRouteProgressObserver(replayProgressObserver);
 
-        if (mapboxNavigation.getRoutes().isEmpty()) {
-            // if simulation is enabled (ReplayLocationEngine set to NavigationOptions)
-            // but we're not simulating yet,
-            // push a single location sample to establish origin
-            mapboxReplayer.pushEvents(
-                    Collections.singletonList(
-                            ReplayRouteMapper.mapToUpdateLocation(
-                                    0.0,
-                                    Point.fromLngLat(123.746122, 10.194461)
-                            )
-                    )
-            );
-        }
-        mapboxReplayer.playFirstLocation();
+//        if (mapboxNavigation.getRoutes().isEmpty()) {
+//            // if simulation is enabled (ReplayLocationEngine set to NavigationOptions)
+//            // but we're not simulating yet,
+//            // push a single location sample to establish origin
+//            mapboxReplayer.pushEvents(
+//                    Collections.singletonList(
+//                            ReplayRouteMapper.mapToUpdateLocation(
+//                                    0.0,
+//                                    // Point.fromLngLat(123.746122, 10.194461)
+//                                    Point.fromLngLat(origin.longitude(), origin.latitude())
+//                            )
+//                    )
+//            );
+//        }
+//        mapboxReplayer.playFirstLocation();
     }
 
     @Override
@@ -796,5 +816,56 @@ public class NavigationActivity extends AppCompatActivity {
         mapboxReplayer.pushEvents(replayEvents);
         mapboxReplayer.seekTo(replayEvents.get(0));
         mapboxReplayer.play();
+    }
+
+    private void snapRoute(ArrayList<Point> gRoute) {
+        // Remove random points since the API limit is only 100 points
+        if(gRoute.size()>100) {
+            int mustRemove = gRoute.size() - 98;
+
+            // Generate random numbers except first and last
+            List<Integer> xPointIndex = new ArrayList<>();
+            for (int i=1; i<gRoute.size()-1; i++) {
+                xPointIndex.add(i);
+            }
+            Collections.shuffle(xPointIndex);
+
+            // Remove random points
+            ArrayList<Point> xPoints = new ArrayList<>();
+            for (int i=0; i<mustRemove; i++) {
+                xPoints.add(gRoute.get(xPointIndex.get(i)));
+            }
+            gRoute.removeAll(xPoints);
+        }
+
+        MapboxMapMatching mapboxMapMatching = MapboxMapMatching.builder()
+                .accessToken(getString(R.string.mapbox_access_token))
+                .coordinates(gRoute)
+                .steps(true)
+                .voiceInstructions(true)
+                .bannerInstructions(true)
+                .profile(PROFILE_DRIVING)
+                .overview(OVERVIEW_FULL)
+                .waypointIndices(0, gRoute.size() - 1)
+                .build();
+        mapboxMapMatching.enqueueCall(new Callback<MapMatchingResponse>() {
+            @Override
+            public void onResponse(Call<MapMatchingResponse> call, Response<MapMatchingResponse> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        List<MapMatchingMatching> mapMatchingMatchings = response.body().matchings();
+                        if (mapMatchingMatchings != null) {
+                            DirectionsRoute directionRoute = mapMatchingMatchings.get(0).toDirectionRoute();
+                            setRouteAndStartNavigation(Collections.singletonList(directionRoute));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+
+            }
+        });
     }
 }
