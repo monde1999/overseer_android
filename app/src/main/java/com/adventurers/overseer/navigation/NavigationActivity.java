@@ -675,6 +675,7 @@ public class NavigationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 clearRouteAndStopNavigation();
+                finish();
             }
         });
         recenter.setOnClickListener(new View.OnClickListener() {
