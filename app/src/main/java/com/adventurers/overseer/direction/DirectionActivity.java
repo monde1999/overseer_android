@@ -1,7 +1,6 @@
 package com.adventurers.overseer.direction;
 
 
-
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -12,11 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.adventurers.overseer.R;
-import com.adventurers.overseer.helpers.ImageHelper;
-import com.adventurers.overseer.map.models.Location;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
-import java.text.DecimalFormat;
 
 
 public class DirectionActivity {
