@@ -34,10 +34,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity
-            android:name=".navigation.PlayVoiceInstructionsActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Overseer.Fullscreen" />
-        <activity
             android:name=".navigation.NavigationActivity"
             android:exported="true"
             android:theme="@style/Theme.Overseer.Fullscreen" />

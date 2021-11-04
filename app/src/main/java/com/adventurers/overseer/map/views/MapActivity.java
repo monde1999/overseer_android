@@ -39,11 +39,9 @@ import com.adventurers.overseer.login.views.LoginActivity;
 import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
 import com.adventurers.overseer.navigation.NavigationActivity;
-import com.adventurers.overseer.navigation.PlayVoiceInstructionsActivity;
 import com.adventurers.overseer.report.views.ReportActivity;
 import com.adventurers.overseer.searchtype.SearchType;
 import com.adventurers.overseer.selection.SelectionActivity;
-import com.adventurers.overseer.signup.views.SignupActivity;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -409,7 +407,6 @@ public class MapActivity extends FragmentActivity
                 // Remove existing routes polyline on map
                 clearRoutesPolyline();
                 // Render new routes polyline
-                Toast.makeText(getApplicationContext(), routes.get(0).getRoute().size()+"", Toast.LENGTH_LONG).show();
                 for (Route route : routes) {
                     List<LatLng> steps = new ArrayList<>();
                     for (Location step : route.getRoute()) {

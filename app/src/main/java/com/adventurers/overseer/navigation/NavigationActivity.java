@@ -1,11 +1,17 @@
 package com.adventurers.overseer.navigation;
 
+import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 import static com.mapbox.api.directions.v5.DirectionsCriteria.OVERVIEW_FULL;
 import static com.mapbox.api.directions.v5.DirectionsCriteria.PROFILE_DRIVING;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
@@ -15,12 +21,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.adventurers.overseer.R;
+import com.adventurers.overseer.api.FloodArea;
+import com.adventurers.overseer.api.OverseerApi;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+import com.google.maps.android.ui.IconGenerator;
 import com.mapbox.api.directions.v5.models.Bearing;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.RouteOptions;
@@ -37,6 +47,11 @@ import com.mapbox.maps.Style;
 import com.mapbox.maps.plugin.LocationPuck2D;
 import com.mapbox.maps.plugin.Plugin;
 import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin;
+import com.mapbox.maps.plugin.annotation.AnnotationConfig;
+import com.mapbox.maps.plugin.annotation.AnnotationPlugin;
+import com.mapbox.maps.plugin.annotation.AnnotationType;
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions;
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
 import com.mapbox.navigation.base.TimeFormat;
 import com.mapbox.navigation.base.extensions.RouteOptionsExtensions;
@@ -113,8 +128,11 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NavigationActivity extends AppCompatActivity {
+    // region Variables...
     private static final Long BUTTON_ANIMATION_DURATION = 1500L;
 
     /**
@@ -359,6 +377,7 @@ public class NavigationActivity extends AppCompatActivity {
                                 .build()
                 );
             }
+            startFloodPointsUpdates(enhancedLocation.getLatitude(), enhancedLocation.getLongitude());
         }
     };
 
@@ -469,13 +488,16 @@ public class NavigationActivity extends AppCompatActivity {
             }
         }
     };
-    private Point origin;
+
+    // endregion
+    AnnotationPlugin annotationApi;
+    PointAnnotationManager pointAnnotationManager;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation2);
+        setContentView(R.layout.activity_navigation);
         mapView = findViewById(R.id.mapView);
         tripProgressCard = findViewById(R.id.tripProgressCard);
         tripProgressView = findViewById(R.id.tripProgressView);
@@ -485,6 +507,11 @@ public class NavigationActivity extends AppCompatActivity {
         routeOverview = findViewById(R.id.routeOverview);
         recenter = findViewById(R.id.recenter);
         mapboxMap = mapView.getMapboxMap();
+        annotationApi = mapView.getPlugin(Plugin.MAPBOX_ANNOTATION_PLUGIN_ID);
+        if (annotationApi != null) {
+            pointAnnotationManager =
+                    (PointAnnotationManager) annotationApi.createAnnotationManager(mapView, AnnotationType.PointAnnotation, new AnnotationConfig());
+        }
 
         // Retrieve route from intent
         ArrayList<String> sRoute = getIntent().getStringArrayListExtra("Route");
@@ -494,9 +521,6 @@ public class NavigationActivity extends AppCompatActivity {
             LatLng latLng = gson.fromJson(s, LatLng.class);
             gRoute.add(Point.fromLngLat(latLng.longitude, latLng.latitude));
         }
-
-        // Set route origin
-        origin = Point.fromLngLat(gRoute.get(0).longitude(), gRoute.get(0).latitude());
 
         // initialize the location puck
         LocationComponentPlugin locationComponent =
@@ -520,7 +544,7 @@ public class NavigationActivity extends AppCompatActivity {
                     new NavigationOptions.Builder(NavigationActivity.this)
                             .accessToken(getString(R.string.mapbox_access_token))
                             // comment out the location engine setting block to disable simulation
-//                            .locationEngine(replayLocationEngine)
+                            .locationEngine(replayLocationEngine)
                             .build()
             );
         }
@@ -635,7 +659,9 @@ public class NavigationActivity extends AppCompatActivity {
 //                        gesture.addOnMapLongClickListener(new OnMapLongClickListener() {
 //                            @Override
 //                            public boolean onMapLongClick(@NonNull Point point) {
-//                                findRoute(point);
+//                                //findRoute(point);
+//                                //startFloodPointsUpdates();
+//                                //showFloodPoints(null);
 //                                return true;
 //                            }
 //                        });
@@ -701,7 +727,6 @@ public class NavigationActivity extends AppCompatActivity {
 //                            ReplayRouteMapper.mapToUpdateLocation(
 //                                    0.0,
 //                                    // Point.fromLngLat(123.746122, 10.194461)
-//                                    Point.fromLngLat(origin.longitude(), origin.latitude())
 //                            )
 //                    )
 //            );
@@ -864,6 +889,69 @@ public class NavigationActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<MapMatchingResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void showFloodPoints(List<FloodArea> floodAreas) {
+        pointAnnotationManager.deleteAll();
+        IconGenerator mIconGenerator = new IconGenerator(this);
+        mIconGenerator.setStyle(IconGenerator.STYLE_ORANGE);
+        PointAnnotationOptions pointAnnotationOptions;
+        for (FloodArea floodArea : floodAreas) {
+            pointAnnotationOptions = new PointAnnotationOptions()
+                    .withPoint(Point.fromLngLat(floodArea.getLongitude(), floodArea.getLatitude()))
+                    .withIconImage(mIconGenerator.makeIcon("Flood"));
+            pointAnnotationManager.create(pointAnnotationOptions);
+        }
+    }
+
+    private Bitmap bitmapFromDrawableRes(Context context, int resourceId) {
+        return convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId));
+    }
+
+    private Bitmap convertDrawableToBitmap(Drawable sourceDrawable) {
+        if (sourceDrawable == null) {
+            return null;
+        }
+        if (sourceDrawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) sourceDrawable).getBitmap();
+        } else {
+            // copying drawable object to not manipulate on the same reference
+            Drawable.ConstantState constantState = sourceDrawable.getConstantState();
+            Drawable drawable = constantState.newDrawable().mutate();
+            Bitmap bitmap = Bitmap.createBitmap(
+                    drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        }
+    }
+
+    private void startFloodPointsUpdates(double latitude, double longitude) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL_OVERSEER)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        OverseerApi overseerApi = retrofit.create(OverseerApi.class);
+        Call<List<FloodArea>> call = overseerApi.getFloodAreas(latitude, longitude);
+        call.enqueue(new Callback<List<FloodArea>>() {
+            @Override
+            public void onResponse(Call<List<FloodArea>> call, Response<List<FloodArea>> response) {
+                if(!response.isSuccessful()){
+                    return;
+                }
+                if (response.body() != null) {
+                    showFloodPoints(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FloodArea>> call, Throwable t) {
 
             }
         });
