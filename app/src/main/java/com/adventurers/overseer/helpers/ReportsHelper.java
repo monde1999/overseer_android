@@ -53,6 +53,32 @@ public class ReportsHelper {
         });
     }
 
+    public static void fetchReportsOnLocation(Integer id, RecyclerView recyclerView) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL_OVERSEER)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        OverseerApi overseerApi = retrofit.create(OverseerApi.class);
+        Call<List<ReportData>> call = overseerApi.getReports(id);
+        call.enqueue(new Callback<List<ReportData>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ReportData>> call, @NonNull Response<List<ReportData>> response) {
+                if(!response.isSuccessful()){
+                    return;
+                }
+                if (response.body() != null) {
+                    ReportsAdapter adapter = new ReportsAdapter(response.body());
+                    recyclerView.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<ReportData>> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
     public static void fetchImagesForReport(int id, RecyclerView recyclerView) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_OVERSEER)

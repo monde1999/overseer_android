@@ -49,10 +49,12 @@ public class MapController implements IMapController {
                 }
                 if (response.body() != null) {
                     List<Location> forecasts = new ArrayList<>();
+                    List<Integer> ids = new ArrayList<>();
                     for(FloodArea floodArea : response.body()){
                         forecasts.add(new Location(floodArea.getLatitude(), floodArea.getLongitude()));
+                        ids.add(floodArea.getId());
                     }
-                    mMapInteractor.onSuccessRequest(new MapData(forecasts));
+                    mMapInteractor.onSuccessRequest(new MapData(forecasts, ids));
                 }
                 else {
                     onServerRequestFailed(EC_SERVER_ERROR, EM_SERVER_ERROR);

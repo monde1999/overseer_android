@@ -20,11 +20,11 @@ public class FloodForecastPopupFragment implements IFloodForecastView {
     private final GoogleMap mMap;
     private final FloodForecastDetailedFragment mFloodForecastDetailedFragment;
 
-    public FloodForecastPopupFragment(Location location, Context context, GoogleMap map) {
+    public FloodForecastPopupFragment(Location location, Integer id, Context context, GoogleMap map) {
         mForecastLocation = new Location(location.getLatitude(), location.getLongitude());
         mIconGenerator = new IconGenerator(context);
         mMap = map;
-        mFloodForecastDetailedFragment = FloodForecastDetailedFragment.newInstance(location);
+        mFloodForecastDetailedFragment = FloodForecastDetailedFragment.newInstance(location, id);
     }
 
     public Location getForecastLocation() {

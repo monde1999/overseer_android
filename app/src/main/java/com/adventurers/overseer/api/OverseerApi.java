@@ -50,6 +50,11 @@ public interface OverseerApi {
             @Query("longitude") double longitude
     );
 
+    @GET("forecast/reports/")
+    Call<List<ReportData>> getReports(
+            @Query("area_id") int id
+    );
+
     @GET("forecast/report-images/")
     Call<List<ReportImage>> getReportImages(
             @Query("report_id") int id

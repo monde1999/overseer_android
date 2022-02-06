@@ -18,7 +18,7 @@ public class MapPresenter implements IMapPresenter {
 
     @Override
     public void presentForecastsAroundLocation(MapData mapData) {
-        FloodForecast floodForecast = new FloodForecast(mapData.getForecasts(),(Context)mMapView, ((MapActivity)mMapView).getMap());
+        FloodForecast floodForecast = new FloodForecast(mapData.getForecasts(), mapData.getIds(), (Context)mMapView, ((MapActivity)mMapView).getMap());
         mMapView.renderForecasts(floodForecast.getPopupFragments());
     }
 

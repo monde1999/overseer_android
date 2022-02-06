@@ -36,13 +36,16 @@ import com.google.gson.Gson;
 public class FloodForecastDetailedFragment extends BottomSheetDialogFragment implements IFloodForecastView {
     private Location mForecastLocation;
     private View view;
+    private Integer mId;
 
-    public static FloodForecastDetailedFragment newInstance(Location location) {
+    public static FloodForecastDetailedFragment newInstance(Location location, Integer id) {
         FloodForecastDetailedFragment fragment = new FloodForecastDetailedFragment();
         Bundle args = new Bundle();
         Gson gson = new Gson();
         String json = gson.toJson(location);
         args.putString("Location", json);
+        json = gson.toJson(id);
+        args.putString("Id", json);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,6 +59,8 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
             String json = getArguments().getString("Location");
             Gson gson = new Gson();
             mForecastLocation = gson.fromJson(json, Location.class);
+            json = getArguments().getString("Id");
+            mId = gson.fromJson(json, Integer.class);
             FloodForecastPresenter presenter = new FloodForecastPresenter(this);
             presenter.present(mForecastLocation);
         }
@@ -129,7 +134,7 @@ public class FloodForecastDetailedFragment extends BottomSheetDialogFragment imp
             RecyclerView recyclerView = view.findViewById(R.id.reports_rv_posts);
             LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
             recyclerView.setLayoutManager(manager);
-            ReportsHelper.fetchReportsOnLocation(forecastData.getLocation(), recyclerView);
+            ReportsHelper.fetchReportsOnLocation(mId, recyclerView);
             String address = GeocoderHelper.getLocationAddress(forecastData.getLocation(), getContext());
             tv_location.setText(address);
         }
