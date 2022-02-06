@@ -9,15 +9,18 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FloodForecast {
     private final List<FloodForecastPopupFragment> popupFragments;
 
-    public FloodForecast(List<Location> locations, Context context, GoogleMap map) {
+    public FloodForecast(List<Location> locations, List<Integer> ids, Context context, GoogleMap map) {
         popupFragments = new ArrayList<>();
-        for (Location location : locations) {
-            popupFragments.add(new FloodForecastPopupFragment(location, context, map));
+        Iterator<Location> locationIterator = locations.iterator();
+        Iterator<Integer> idIterator = ids.iterator();
+        while (locationIterator.hasNext() && idIterator.hasNext()) {
+            popupFragments.add(new FloodForecastPopupFragment(locationIterator.next(), idIterator.next(), context, map));
         }
     }
 
