@@ -1,6 +1,8 @@
 package com.adventurers.overseer.report.views;
 
 import static com.adventurers.overseer.Constants.preferencesKey;
+import static com.adventurers.overseer.R.*;
+
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,7 +12,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,6 +26,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +36,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,6 +71,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     private int floodLevel;
     private int user;
     private String description;
+    private SeekBar seekBar_flood_level;
 
     private View view;
     private IReportView iReportView;
@@ -73,6 +80,9 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     private ActivityResultLauncher<Intent> cameraIntentResultLauncher;
     private List<File> imageFiles;
     private String takePhotoPath;
+
+    public ReportActivity() {
+    }
 
     public static ReportActivity newInstance(Location location) {
         ReportActivity reportActivity = new ReportActivity();
@@ -103,9 +113,9 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     // endregion
 
     // region DialogFragment...
-    public void submit(EditText et_description,NumberPicker np_flood_level) {
+    public void submit(EditText et_description,SeekBar seekBar_flood_level) {
         description = et_description.getText().toString();
-        floodLevel = np_flood_level.getValue();
+        floodLevel = seekBar_flood_level.getProgress();
         ReportPresenter presenter = new ReportPresenter(this);
         Toast.makeText(getContext(),
                 "user: " + user
@@ -178,7 +188,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_report, container, false);
+        return inflater.inflate(layout.fragment_report, container, false);
     }
     // endregion
 
@@ -188,17 +198,18 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onShow(DialogInterface dialog) {
                 BottomSheetDialog d = (BottomSheetDialog) dialog;
 
-                FrameLayout bottomSheet = d.findViewById(R.id.design_bottom_sheet);
+                FrameLayout bottomSheet = d.findViewById(id.design_bottom_sheet);
                 if(bottomSheet != null) {
                     BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
                 view = getView();
                 if (view != null) {
-                    Button btn_upload = view.findViewById(R.id.report_btn_upload);
+                    Button btn_upload = view.findViewById(id.report_btn_upload);
                     btn_upload.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -243,33 +254,64 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                         }
                     });
 
-                    RecyclerView recyclerView = view.findViewById(R.id.report_recycler);
+                    RecyclerView recyclerView = view.findViewById(id.report_recycler);
                     LinearLayoutManager horizontal = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
                     recyclerView.setLayoutManager(horizontal);
                     adapter = new ReportRecyclerViewAdapter(imageFiles);
                     recyclerView.setAdapter(adapter);
+                    seekBar_flood_level = (SeekBar) view.findViewById(id.seekBar4);
+                    EditText et_description = view.findViewById(id.report_et_caption);
 
-                    NumberPicker np_flood_level = view.findViewById(R.id.report_np_flood_level);
-                    np_flood_level.setMinValue(1);
-                    np_flood_level.setMaxValue(5);
-                    np_flood_level.setWrapSelectorWheel(false);
-                    String[] pickerVals = new String[] {"1","2","3","4","5"};
-                    np_flood_level.setDisplayedValues(pickerVals);
+                    seekBar_flood_level.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            Drawable flooded_1  = getResources().getDrawable(drawable.flooded_level_model_1);
+                            Drawable flooded_2  = getResources().getDrawable(drawable.flooded_level_model_2);
+                            Drawable flooded_3  = getResources().getDrawable(drawable.flooded_level_model_3);
+                            Drawable flooded_4  = getResources().getDrawable(drawable.flooded_level_model_4);
+                            Drawable flooded_5  = getResources().getDrawable(drawable.flooded_level_model_5);
+                            SeekBar current_seekbar_value;
+                            switch(seekBar_flood_level.getProgress()){
+                                case 1: {
+                                    seekBar_flood_level.setBackground(flooded_1);
+                                    break;
+                                }
+                                case 2: {
+                                    seekBar_flood_level.setBackground(flooded_2);
+                                    break;
+                                }
+                                case 3:{
+                                    seekBar_flood_level.setBackground(flooded_3);
+                                    break;
+                                }
+                                case 4:{
+                                    seekBar_flood_level.setBackground(flooded_4);
+                                    break;
+                                }
+                                case 5:{
+                                    seekBar_flood_level.setBackground(flooded_5);
+                                    break;
+                                }
+                            }
+                        }
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) { }
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) { }
+                    });
 
-                    EditText et_description = view.findViewById(R.id.report_et_caption);
-
-                    Button btn_submit = view.findViewById(R.id.report_btn_submit);
+                    Button btn_submit = view.findViewById(id.report_btn_submit);
                     btn_submit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                           submit(et_description,np_flood_level);
+                           submit(et_description,seekBar_flood_level);
                         }
                     });
 
-                    TextView tv_name = view.findViewById(R.id.report_tv_username);
-                    TextView tv_location = view.findViewById(R.id.report_tv_location);
-                    ImageView iv_location = view.findViewById(R.id.report_iv_location);
-                    TextView tv_time_location = view.findViewById(R.id.report_tv_time_location);
+                    TextView tv_name = view.findViewById(id.report_tv_username);
+                    TextView tv_location = view.findViewById(id.report_tv_location);
+                    ImageView iv_location = view.findViewById(id.report_iv_location);
+                    TextView tv_time_location = view.findViewById(id.report_tv_time_location);
 
                     SharedPreferences sharedPreferences = getActivity().getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
                     if(UserInfoHandler.hasAccountStored(sharedPreferences)){
