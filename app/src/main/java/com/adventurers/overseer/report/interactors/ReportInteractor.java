@@ -22,11 +22,11 @@ public class ReportInteractor{
         this.presenter = presenter;
     }
 
-    public void report(int UserID, Location location, Date datetime, List<File> picture, int floodLevel, String description) {
+    public void report(int UserID, Location location, Date datetime, List<File> picture, int floodLevel, String description, String token) {
         this.rc = new ReportController(this);
         CreateReportData reportData = new CreateReportData(UserID, description, location, floodLevel, picture);
         this.createreportData = reportData;
-        this.rc.addReportToDb(reportData);
+        this.rc.addReportToDb(reportData, token);
     }
     public void feedbackReportSuccess(String message)
     {

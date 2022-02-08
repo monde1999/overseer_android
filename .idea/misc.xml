@@ -60,10 +60,12 @@
         <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_thumbs_up_20dp_grey.xml" value="0.2296875" />
         <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_thumbs_up_20dp_white.xml" value="0.2296875" />
         <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/layout/fragment_report.xml" value="0.2757255936675462" />
+        <entry key="..\:/Users/ervin/Desktop/4th Year Files/Projects/overseer_android/app/src/main/res/layout/activity_map.xml" value="0.24587315377932234" />
+        <entry key="..\:/Users/ervin/Desktop/4th Year Files/Projects/overseer_android/app/src/main/res/layout/fragment_map_hud.xml" value="0.14739583333333334" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,6 +1,10 @@
 package com.adventurers.overseer.report.controllers;
 
 import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
+import static com.adventurers.overseer.Constants.EC_SERVER_ERROR;
+import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
+import static com.adventurers.overseer.Constants.EM_SERVER_ERROR;
+import static com.adventurers.overseer.Constants.EM_SERVER_FAILED;
 
 import com.adventurers.overseer.api.OverseerApi;
 import com.adventurers.overseer.report.interactors.ReportInteractor;
@@ -30,7 +34,7 @@ public class ReportController implements IReportController {
                 .build();
     }
     @Override
-    public void addReportToDb(CreateReportData reportData) {
+    public void addReportToDb(CreateReportData reportData, String token) {
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
         MultipartBody.Part[] imagesPart;
         if (reportData.getImages()!= null && !reportData.getImages().isEmpty()){
@@ -48,7 +52,7 @@ public class ReportController implements IReportController {
             imagesPart = null;
         }
         RequestBody description = RequestBody.create(MediaType.parse("text/plain"),reportData.getDescription());
-        Call<okhttp3.ResponseBody> call = overseerApi.createReport(reportData.getUser(), reportData.getDescription(),
+        Call<okhttp3.ResponseBody> call = overseerApi.createReport("Token "+token, reportData.getUser(), reportData.getDescription(),
                 reportData.getLatitude(), reportData.getLongitude(), reportData.getFloodLevel(), imagesPart);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -57,13 +61,13 @@ public class ReportController implements IReportController {
                    reportInteractor.feedbackReportSuccess("Success");
                 }
                 else {
-                    reportInteractor.feedbackReportProgressing("In progress");
+                    reportInteractor.feedbackReportError(EC_SERVER_ERROR,EM_SERVER_ERROR);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                reportInteractor.feedbackReportError(001,"Unable to connect.");
+                reportInteractor.feedbackReportError(EC_SERVER_FAILED,EM_SERVER_FAILED);
             }
         });
     }
