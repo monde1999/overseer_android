@@ -117,15 +117,23 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
         description = et_description.getText().toString();
         floodLevel = seekBar_flood_level.getProgress();
         ReportPresenter presenter = new ReportPresenter(this);
-        Toast.makeText(getContext(),
-                "user: " + user
-                        + "\nreportedLocation: " + reportedLocation.toString()
-                        + "\ntime: "
-                        + "\nfloodLevel: " + floodLevel
-                        + "\nimageFiles: " + imageFiles.size()
-                        + "\ndescription: " + description,
-                Toast.LENGTH_LONG).show();
-        presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description);
+        if(imageFiles==null || imageFiles.size()==0){
+            Toast.makeText(getContext(),"Image is missing. Please Try again.",Toast.LENGTH_LONG).show();
+        }
+        else if(description.isEmpty()){
+            Toast.makeText(getContext(),"Please add a description.",Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(getContext(),
+                    "user: " + user
+                            + "\nreportedLocation: " + reportedLocation.toString()
+                            + "\ntime: " + time
+                            + "\nfloodLevel: " + floodLevel
+                            + "\nimageFiles: " + imageFiles.size()
+                            + "\ndescription: " + description,
+                    Toast.LENGTH_LONG).show();
+            presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description);
+        }
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -265,12 +273,11 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                     seekBar_flood_level.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            Drawable flooded_1  = getResources().getDrawable(drawable.flooded_level_model_1);
-                            Drawable flooded_2  = getResources().getDrawable(drawable.flooded_level_model_2);
-                            Drawable flooded_3  = getResources().getDrawable(drawable.flooded_level_model_3);
-                            Drawable flooded_4  = getResources().getDrawable(drawable.flooded_level_model_4);
-                            Drawable flooded_5  = getResources().getDrawable(drawable.flooded_level_model_5);
-                            SeekBar current_seekbar_value;
+                            Drawable flooded_1  = getResources().getDrawable(drawable.flooded_level_model_1,null);
+                            Drawable flooded_2  = getResources().getDrawable(drawable.flooded_level_model_2,null);
+                            Drawable flooded_3  = getResources().getDrawable(drawable.flooded_level_model_3,null);
+                            Drawable flooded_4  = getResources().getDrawable(drawable.flooded_level_model_4,null);
+                            Drawable flooded_5  = getResources().getDrawable(drawable.flooded_level_model_5,null);
                             switch(seekBar_flood_level.getProgress()){
                                 case 1: {
                                     seekBar_flood_level.setBackground(flooded_1);
