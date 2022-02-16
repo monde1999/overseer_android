@@ -18,7 +18,7 @@
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_floodforecast_detailed.xml" value="0.33" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_map_hud.xml" value="0.20615384615384616" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_maps.xml" value="0.20615384615384616" />
-        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_report.xml" value="0.18055555555555555" />
+        <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_report.xml" value="0.33" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_reports.xml" value="0.209375" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_reports_post.xml" value="0.1" />
         <entry key="..\:/Code/Android/Overseer2/app/src/main/res/layout/fragment_selection.xml" value="0.1953125" />
@@ -51,15 +51,6 @@
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/activity_maps.xml" value="0.1" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/activity_splash.xml" value="0.18" />
         <entry key="..\:/Users/Franz/AndroidStudioProjects/Overseer/app/src/main/res/layout/fragment_floodforecast_detailed.xml" value="0.25" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/card_rounded_top.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_afternoon_20dp.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_arrow_left_20dp.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_evening_20dp.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_logout_20dp.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_rain_15dp.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_thumbs_up_20dp_grey.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/drawable/ic_thumbs_up_20dp_white.xml" value="0.2296875" />
-        <entry key="..\:/Users/admin/Documents/GitHub/overseer_android/app/src/main/res/layout/fragment_report.xml" value="0.2757255936675462" />
       </map>
     </option>
   </component>

@@ -72,6 +72,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     private int user;
     private String description;
     private SeekBar seekBar_flood_level;
+    private ImageView iv_flood_level;
 
     private View view;
     private IReportView iReportView;
@@ -115,7 +116,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     // region DialogFragment...
     public void submit(EditText et_description,SeekBar seekBar_flood_level) {
         description = et_description.getText().toString();
-        floodLevel = seekBar_flood_level.getProgress();
+        floodLevel = seekBar_flood_level.getProgress() + 1;
         ReportPresenter presenter = new ReportPresenter(this);
         if(imageFiles==null || imageFiles.size()==0){
             Toast.makeText(getContext(),"Image is missing. Please Try again.",Toast.LENGTH_LONG).show();
@@ -268,6 +269,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                     adapter = new ReportRecyclerViewAdapter(imageFiles);
                     recyclerView.setAdapter(adapter);
                     seekBar_flood_level = (SeekBar) view.findViewById(id.seekBar4);
+                    iv_flood_level = view.findViewById(id.report_iv_flood_level);
                     EditText et_description = view.findViewById(id.report_et_caption);
 
                     seekBar_flood_level.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -279,24 +281,24 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                             Drawable flooded_4  = getResources().getDrawable(drawable.flooded_level_model_4,null);
                             Drawable flooded_5  = getResources().getDrawable(drawable.flooded_level_model_5,null);
                             switch(seekBar_flood_level.getProgress()){
-                                case 1: {
-                                    seekBar_flood_level.setBackground(flooded_1);
+                                case 0: {
+                                    iv_flood_level.setImageDrawable(flooded_1);
                                     break;
                                 }
-                                case 2: {
-                                    seekBar_flood_level.setBackground(flooded_2);
+                                case 1: {
+                                    iv_flood_level.setImageDrawable(flooded_2);
+                                    break;
+                                }
+                                case 2:{
+                                    iv_flood_level.setImageDrawable(flooded_3);
                                     break;
                                 }
                                 case 3:{
-                                    seekBar_flood_level.setBackground(flooded_3);
+                                    iv_flood_level.setImageDrawable(flooded_4);
                                     break;
                                 }
                                 case 4:{
-                                    seekBar_flood_level.setBackground(flooded_4);
-                                    break;
-                                }
-                                case 5:{
-                                    seekBar_flood_level.setBackground(flooded_5);
+                                    iv_flood_level.setImageDrawable(flooded_5);
                                     break;
                                 }
                             }
