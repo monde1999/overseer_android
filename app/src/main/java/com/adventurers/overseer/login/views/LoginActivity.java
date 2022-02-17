@@ -30,6 +30,8 @@ import com.adventurers.overseer.signup.views.SignupActivity;
 import com.adventurers.overseer.user.handlers.UserInfoHandler;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,7 +95,15 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 BASE_URL_OVERSEER = input.toString();
-                                Toast.makeText(LoginActivity.this, BASE_URL_OVERSEER, Toast.LENGTH_SHORT).show();
+                                try {
+                                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("config.txt", Context.MODE_PRIVATE));
+                                    outputStreamWriter.write(BASE_URL_OVERSEER);
+                                    outputStreamWriter.close();
+                                    Toast.makeText(LoginActivity.this, "Configuration saved.", Toast.LENGTH_SHORT).show();
+                                }
+                                catch (IOException e) {
+                                    Toast.makeText(LoginActivity.this, "Error saving configuration.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }).show();
             }
