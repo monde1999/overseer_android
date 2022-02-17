@@ -3,7 +3,7 @@ This is the new version of Overseer.
 
 ## Setup
 1. Run cmd/ipconfig to get host IP address.\
-2. Example: 192.168.1.2
+   Example: 192.168.1.2
 
 2. Make sure to add the host IP address to the ALLOWED_HOSTS in settings.py\
    Example: ALLOWED_HOSTS = ["192.168.1.2"] or ALLOWED_HOSTS = ["*"] 
