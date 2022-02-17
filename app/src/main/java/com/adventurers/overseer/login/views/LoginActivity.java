@@ -1,5 +1,6 @@
 package com.adventurers.overseer.login.views;
 
+import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 import static com.adventurers.overseer.Constants.EC_ACCOUNT_NOT_EXIST;
 import static com.adventurers.overseer.Constants.EC_SERVER_FAILED;
 import static com.adventurers.overseer.Constants.EC_WRONG_PASSWORD;
@@ -14,9 +15,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.adventurers.overseer.R;
@@ -25,7 +28,10 @@ import com.adventurers.overseer.login.presenters.LoginPresenter;
 import com.adventurers.overseer.map.views.MapActivity;
 import com.adventurers.overseer.signup.views.SignupActivity;
 import com.adventurers.overseer.user.handlers.UserInfoHandler;
+import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +44,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     private TextView tv_password_error;
     private LoadingDialog loadingDialog;
     private SharedPreferences sharedPreferences;
+    private ImageButton ib_ip;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         loadingDialog = new LoadingDialog(this);
         TextView tv_create_account = findViewById(R.id.login_tv_create_account);
         Button btn_login = findViewById(R.id.login_btn_login);
+        ib_ip = findViewById(R.id.login_ib_ip);
         setTextListeners();
 
         sharedPreferences = getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
@@ -73,6 +82,30 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), SignupActivity.class);
                 startActivity(i);
+            }
+        });
+
+        ib_ip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(LoginActivity.this)
+                        .title("Configure")
+                        .content("Overseer server IP address:")
+                        .input(null, BASE_URL_OVERSEER, false, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                BASE_URL_OVERSEER = input.toString();
+                                try {
+                                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("config.txt", Context.MODE_PRIVATE));
+                                    outputStreamWriter.write(BASE_URL_OVERSEER);
+                                    outputStreamWriter.close();
+                                    Toast.makeText(LoginActivity.this, "Configuration saved.", Toast.LENGTH_SHORT).show();
+                                }
+                                catch (IOException e) {
+                                    Toast.makeText(LoginActivity.this, "Error saving configuration.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).show();
             }
         });
     }
