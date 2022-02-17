@@ -11,6 +11,6 @@ This is the new version of Overseer.
    Example: python manage.py runserver 192.168.1.2:8000
 
 4. In the login screen, click the pen icon on the top-right corner to edit the IP address.\
-   Example: http://192.168.1.2:8000/\
+   Example: http://192.168.1.2:8000/ \
    Click OK to save. This will be loaded on future app start up.
 
