@@ -1,8 +1,9 @@
 package com.adventurers.overseer.report.views;
 
 import static com.adventurers.overseer.Constants.preferencesKey;
-import static com.adventurers.overseer.R.*;
-
+import static com.adventurers.overseer.R.drawable;
+import static com.adventurers.overseer.R.id;
+import static com.adventurers.overseer.R.layout;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,7 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +41,6 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.models.DateTime;
 import com.adventurers.overseer.helpers.GeocoderHelper;
 import com.adventurers.overseer.helpers.ImageHelper;
