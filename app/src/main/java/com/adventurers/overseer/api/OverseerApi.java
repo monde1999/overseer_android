@@ -53,6 +53,7 @@ public interface OverseerApi {
 
     @GET("forecast/reports/")
     Call<List<ReportData>> getReports(
+            @Header("Authorization") String token,
             @Query("area_id") int id
     );
 

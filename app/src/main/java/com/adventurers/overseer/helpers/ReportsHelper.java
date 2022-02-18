@@ -1,7 +1,10 @@
 package com.adventurers.overseer.helpers;
 
 import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
+import static com.adventurers.overseer.Constants.preferencesKey;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +20,7 @@ import com.adventurers.overseer.api.ReportUserReaction;
 import com.adventurers.overseer.floodforecast.views.ReportsAdapter;
 import com.adventurers.overseer.floodforecast.views.ReportsImagesAdapter;
 import com.adventurers.overseer.map.models.Location;
+import com.adventurers.overseer.user.handlers.UserInfoHandler;
 
 import java.util.List;
 
@@ -59,7 +63,8 @@ public class ReportsHelper {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
-        Call<List<ReportData>> call = overseerApi.getReports(id);
+        SharedPreferences sharedPreferences = recyclerView.getContext().getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
+        Call<List<ReportData>> call = overseerApi.getReports("Token " + UserInfoHandler.getCurrentAccountToken(sharedPreferences), id);
         call.enqueue(new Callback<List<ReportData>>() {
             @Override
             public void onResponse(@NonNull Call<List<ReportData>> call, @NonNull Response<List<ReportData>> response) {
