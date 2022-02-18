@@ -169,7 +169,8 @@ public class ReportsHelper {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         OverseerApi overseerApi = retrofit.create(OverseerApi.class);
-        Call<ReportReactResponse> call = overseerApi.postReportReaction(reportReactionData);
+        SharedPreferences sharedPreferences = tv_likes.getContext().getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
+        Call<ReportReactResponse> call = overseerApi.postReportReaction("Token " + UserInfoHandler.getCurrentAccountToken(sharedPreferences), reportReactionData);
         call.enqueue(new Callback<ReportReactResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReportReactResponse> call, @NonNull Response<ReportReactResponse> response) {

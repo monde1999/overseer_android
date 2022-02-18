@@ -74,5 +74,8 @@ public interface OverseerApi {
     );
 
     @POST("report/react/")
-    Call<ReportReactResponse> postReportReaction(@Body ReportReactionData reportReactionData);
+    Call<ReportReactResponse> postReportReaction(
+            @Header("Authorization") String token,
+            @Body ReportReactionData reportReactionData
+    );
 }
