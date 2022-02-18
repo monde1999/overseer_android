@@ -235,7 +235,7 @@ public class MapActivity extends FragmentActivity
         for(FloodForecastPopupFragment popupFragment : forecasts) {
             popupFragment.renderForecastOnLocation(null);
         }
-        mFab_report.setClickable(true);
+        mFab_report.setEnabled(true);
         mFab_report.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(52,152,219)));
     }
 
@@ -261,7 +261,7 @@ public class MapActivity extends FragmentActivity
     @Override
     public void renderError(int errorCode, String errorString) {
         Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show();
-        mFab_report.setClickable(false);
+        mFab_report.setEnabled(false);
         mFab_report.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.grey)));
         // Remove previous popupFragments from the map
         if(mPopupFragments!=null) {

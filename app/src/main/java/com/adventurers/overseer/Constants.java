@@ -23,15 +23,15 @@ public class Constants {
     public static final String EM_EMAIL_REGISTERED = "Email is already registered.";
 
     // Tags
-    public static String TAG_FLOOD_FORECAST_MODULE = "FloodForecastModule";
-    public static String TAG_REPORT = "ReportModule";
+    public static final String TAG_FLOOD_FORECAST_MODULE = "FloodForecastModule";
+    public static final String TAG_REPORT = "ReportModule";
 
     // APIs
-    public static String BASE_URL_OVERSEER = "http://192.168.8.101:8000/";
-    public static String BASE_URL_WEATHER = "https://api.openweathermap.org/";
+    public static String BASE_URL_OVERSEER = "http://192.168.1.2:8000/";
+    public static final String BASE_URL_WEATHER = "https://api.openweathermap.org/";
 
     // Keys
-    public static String MAPS_API_KEY = "AIzaSyC-Aad2Zl-pfaVAJg5VnJUyflfdjJogjIY";
-    public static String OPEN_WEATHER_APP_ID = "67aa636d02df1df62ef01de2db58fa49";
+    public static final String MAPS_API_KEY = "AIzaSyC-Aad2Zl-pfaVAJg5VnJUyflfdjJogjIY";
+    public static final String OPEN_WEATHER_APP_ID = "67aa636d02df1df62ef01de2db58fa49";
     public static final String preferencesKey = "com.adventurers.overseer";
 }

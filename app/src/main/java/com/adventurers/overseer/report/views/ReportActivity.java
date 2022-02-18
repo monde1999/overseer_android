@@ -1,8 +1,9 @@
 package com.adventurers.overseer.report.views;
 
 import static com.adventurers.overseer.Constants.preferencesKey;
-import static com.adventurers.overseer.R.*;
-
+import static com.adventurers.overseer.R.drawable;
+import static com.adventurers.overseer.R.id;
+import static com.adventurers.overseer.R.layout;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,7 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +41,6 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.adventurers.overseer.R;
 import com.adventurers.overseer.floodforecast.models.DateTime;
 import com.adventurers.overseer.helpers.GeocoderHelper;
 import com.adventurers.overseer.helpers.ImageHelper;
@@ -72,6 +71,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     private int user;
     private String description;
     private SeekBar seekBar_flood_level;
+    private ImageView iv_flood_level;
 
     private View view;
     private IReportView iReportView;
@@ -116,17 +116,25 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     // region DialogFragment...
     public void submit(EditText et_description,SeekBar seekBar_flood_level) {
         description = et_description.getText().toString();
-        floodLevel = seekBar_flood_level.getProgress();
+        floodLevel = seekBar_flood_level.getProgress() + 1;
         ReportPresenter presenter = new ReportPresenter(this);
-        Toast.makeText(getContext(),
-                "user: " + user
-                        + "\nreportedLocation: " + reportedLocation.toString()
-                        + "\ntime: "
-                        + "\nfloodLevel: " + floodLevel
-                        + "\nimageFiles: " + imageFiles.size()
-                        + "\ndescription: " + description,
-                Toast.LENGTH_LONG).show();
-        presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description, UserInfoHandler.getCurrentAccountToken(sharedPreferences));
+        if(imageFiles==null || imageFiles.size()==0){
+            Toast.makeText(getContext(),"Image is missing. Please Try again.",Toast.LENGTH_LONG).show();
+        }
+        else if(description.isEmpty()){
+            Toast.makeText(getContext(),"Please add a description.",Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(getContext(),
+                    "user: " + user
+                            + "\nreportedLocation: " + reportedLocation.toString()
+                            + "\ntime: " + time
+                            + "\nfloodLevel: " + floodLevel
+                            + "\nimageFiles: " + imageFiles.size()
+                            + "\ndescription: " + description,
+                    Toast.LENGTH_LONG).show();
+            presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description, UserInfoHandler.getCurrentAccountToken(sharedPreferences));
+        }
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -262,36 +270,36 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                     adapter = new ReportRecyclerViewAdapter(imageFiles);
                     recyclerView.setAdapter(adapter);
                     seekBar_flood_level = (SeekBar) view.findViewById(id.seekBar4);
+                    iv_flood_level = view.findViewById(id.report_iv_flood_level);
                     EditText et_description = view.findViewById(id.report_et_caption);
 
                     seekBar_flood_level.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            Drawable flooded_1  = getResources().getDrawable(drawable.flooded_level_model_1);
-                            Drawable flooded_2  = getResources().getDrawable(drawable.flooded_level_model_2);
-                            Drawable flooded_3  = getResources().getDrawable(drawable.flooded_level_model_3);
-                            Drawable flooded_4  = getResources().getDrawable(drawable.flooded_level_model_4);
-                            Drawable flooded_5  = getResources().getDrawable(drawable.flooded_level_model_5);
-                            SeekBar current_seekbar_value;
+                            Drawable flooded_1  = getResources().getDrawable(drawable.flooded_level_model_1,null);
+                            Drawable flooded_2  = getResources().getDrawable(drawable.flooded_level_model_2,null);
+                            Drawable flooded_3  = getResources().getDrawable(drawable.flooded_level_model_3,null);
+                            Drawable flooded_4  = getResources().getDrawable(drawable.flooded_level_model_4,null);
+                            Drawable flooded_5  = getResources().getDrawable(drawable.flooded_level_model_5,null);
                             switch(seekBar_flood_level.getProgress()){
-                                case 1: {
-                                    seekBar_flood_level.setBackground(flooded_1);
+                                case 0: {
+                                    iv_flood_level.setImageDrawable(flooded_1);
                                     break;
                                 }
-                                case 2: {
-                                    seekBar_flood_level.setBackground(flooded_2);
+                                case 1: {
+                                    iv_flood_level.setImageDrawable(flooded_2);
+                                    break;
+                                }
+                                case 2:{
+                                    iv_flood_level.setImageDrawable(flooded_3);
                                     break;
                                 }
                                 case 3:{
-                                    seekBar_flood_level.setBackground(flooded_3);
+                                    iv_flood_level.setImageDrawable(flooded_4);
                                     break;
                                 }
                                 case 4:{
-                                    seekBar_flood_level.setBackground(flooded_4);
-                                    break;
-                                }
-                                case 5:{
-                                    seekBar_flood_level.setBackground(flooded_5);
+                                    iv_flood_level.setImageDrawable(flooded_5);
                                     break;
                                 }
                             }

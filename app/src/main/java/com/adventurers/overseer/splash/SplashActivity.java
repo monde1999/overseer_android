@@ -1,5 +1,6 @@
 package com.adventurers.overseer.splash;
 
+import static com.adventurers.overseer.Constants.BASE_URL_OVERSEER;
 import static com.adventurers.overseer.Constants.preferencesKey;
 
 import android.content.Context;
@@ -15,6 +16,13 @@ import com.adventurers.overseer.map.views.MapActivity;
 import com.adventurers.overseer.user.handlers.UserInfoHandler;
 import com.adventurers.overseer.user.models.UserInfo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 public class SplashActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
@@ -25,6 +33,7 @@ public class SplashActivity extends AppCompatActivity {
         //use this to delete all stored info
         //for testing
         //sharedPreferences.edit().clear().commit();
+        loadOverseerServerIp();
         if(UserInfoHandler.hasAccountStored(sharedPreferences)){
             UserInfo currentUser = UserInfoHandler.getCurrentUser(sharedPreferences);
             String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
@@ -36,5 +45,33 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(new Intent(SplashActivity.this, LoginActivity.class));
         }
         finish();
+    }
+
+    public void loadOverseerServerIp() {
+        File file = new File(getFilesDir(), "config.txt");
+        if(file.exists()) {
+            try {
+                InputStream inputStream = openFileInput("config.txt");
+                if ( inputStream != null ) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String receiveString;
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    while ( (receiveString = bufferedReader.readLine()) != null ) {
+                        stringBuilder.append(receiveString);
+                    }
+
+                    inputStream.close();
+                    BASE_URL_OVERSEER = stringBuilder.toString();
+                    Toast.makeText(this, BASE_URL_OVERSEER, Toast.LENGTH_SHORT).show();
+                }
+            }
+            catch (FileNotFoundException e) {
+                Toast.makeText(this, "No configuration found.", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Toast.makeText(this, "Error loading configuration.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
