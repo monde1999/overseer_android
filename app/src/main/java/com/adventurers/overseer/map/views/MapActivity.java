@@ -4,11 +4,14 @@ import static com.adventurers.overseer.Constants.RC_ACCESS_FINE_LOCATION;
 import static com.adventurers.overseer.Constants.RC_GPS_SERVICE;
 import static com.adventurers.overseer.Constants.RC_SEARCH_TYPE;
 import static com.adventurers.overseer.Constants.TAG_REPORT;
+import static com.adventurers.overseer.Constants.preferencesKey;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -100,6 +103,7 @@ public class MapActivity extends FragmentActivity
     DirectionActivity mDirectionActivity;
     private Marker mFocusedMarker;
     private Polyline mFocusedRoute;
+    private SharedPreferences sharedPreferences;
 
     private static final String TAG = "MapActivity";
     private final int MAP = 0;
@@ -110,7 +114,7 @@ public class MapActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        sharedPreferences = getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_map);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -155,6 +159,7 @@ public class MapActivity extends FragmentActivity
         fab_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sharedPreferences.edit().clear().commit();
                 Intent i = new Intent(MapActivity.this, LoginActivity.class);
                 startActivity(i);
                 stopLocationUpdates();

@@ -25,10 +25,10 @@ public void presentReportFailure(int code, String message) {
         this.rv.renderReportFailure(code, message);
         }
 
-public void report(int userID, Location location, Date datetime, int floodLevel, List<File> picture, String description) {
+public void report(int userID, Location location, Date datetime, int floodLevel, List<File> picture, String description, String token) {
         ReportInteractor reportInteractor = new ReportInteractor(this);
         this.ri = reportInteractor;
-        reportInteractor.report(userID, location, datetime, picture, floodLevel, description);
+        reportInteractor.report(userID, location, datetime, picture, floodLevel, description, token);
         }
 
 public void presentReportProgressing(String message) {

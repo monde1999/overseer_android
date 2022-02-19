@@ -11,6 +11,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -37,7 +38,7 @@ public interface OverseerApi {
 
     @Multipart
     @POST("report/create/")
-    Call<ResponseBody> createReport(@Part("user") int user,
+    Call<ResponseBody> createReport(@Header("Authorization") String token, @Part("user") int user,
                                     @Part ("description") String description,
                                     @Part("latitude") double latitude,
                                     @Part("longitude") double longitude,
@@ -52,6 +53,7 @@ public interface OverseerApi {
 
     @GET("forecast/reports/")
     Call<List<ReportData>> getReports(
+            @Header("Authorization") String token,
             @Query("area_id") int id
     );
 
@@ -72,5 +74,8 @@ public interface OverseerApi {
     );
 
     @POST("report/react/")
-    Call<ReportReactResponse> postReportReaction(@Body ReportReactionData reportReactionData);
+    Call<ReportReactResponse> postReportReaction(
+            @Header("Authorization") String token,
+            @Body ReportReactionData reportReactionData
+    );
 }

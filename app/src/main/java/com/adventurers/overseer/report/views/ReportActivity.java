@@ -80,8 +80,9 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     private ActivityResultLauncher<Intent> cameraIntentResultLauncher;
     private List<File> imageFiles;
     private String takePhotoPath;
-
+    private SharedPreferences sharedPreferences;
     public ReportActivity() {
+
     }
 
     public static ReportActivity newInstance(Location location) {
@@ -132,12 +133,13 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                             + "\nimageFiles: " + imageFiles.size()
                             + "\ndescription: " + description,
                     Toast.LENGTH_LONG).show();
-            presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description);
+            presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description, UserInfoHandler.getCurrentAccountToken(sharedPreferences));
         }
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getContext().getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
         imageFiles = new ArrayList<>();
         iReportView = (IReportView) getView();
         if(getArguments() != null){
