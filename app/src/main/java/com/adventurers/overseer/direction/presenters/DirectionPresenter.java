@@ -19,7 +19,7 @@ public class DirectionPresenter implements IDirectionPresenter {
 
     @Override
     public void presentPathFindingUnsuccessful() {
-
+        mMapActivity.renderPathFindingUnsuccessful();
     }
 
     public void present(Location currentLocation, Location goal) {
