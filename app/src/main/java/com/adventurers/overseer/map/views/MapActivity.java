@@ -110,6 +110,7 @@ public class MapActivity extends FragmentActivity
     private final int SEARCH = 1;
     private final int SELECTION = 2;
     private final int DIRECTIONS = 3;
+    private boolean startImmediately = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -361,8 +362,14 @@ public class MapActivity extends FragmentActivity
             mSelectionActivity.setOnStartClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Intent i = new Intent(getApplicationContext(), PlayVoiceInstructionsActivity.class);
-//                    startActivity(i);
+                    startDirectionActivity();
+                    DirectionPresenter directionPresenter = new DirectionPresenter(MapActivity.this);
+                    Location directionGoal = new Location(place.getLatLng());
+                    directionPresenter.present(mUserLocation, directionGoal);
+                    mFocusedMarker.remove();
+                    mSelectionActivity.hide();
+                    startImmediately = true;
+                    mDirectionActivity.hide();
                 }
             });
             Location destination = new Location(Objects.requireNonNull(place.getLatLng()));
@@ -426,6 +433,20 @@ public class MapActivity extends FragmentActivity
                 if (mRoutesPolyline != null) {
                     selectPolyline(mRoutesPolyline.get(0));
                     mState = DIRECTIONS;
+
+                    if(startImmediately) {
+                        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+                        Gson gson = new Gson();
+                        ArrayList<String> route = new ArrayList<>();
+                        for(LatLng latLng : mFocusedRoute.getPoints()) {
+                            String json = gson.toJson(latLng);
+                            route.add(json);
+                        }
+                        i.putStringArrayListExtra("Route", route);
+                        startActivity(i);
+                        startImmediately = false;
+                        mDirectionActivity.show();
+                    }
                 }
             }
 
