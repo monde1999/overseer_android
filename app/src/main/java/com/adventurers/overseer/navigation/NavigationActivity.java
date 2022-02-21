@@ -73,6 +73,7 @@ import com.mapbox.navigation.core.replay.route.ReplayProgressObserver;
 import com.mapbox.navigation.core.replay.route.ReplayRouteMapper;
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult;
 import com.mapbox.navigation.core.trip.session.LocationObserver;
+import com.mapbox.navigation.core.trip.session.OffRouteObserver;
 import com.mapbox.navigation.core.trip.session.RouteProgressObserver;
 import com.mapbox.navigation.core.trip.session.VoiceInstructionsObserver;
 import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer;
@@ -489,9 +490,18 @@ public class NavigationActivity extends AppCompatActivity {
         }
     };
 
+
+    OffRouteObserver offRouteObserver = new OffRouteObserver() {
+        @Override
+        public void onOffRouteStateChanged(boolean b) {
+            findRoute(destination);
+        }
+    };
+
     // endregion
     AnnotationPlugin annotationApi;
     PointAnnotationManager pointAnnotationManager;
+    Point destination;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -521,6 +531,7 @@ public class NavigationActivity extends AppCompatActivity {
             LatLng latLng = gson.fromJson(s, LatLng.class);
             gRoute.add(Point.fromLngLat(latLng.longitude, latLng.latitude));
         }
+        destination = Point.fromLngLat(gRoute.get(gRoute.size()-1).longitude(), gRoute.get(gRoute.size()-1).latitude());
 
         // initialize the location puck
         LocationComponentPlugin locationComponent =
@@ -544,7 +555,7 @@ public class NavigationActivity extends AppCompatActivity {
                     new NavigationOptions.Builder(NavigationActivity.this)
                             .accessToken(getString(R.string.mapbox_access_token))
                             // comment out the location engine setting block to disable simulation
-                            .locationEngine(replayLocationEngine)
+                            //.locationEngine(replayLocationEngine)
                             .build()
             );
         }
@@ -718,6 +729,7 @@ public class NavigationActivity extends AppCompatActivity {
         mapboxNavigation.registerLocationObserver(locationObserver);
         mapboxNavigation.registerVoiceInstructionsObserver(voiceInstructionsObserver);
         mapboxNavigation.registerRouteProgressObserver(replayProgressObserver);
+        mapboxNavigation.registerOffRouteObserver(offRouteObserver);
 
 //        if (mapboxNavigation.getRoutes().isEmpty()) {
 //            // if simulation is enabled (ReplayLocationEngine set to NavigationOptions)
@@ -745,6 +757,7 @@ public class NavigationActivity extends AppCompatActivity {
         mapboxNavigation.unregisterLocationObserver(locationObserver);
         mapboxNavigation.unregisterVoiceInstructionsObserver(voiceInstructionsObserver);
         mapboxNavigation.unregisterRouteProgressObserver(replayProgressObserver);
+        mapboxNavigation.unregisterOffRouteObserver(offRouteObserver);
     }
 
     @Override
