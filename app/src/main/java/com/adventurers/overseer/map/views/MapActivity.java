@@ -28,6 +28,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.adventurers.overseer.Constants;
 import com.adventurers.overseer.R;
 import com.adventurers.overseer.direction.DirectionActivity;
 import com.adventurers.overseer.direction.models.Route;
@@ -43,6 +44,7 @@ import com.adventurers.overseer.map.models.Location;
 import com.adventurers.overseer.map.presenters.MapPresenter;
 import com.adventurers.overseer.navigation.NavigationActivity;
 import com.adventurers.overseer.report.views.ReportActivity;
+import com.adventurers.overseer.searchtap.SearchTap;
 import com.adventurers.overseer.searchtype.SearchType;
 import com.adventurers.overseer.selection.SelectionActivity;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -63,11 +65,13 @@ import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -289,6 +293,7 @@ public class MapActivity extends FragmentActivity
     @SuppressLint({"MissingPermission", "PotentialBehaviorOverride"})
     private void setupMap() {
         mMap.setMyLocationEnabled(true);
+        Places.initialize(MapActivity.this, Constants.MAPS_API_KEY);
 
         // Stop following device when the user moves the map
         mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
@@ -324,6 +329,23 @@ public class MapActivity extends FragmentActivity
             @Override
             public void onPolylineClick(@NonNull Polyline polyline) {
                 selectPolyline(polyline);
+            }
+        });
+
+        SearchTap searchTap = new SearchTap(this);
+        searchTap.setOnPlaceDetailsRequestListener(new SearchTap.OnPlaceDetailsRequestListener() {
+            @Override
+            public void onSuccess(Place place) {
+                if(mState == SELECTION) {
+                    onBackPressed();
+                }
+                searchTypeSuccess(place);
+            }
+        });
+        mMap.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
+            @Override
+            public void onPoiClick(@NonNull PointOfInterest pointOfInterest) {
+                searchTap.requestPlaceDetails(pointOfInterest);
             }
         });
     }
