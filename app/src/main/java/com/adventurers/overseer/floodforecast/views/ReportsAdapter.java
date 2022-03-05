@@ -21,7 +21,11 @@ import com.adventurers.overseer.helpers.ReportsHelper;
 import com.adventurers.overseer.user.handlers.UserInfoHandler;
 import com.adventurers.overseer.user.models.UserInfo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsViewHolder> {
     private final List<ReportData> reports;
@@ -43,7 +47,23 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportsV
         String name = reports.get(position).getUser().getFirst_name() + " " + reports.get(position).getUser().getLast_name();
         int reportId = reports.get(position).getId();
         holder.tv_name.setText(name);
+
+//        Instant instant = Instant.parse(reports.get(position).getTimestamp());
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy | h:mm a");
+//        ZoneOffset offset = ZoneOffset.ofHours(0);
+//        OffsetDateTime offsetDateTime = instant.atOffset(offset);
+//        //holder.tv_time_address.setText(formatter.format(offsetDateTime));
+
         holder.tv_time_address.setText(reports.get(position).getTimestamp());
+        try {
+            SimpleDateFormat utc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+            Date date = utc.parse(reports.get(position).getTimestamp());
+            SimpleDateFormat targetFormat = new SimpleDateFormat("MMMM d, yyyy | h:mm a");
+            holder.tv_time_address.setText(targetFormat.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         holder.tv_caption.setText((reports.get(position).getDescription()));
         LinearLayoutManager manager = new LinearLayoutManager(holder.rv_images.getContext(), LinearLayoutManager.HORIZONTAL, false);
         holder.rv_images.setLayoutManager(manager);
