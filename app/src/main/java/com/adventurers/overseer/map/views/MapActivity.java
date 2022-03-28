@@ -336,6 +336,9 @@ public class MapActivity extends FragmentActivity
         searchTap.setOnPlaceDetailsRequestListener(new SearchTap.OnPlaceDetailsRequestListener() {
             @Override
             public void onSuccess(Place place) {
+                if(mState == DIRECTIONS) {
+                    onBackPressed();
+                }
                 if(mState == SELECTION) {
                     onBackPressed();
                 }
