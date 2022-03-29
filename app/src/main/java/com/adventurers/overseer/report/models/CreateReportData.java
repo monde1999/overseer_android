@@ -9,7 +9,6 @@ public class CreateReportData {
     private int user;
     double latitude;
     double longitude;
-    private int id;
     private String description;
     private List<File> images;
     private int floodLevel;
@@ -29,9 +28,6 @@ public class CreateReportData {
         return latitude;
     }
     public double getLongitude() {return longitude;}
-    public int getId(){
-        return id;
-    }
     public List<File> getImages() {
         return images;
     }

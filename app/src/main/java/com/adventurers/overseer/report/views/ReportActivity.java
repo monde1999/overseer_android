@@ -81,6 +81,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
     private List<File> imageFiles;
     private String takePhotoPath;
     private SharedPreferences sharedPreferences;
+    private String token;
     public ReportActivity() {
 
     }
@@ -118,6 +119,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
         description = et_description.getText().toString();
         floodLevel = seekBar_flood_level.getProgress() + 1;
         ReportPresenter presenter = new ReportPresenter(this);
+        token = UserInfoHandler.getCurrentAccountToken(sharedPreferences);
         if(imageFiles==null || imageFiles.size()==0){
             Toast.makeText(getContext(),"Image is missing. Please Try again.",Toast.LENGTH_LONG).show();
         }
@@ -133,7 +135,7 @@ public class ReportActivity extends BottomSheetDialogFragment implements IReport
                             + "\nimageFiles: " + imageFiles.size()
                             + "\ndescription: " + description,
                     Toast.LENGTH_LONG).show();
-            presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description, UserInfoHandler.getCurrentAccountToken(sharedPreferences));
+            presenter.report(user, reportedLocation, time, floodLevel, imageFiles, description, token);
         }
     }
     @Override
